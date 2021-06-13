@@ -13,14 +13,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:progressBgColor="@color/white"
-        app:progressCenterColor="#162353"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        app:progressRadius="20dp"
-        app:progressEndColor="#FFF801"
+        app:progressRadius="15dp"
+        app:progressEndColor="#29359C"
         app:progressMax="100"
-        app:progressStartColor="#9C2929"
-        app:progressType="vertical" />
+        app:progressStartColor="#29359C"
+        app:progressType="horizontal" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
