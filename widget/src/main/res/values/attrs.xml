@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TranslationBehavior">
+        <!-- [s] BasePercentageBehavior Attr -->
+        <attr name="behavior_dependId" format="reference"/> <!-- Dependency View Id -->
+        <attr name="behavior_dependType" format="enum"> <!-- Dependency View Type -->
+            <enum name="horizontal" value="0"/>
+            <enum name="vertical" value="1"/>
+        </attr>
+        <attr name="behavior_dependPin" format="dimension" /> <!-- Dependency Pin Height or Width-->
+        <attr name="behavior_dependRange" format="dimension"/> <!-- Dependency Action Range -->
+        <!-- [e] BasePercentageBehavior Attr -->
+
+        <!-- [s] TranslationBehavior Attr -->
+        <!-- Child View End X Location
+            Format {$Standard , End Location X}
+            @param Standard -> s or e (없어도 됨.)
+            @param End Location X -> 33(dp) s or e 기준으로 Child View 를 마지막에 위치 하고 싶은 Y 좌표.
+            ex.) 23 or s,33
+         -->
+        <attr name="behavior_endX" format="string"/>
+        <!-- Child View End Y Location
+            Format {$Standard , End Location Y}
+            @param Standard -> s or e (없어도 됨.)
+            @param End Location Y -> 33(dp) s or e 기준으로 Child View 를 마지막에 위치 하고 싶은 Y 좌표.
+            ex.) 23 or s,33
+         -->
+        <attr name="behavior_endY" format="string"/>
+        <attr name="behavior_endAlpha" format="float"/> <!-- Child View End Alpha -->
+
+        <attr name="behavior_endWidth" format="dimension"/>   <!-- Child View End Width -->
+        <attr name="behavior_endHeight" format="dimension"/> <!-- Child View End Height -->
+        <!-- [e] TranslationBehavior Attr -->
+    </declare-styleable>
+
+    <!-- CustomProgressView Attr [Start] -->
+    <declare-styleable name="ProgressView">
+        <attr name="type" format="enum"> <!-- ProgressView type horizontal or vertical -->
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
+        <attr name="gradientRadius" format="dimension" /> <!-- defines gradient radius -->
+        <attr name="gradientStartColor" format="color" /> <!-- defines gradient start color -->
+        <attr name="gradientCenterColor" format="color" /> <!-- defines gradient center color -->
+        <attr name="gradientEndColor" format="color" /> <!-- defines gradient end color -->
+        <attr name="gradientLocation" format="float" /> <!-- defines gradient color location -->
+        <attr name="bgColor" format="color" />   <!-- Background Color -->
+        <attr name="max" format="integer" /> <!-- defines the maximum value -->
+        <attr name="min" format="integer" /> <!-- defines the minimum value -->
+    </declare-styleable>
+    <!-- CustomProgressView Attr [End] -->
+</resources>
