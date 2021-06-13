@@ -1,7 +1,6 @@
 package hmju.widget.progress
 
 import android.content.Context
-import android.content.res.TypedArray
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
@@ -22,12 +21,20 @@ class ProgressView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : SurfaceView(context, attrs, defStyleAttr), SurfaceHolder.Callback {
 
-    private val TAG: String = "CustomProgressView"
+    companion object {
+        private const val TAG = "ProgressView"
+        private const val DEBUG = false
+        fun LogD(msg: String) {
+            if (DEBUG) {
+                Log.d(TAG, msg)
+            }
+        }
+    }
 
-    private val mHolder: SurfaceHolder
+    private val surfaceHolder: SurfaceHolder by lazy { holder }
 
     // [s] Attributes Value Define
-    enum class TYPE {
+    enum class Type {
         HORIZONTAL, VERTICAL
     }
 
@@ -38,111 +45,106 @@ class ProgressView @JvmOverloads constructor(
         var centerColor: Int = 0
         var endColor: Int = 0
         var location: Float = 0F
-
     }
 
-    internal val mGradientInfo: GradientInfo = GradientInfo()
-    internal var mType: TYPE = TYPE.HORIZONTAL  // default horizontal
-    internal var mMax: Int = 100                // default Value 100
-    internal var mBgColor: Int = Color.BLACK    // default Black
+    internal val gradientInfo: GradientInfo by lazy { GradientInfo() }
+    internal var type = Type.HORIZONTAL  // default horizontal
+    internal var max: Int = 100                // default Value 100
+    internal var bgColor: Int = Color.BLACK    // default Black
     // [e] Attributes Value Define
 
-    private var mThread: ProgressThread? = null
-    private var mCurrentProgress: Int = 0
-
-    // Surface Life Cycle
-    // Type 은 2가지로 표현 한다. 더 필요한 경우 타입 추가.
-    internal enum class LIFE {
-        CAN_DRAW, NOT_DRAW
-    }
-
-    private var mCurrentLife: LIFE = LIFE.NOT_DRAW
-
-    init {
-        if (!isInEditMode) {
-            attrs?.run {
-                val attr: TypedArray =
-                    context.obtainStyledAttributes(this, R.styleable.ProgressView)
-                try {
-                    mBgColor = attr.getColor(R.styleable.ProgressView_bgColor, Color.BLACK)
-                    mType = TYPE.values()[attr.getInt(R.styleable.ProgressView_type, 0)]
-                    mMax = attr.getInt(R.styleable.ProgressView_max, 100)
-                    // set Start Progress
-                    mCurrentProgress = attr.getInt(R.styleable.ProgressView_min, 0)
-
-                    mGradientInfo.radius =
-                        attr.getDimensionPixelOffset(R.styleable.ProgressView_gradientRadius, 0)
-                    mGradientInfo.startColor =
-                        attr.getColor(R.styleable.ProgressView_gradientStartColor, Color.BLACK)
-                    mGradientInfo.centerColor =
-                        attr.getColor(R.styleable.ProgressView_gradientCenterColor, Color.BLACK)
-                    mGradientInfo.endColor =
-                        attr.getColor(R.styleable.ProgressView_gradientEndColor, Color.BLACK)
-                    mGradientInfo.location =
-                        attr.getFloat(R.styleable.ProgressView_gradientLocation, 0F)
-                } finally {
-                    attr.recycle()
+    private var thread: ProgressThread? = null
+    var currentProgress: Int = 0
+        set(value) {
+            if (field != value) {
+                field = value
+                if (currentLife == Life.CAN_DRAW) {
+                    thread?.draw()
                 }
             }
         }
-        mHolder = holder
-        mHolder.addCallback(this)
-        // 기본 SurfaceView 투명화
-        setZOrderOnTop(true)
-        mHolder.setFormat(PixelFormat.TRANSPARENT)
+
+
+    // Surface Life Cycle
+    internal enum class Life {
+        CAN_DRAW, NOT_DRAW
     }
 
-    fun setType(type: TYPE): ProgressView {
-        mType = type
+    private var currentLife = Life.NOT_DRAW
+
+    init {
+        if (!isInEditMode) {
+            context.obtainStyledAttributes(attrs, R.styleable.ProgressView).run {
+                try {
+                    bgColor = getColor(R.styleable.ProgressView_progressBgColor, Color.BLACK)
+                    type = Type.values()[getInt(R.styleable.ProgressView_progressType, 0)]
+                    max = getInt(R.styleable.ProgressView_progressMax, 100)
+                    // set Start Progress
+                    currentProgress = getInt(R.styleable.ProgressView_progressMin, 0)
+
+                    gradientInfo.apply {
+                        radius = getDimensionPixelOffset(R.styleable.ProgressView_progressRadius, 0)
+                        startColor =
+                            getColor(R.styleable.ProgressView_progressStartColor, Color.BLACK)
+                        centerColor =
+                            getColor(R.styleable.ProgressView_progressCenterColor, Color.BLACK)
+                        endColor = getColor(R.styleable.ProgressView_progressEndColor, Color.BLACK)
+                        location = getFloat(R.styleable.ProgressView_progressCenterXY, 0F)
+                    }
+
+                } catch (_: Exception) {
+
+                }
+                recycle()
+            }
+        }
+        // 기본 SurfaceView 투명화
+        setZOrderOnTop(true)
+
+        surfaceHolder.apply {
+            addCallback(this@ProgressView)
+            setFormat(PixelFormat.TRANSPARENT)
+        }
+    }
+
+    fun setType(type: Type): ProgressView {
+        this.type = type
         return this
     }
 
     fun setMin(min: Int): ProgressView {
-        mCurrentProgress = min
+        currentProgress = min
         return this
     }
 
     fun setBgColor(id: Int): ProgressView {
-        mBgColor = id
+        bgColor = id
         return this
     }
 
     fun setRadius(radius: Int): ProgressView {
-        mGradientInfo.radius = radius
+        gradientInfo.radius = radius
         return this
     }
 
     fun setStartColor(color: Int): ProgressView {
-        mGradientInfo.startColor = color
+        gradientInfo.startColor = color
         return this
     }
 
     fun setCenterColor(color: Int): ProgressView {
-        mGradientInfo.centerColor = color
+        gradientInfo.centerColor = color
         return this
     }
 
     fun setEndColor(color: Int): ProgressView {
-        mGradientInfo.endColor = color
+        gradientInfo.endColor = color
         return this
     }
 
     fun setGradientLocation(location: Float): ProgressView {
-        mGradientInfo.location = location
+        gradientInfo.location = location
         return this
-    }
-
-    /**
-     * 프로그래스 진행률을 노출하는 함수.
-     * {@link Reference #ProgressBar.setProgress(int)}
-     * @param progress 현재 진행도를 나타내고 싶은 수치
-     * @author hmju
-     */
-    fun setProgress(progress: Int) {
-        mCurrentProgress = progress
-        if (mCurrentLife == LIFE.CAN_DRAW) {
-            mThread?.draw()
-        }
     }
 
     /**
@@ -152,36 +154,25 @@ class ProgressView @JvmOverloads constructor(
      * @author hmju
      */
     fun incrementProgressBy(diff: Int) {
-        mCurrentProgress += diff
-        if (mCurrentLife == LIFE.CAN_DRAW) {
-            mThread?.draw()
-        }
-    }
-
-    /**
-     * get Current Progress
-     * @author hmju
-     */
-    fun getProgress(): Int {
-        return mCurrentProgress
+        currentProgress += diff
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {}
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-        if (mThread != null) {
-            mThread?.closeThread()
-            mThread = null
+        if (thread != null) {
+            thread?.closeThread()
+            thread = null
         }
 
         // init Thread.
-        mCurrentLife = LIFE.CAN_DRAW
-        mThread = ProgressThread(width, height)
+        currentLife = Life.CAN_DRAW
+        thread = ProgressThread(width.toFloat(), height.toFloat())
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
-        mCurrentLife = LIFE.NOT_DRAW
-        mThread?.closeThread()
+        currentLife = Life.NOT_DRAW
+        thread?.closeThread()
     }
 
 
@@ -190,66 +181,67 @@ class ProgressView @JvmOverloads constructor(
      *
      * @author hmju
      */
-    internal inner class ProgressThread(private val width: Int, private val height: Int) :
-        Runnable {
-        private val thread: ExecutorService = Executors.newFixedThreadPool(1)
-        private val fgPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG) // 부드럽게 처리하는 Flag
-        private val bgPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)  // 부드럽게 처리하는 Flag
+    internal inner class ProgressThread(
+        private val surfaceWidth: Float,
+        private val surfaceHeight: Float
+    ) : Runnable {
+        private val thread: ExecutorService by lazy {
+            Executors.newFixedThreadPool(1).apply {
+                execute(this@ProgressThread)
+            }
+        }
+        private val fgPaint: Paint by lazy {
+            Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP)
+                shader = if (type == Type.HORIZONTAL) {
+                    LinearGradient(
+                        0F, 0F, 0F, surfaceHeight,
+                        intArrayOf(
+                            gradientInfo.startColor,
+                            gradientInfo.centerColor,
+                            gradientInfo.endColor
+                        ),
+                        floatArrayOf(0F, gradientInfo.location, 1F), Shader.TileMode.CLAMP
+                    )
+                } else {
+                    LinearGradient(
+                        0F, 0F, 0F, surfaceHeight,
+                        intArrayOf(
+                            gradientInfo.startColor,
+                            gradientInfo.centerColor,
+                            gradientInfo.endColor
+                        ),
+                        floatArrayOf(0F, gradientInfo.location, 1F), Shader.TileMode.CLAMP
+                    )
+                }
+            }
+        }
 
-        //        private val txtPaint: Paint = Paint()
-        private val bgRectF: RectF = RectF(0F, 0F, width.toFloat(), height.toFloat())
-        private val radius: Float = mGradientInfo.radius.toFloat()
-        private val fgRect: Rect
+        private val bgPaint: Paint by lazy {
+            Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = bgColor
+            }
+        }
+
+        private val bgRectF: RectF by lazy {
+            RectF(
+                0F,
+                0F,
+                surfaceWidth,
+                surfaceHeight
+            )
+        }
+        private val radius: Float by lazy { gradientInfo.radius.toFloat() }
+        private val fgRectF: RectF by lazy {
+            if (type == Type.HORIZONTAL) {
+                RectF(0F, 0F, 0F, surfaceHeight)
+            } else {
+                RectF(0F, surfaceHeight, surfaceWidth, surfaceHeight)
+            }
+        }
 
         init {
-
-//            txtPaint.color = Color.BLACK
-//            txtPaint.textSize = 30F
-
-            // [s] init Background
-            bgPaint.color = mBgColor
-            // [e] init Background
-
-            // [s] init Gradient
-            val gradient: LinearGradient
-            // 라운딩 처리된 배경에 그라데이트되어 있는 Foreground 를 입힌다.
-            fgPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP)
-            // Type 별 초기화
-            if (mType == TYPE.HORIZONTAL) {
-                fgRect = Rect(0, 0, 0, height)
-                gradient = LinearGradient(
-                    0F, 0F, 0F, height.toFloat(),
-                    intArrayOf(
-                        mGradientInfo.startColor,
-                        mGradientInfo.centerColor,
-                        mGradientInfo.endColor
-                    ),
-                    floatArrayOf(0F, mGradientInfo.location, 1F), Shader.TileMode.CLAMP
-                )
-            }
-            // Vertical
-            else {
-                fgRect = Rect(0, height, width, height)
-                gradient = LinearGradient(
-                    0F, 0F, 0F, height.toFloat(),
-                    intArrayOf(
-                        mGradientInfo.startColor,
-                        mGradientInfo.centerColor,
-                        mGradientInfo.endColor
-                    ),
-                    floatArrayOf(0F, mGradientInfo.location, 1F), Shader.TileMode.CLAMP
-                )
-            }
-
-            // set Paint Shader
-            fgPaint.shader = gradient
-            // [e] init Gradient
-
-            // [s] init Thread
-            thread.execute(this)
-            // setBgColor
             draw()
-            // [e] init Thread
         }
 
         /**
@@ -257,39 +249,28 @@ class ProgressView @JvmOverloads constructor(
          * @author hmju
          */
         override fun run() {
-            val canvas: Canvas? = mHolder.lockCanvas()
-            try {
-                synchronized(mHolder) {
-                    // draw background
-                    canvas?.drawRoundRect(bgRectF, radius, radius, bgPaint)
+            surfaceHolder.lockCanvas().runCatching {
+                drawRoundRect(bgRectF, radius, radius, bgPaint)
 
-                    // 초기값인 경우 아래 로직 패스.
-                    if (mCurrentProgress == 0) {
-                        return@run
-                    }
-
-                    // Type 별로 분기처리
-                    if (mType == TYPE.HORIZONTAL) {
-                        val updateValue: Float =
-                            (width * (mCurrentProgress.toFloat() / mMax.toFloat()))
-                        fgRect.right = updateValue.toInt()
-                    }
-                    // Type Vertical
-                    else {
-                        val updateValue: Float =
-                            (((mMax - mCurrentProgress) * height) / mMax).toFloat()
-                        fgRect.top = updateValue.toInt()
-                    }
-
-                    // draw ForeGround
-                    return@synchronized canvas?.drawRect(fgRect, fgPaint)
+                if (currentProgress == 0) {
+                    drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+                    return@runCatching this
                 }
-            } catch (ex: Exception) {
-                Log.e(TAG, "Thread Error\t${ex.message}")
-            } finally {
-                if (canvas != null) {
-                    mHolder.unlockCanvasAndPost(canvas)
+
+                if (type == Type.HORIZONTAL) {
+                    val updateValue: Float =
+                        (surfaceWidth * (currentProgress.toFloat()) / max.toFloat())
+                    fgRectF.right = updateValue
+                } else {
+                    val updateValue: Float =
+                        (((max - currentProgress) * surfaceHeight) / max)
+                    fgRectF.top = updateValue
                 }
+
+                drawRect(fgRectF, fgPaint)
+                return@runCatching this
+            }.also {
+                surfaceHolder.unlockCanvasAndPost(it.getOrNull())
             }
         }
 
@@ -298,10 +279,10 @@ class ProgressView @JvmOverloads constructor(
          * @author hmmu
          */
         internal fun draw() {
-            try {
+            runCatching {
                 this.run()
-            } catch (ex: Exception) {
-                Log.e(TAG, "Draw Error\t${ex.message}")
+            }.onFailure {
+                LogD("Draw Error\t${it.message}")
             }
         }
 
@@ -310,10 +291,10 @@ class ProgressView @JvmOverloads constructor(
          * @author hmju
          */
         internal fun closeThread() {
-            try {
+            runCatching {
                 thread.shutdownNow()
-            } catch (ex: Exception) {
-                Log.e(TAG, "CloseThread Error\t${ex.message}")
+            }.onFailure {
+                LogD("CloseThread Error\t${it.message}")
             }
         }
     }

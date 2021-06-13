@@ -33,20 +33,20 @@
         <!-- [e] TranslationBehavior Attr -->
     </declare-styleable>
 
-    <!-- CustomProgressView Attr [Start] -->
+    <!-- ProgressView Attr [Start] -->
     <declare-styleable name="ProgressView">
-        <attr name="type" format="enum"> <!-- ProgressView type horizontal or vertical -->
+        <attr name="progressType" format="enum"> <!-- ProgressView type horizontal or vertical -->
             <enum name="horizontal" value="0" />
             <enum name="vertical" value="1" />
         </attr>
-        <attr name="gradientRadius" format="dimension" /> <!-- defines gradient radius -->
-        <attr name="gradientStartColor" format="color" /> <!-- defines gradient start color -->
-        <attr name="gradientCenterColor" format="color" /> <!-- defines gradient center color -->
-        <attr name="gradientEndColor" format="color" /> <!-- defines gradient end color -->
-        <attr name="gradientLocation" format="float" /> <!-- defines gradient color location -->
-        <attr name="bgColor" format="color" />   <!-- Background Color -->
-        <attr name="max" format="integer" /> <!-- defines the maximum value -->
-        <attr name="min" format="integer" /> <!-- defines the minimum value -->
+        <attr name="progressRadius" format="dimension" /> <!-- defines gradient radius -->
+        <attr name="progressStartColor" format="color" /> <!-- defines gradient start color -->
+        <attr name="progressCenterColor" format="color" /> <!-- defines gradient center color -->
+        <attr name="progressEndColor" format="color" /> <!-- defines gradient end color -->
+        <attr name="progressCenterXY" format="float" /> <!-- defines gradient color location -->
+        <attr name="progressBgColor" format="color" />   <!-- Background Color -->
+        <attr name="progressMax" format="integer" /> <!-- defines the maximum value -->
+        <attr name="progressMin" format="integer" /> <!-- defines the minimum value -->
     </declare-styleable>
     <!-- CustomProgressView Attr [End] -->
 </resources>

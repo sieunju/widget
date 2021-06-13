@@ -1,0 +1,88 @@
+ext.deps = [:]
+
+/* version */
+def versions = [:]
+versions.kotlin = "1.5.0"
+versions.android_gradle_plugin = "4.1.2"
+versions.ktx_core = "1.5.0"
+versions.appcompat = "1.3.0"
+versions.activity = "1.1.0"
+versions.fragment = "1.3.3"
+versions.palette = "1.0.0"
+versions.constraint = "2.0.4"
+versions.viewpager = "1.0.0"
+versions.cardview = "1.0.0"
+versions.legacy = "1.0.0"
+versions.material = "1.3.0"
+versions.recyclerview = "1.2.0"
+versions.lifecycle = "2.3.1"
+versions.multidex = "2.0.1"
+versions.retrofit = "2.9.0"
+versions.moshi = "1.9.3"
+versions.kotlinx_serialization = "1.2.1"
+versions.kotlinx_converter = "0.8.0"
+versions.okhttp = "4.9.0"
+versions.rxjava = "3.0.0"
+versions.koin = "3.0.1"
+versions.paging = "2.1.2"
+versions.rxPermission = "0.12" // 소스 참고 해서 그냥 자체 내에서 모듈화할 생각
+versions.glide = "4.11.0"
+ext.versions = versions
+
+def build_versions = [:]
+build_versions.min_sdk = 21
+build_versions.compile_sdk = 30
+build_versions.target_sdk = 30
+build_versions.build_tools = "30.0.3"
+ext.build_versions = build_versions
+
+def deps = [:]
+
+deps.android_gradle_plugin = "com.android.tools.build:gradle:$versions.android_gradle_plugin"
+deps.kotlin_gradle_plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+
+/* Kotlin */
+def kotlin = [:]
+kotlin.stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin"
+kotlin.core = "androidx.core:core-ktx:$versions.ktx_core"
+deps.kotlin = kotlin
+
+/* lifecycle */
+def lifecycle = [:]
+lifecycle.base = "androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifecycle"
+lifecycle.viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
+lifecycle.livedata = "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycle"
+deps.lifecycle = lifecycle
+
+deps.databinding = "com.android.databinding:compiler:$versions.android_gradle_plugin"
+
+/* Common */
+def common = [:]
+common.appCompat = "androidx.appcompat:appcompat:$versions.appcompat"
+common.constraint_layout = "androidx.constraintlayout:constraintlayout:$versions.constraint"
+common.activity = "androidx.activity:activity-ktx:$versions.activity"
+common.material = "com.google.android.material:material:$versions.material"
+common.multidex = "androidx.multidex:multidex:$versions.multidex"
+common.legacy = "androidx.legacy:legacy-support-v4:$versions.legacy"
+common.viewpager = "androidx.viewpager2:viewpager2:$versions.viewpager"
+common.cardview = "androidx.cardview:cardview:$versions.cardview"
+common.fragment = "androidx.fragment:fragment-ktx:$versions.fragment"
+common.palette = "androidx.palette:palette-ktx:$versions.palette"
+deps.common = common
+
+/* RxJava */
+def rxjava = [:]
+rxjava.base = "io.reactivex.rxjava3:rxjava:$versions.rxjava"
+rxjava.android = "io.reactivex.rxjava3:rxandroid:$versions.rxjava"
+rxjava.kotlin = "io.reactivex.rxjava3:rxkotlin:$versions.rxjava"
+deps.rxjava = rxjava
+
+ext.deps = deps
+
+static def addRepos(RepositoryHandler handler) {
+    handler.google()
+    handler.mavenCentral()
+    handler.maven { url 'https://jitpack.io' }
+    handler.maven { url "https://maven.google.com" }
+}
+ext.addRepos = this.&addRepos
