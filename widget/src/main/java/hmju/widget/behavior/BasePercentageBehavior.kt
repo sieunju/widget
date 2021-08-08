@@ -1,12 +1,9 @@
 package hmju.widget.behavior
 
 import android.content.Context
-import android.content.res.TypedArray
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import hmju.widget.BuildConfig
 import hmju.widget.R
 import hmju.widget.extensions.actionBarHeight
 import hmju.widget.extensions.statusBarHeight
@@ -24,6 +21,11 @@ abstract class BasePercentageBehavior<V : View> @JvmOverloads internal construct
     defStyleAttr: Int = 0
 ) : CoordinatorLayout.Behavior<V>(context, attrs) {
 
+    companion object {
+        const val UNSPECIFIED_FLOAT: Float = Float.MAX_VALUE
+        const val UNSPECIFIED_INT: Int = Int.MAX_VALUE
+    }
+
     /**
      * 0~1.0 의 맞게 ReDraw View Override Func
      * @param child : Changed View
@@ -32,56 +34,53 @@ abstract class BasePercentageBehavior<V : View> @JvmOverloads internal construct
      */
     abstract fun onRedraw(child: V, percent: Float)
 
-    protected val TAG: String = "CustomBehavior"
-
-    protected val mContext: Context = context
-    protected val UNSPECIFIED_FLOAT: Float = Float.MAX_VALUE
-    protected val UNSPECIFIED_INT: Int = Int.MAX_VALUE
+    protected val ctx = context
 
     //[s]=====================AttributeSet Variable=====================//
-    enum class TYPE {
+    enum class Type {
         HORIZONTAL, VERTICAL
     }
 
-    private var mDependId: Int = 0                  // Dependency View Id
-    private var mDependPin: Float = 0F              // Dependency View Pin Height or Width
-    private var mDependRange: Float = 0F            // Dependency View 스크롤 범위.
-    private var mDependType: TYPE = TYPE.VERTICAL   // Behavior Type
+    private var dependId: Int = 0                  // Dependency View Id
+    private var dependPin: Float = 0F              // Dependency View Pin Height or Width
+    private var dependRange: Float = 0F            // Dependency View 스크롤 범위.
+    private var dependType: Type = Type.VERTICAL   // Behavior Type
     //[e]=====================AttributeSet Variable=====================//
 
-    private var mSoundOnCreate: Boolean = true
-    private var mDependX: Float = 0F                // Dependency Location X
-    private var mDependY: Float = 0F                // Dependency Location Y
-    protected var mDependWidth: Int = 0             // Dependency View Width
-    protected var mDependHeight: Int = 0            // Dependency View Height
+    private var soundOnCreate: Boolean = true
+    private var dependX: Float = 0F                // Dependency Location X
+    private var dependY: Float = 0F                // Dependency Location Y
+    protected var dependWidth: Int = 0             // Dependency View Width
+    protected var dependHeight: Int = 0            // Dependency View Height
 
     init {
-        val attr: TypedArray =
-            mContext.obtainStyledAttributes(attrs, R.styleable.TranslationBehavior)
-        mDependId = attr.getResourceId(R.styleable.TranslationBehavior_behavior_dependId, 0)
-        mDependPin =
-            attr.getDimension(R.styleable.TranslationBehavior_behavior_dependPin, UNSPECIFIED_FLOAT)
-
-        // 해당 속성값 셋팅 하였는지 체크.
-        if (mDependId == 0) {
-            // Dependency Id 값을 셋팅 안안하는 경우 NullPointerException Throw
-            throw NullPointerException("behavior_dependId is a required attribute.")
+        context.obtainStyledAttributes(attrs, R.styleable.TranslationBehavior).run {
+            try {
+                dependId = getResourceId(R.styleable.TranslationBehavior_behaviorDependId, 0)
+                dependPin = getDimension(
+                    R.styleable.TranslationBehavior_behaviorDependPin,
+                    UNSPECIFIED_FLOAT
+                )
+                // 해당 속성값 셋팅 하였는지 체크.
+                if (dependId == 0) {
+                    // Dependency Id 값을 셋팅 안안하는 경우 NullPointerException Throw
+                    throw NullPointerException("behavior_dependId is a required attribute.")
+                }
+                dependType =
+                    Type.values()[getInt(R.styleable.TranslationBehavior_behaviorDependType, 1)]
+                dependRange = getDimension(
+                    R.styleable.TranslationBehavior_behaviorDependRange,
+                    UNSPECIFIED_FLOAT
+                )
+            } catch (_: Exception) {
+            }
+            recycle()
         }
-
-        mDependType = TYPE.values()[attr.getInt(
-            R.styleable.TranslationBehavior_behavior_dependType,
-            1
-        )] // 기본값은 Vertical
-        mDependRange = attr.getDimension(
-            R.styleable.TranslationBehavior_behavior_dependRange,
-            UNSPECIFIED_FLOAT
-        )  // Dependency Scroll Range
-        attr.recycle()
     }
 
     override fun layoutDependsOn(parent: CoordinatorLayout, child: V, dependency: View): Boolean {
         // 속성에서 ID 값을 지정 한 View 에 대해 true 반환.
-        return dependency.id == mDependId
+        return dependency.id == dependId
     }
 
     /**
@@ -94,10 +93,11 @@ abstract class BasePercentageBehavior<V : View> @JvmOverloads internal construct
         dependency: View
     ): Boolean {
         // 최초 한번만 실행.
-        if (mSoundOnCreate) {
+        if (soundOnCreate) {
             onCreate(parent, child, dependency)
         }
 
+        TranslationBehavior.LogD("onDependentViewChanged $child")
         // percentage Calculate
         onUpdateCal(child, dependency)
         return false
@@ -111,29 +111,29 @@ abstract class BasePercentageBehavior<V : View> @JvmOverloads internal construct
      * @author hmju
      */
     open fun onCreate(parent: CoordinatorLayout, child: V, dependency: View) {
-        mDependX = dependency.x
-        mDependY = dependency.y
-        mDependWidth = dependency.width
-        mDependHeight = dependency.height
+        dependX = dependency.x
+        dependY = dependency.y
+        dependWidth = dependency.width
+        dependHeight = dependency.height
 
         // Dependency View Scroll Type Vertical 인 경우.
-        if (TYPE.VERTICAL == mDependType) {
+        if (Type.VERTICAL == dependType) {
             // Dependency View 의 Pint 값을 속성에서 셋팅 안한경우 기본 ActionBarSize 로 셋팅.
-            if (mDependPin == UNSPECIFIED_FLOAT) {
-                mDependPin = mContext.actionBarHeight()
+            if (dependPin == UNSPECIFIED_FLOAT) {
+                dependPin = ctx.actionBarHeight()
             }
 
             // 스크롤 범위 최대값 -> Dependency View 높이 - 상태바 높이
-            val maxRange: Float = mDependHeight - mDependPin + mContext.statusBarHeight()
+            val maxRange: Float = dependHeight - dependPin + ctx.statusBarHeight()
             // 스크롤 범위 값 제한.
-            if (maxRange < mDependRange) {
-                mDependRange = maxRange
+            if (maxRange < dependRange) {
+                dependRange = maxRange
             }
         } else {
             // TODO 나중에 Dependency 가 Horizontal 인경우 대응 해야함.
         }
 
-        mSoundOnCreate = false
+        soundOnCreate = false
     }
 
     /**
@@ -145,31 +145,32 @@ abstract class BasePercentageBehavior<V : View> @JvmOverloads internal construct
      */
     private fun onUpdateCal(child: V, dependency: View) {
 
-        val percent: Float
+        var percent: Float
         val start: Float
         val current: Float
         val end: Float
 
         // 각 타입에 맞게 계산.
-        when (mDependType) {
-            TYPE.HORIZONTAL -> {
-                start = mDependX
+        when (dependType) {
+            Type.HORIZONTAL -> {
+                start = dependX
                 current = dependency.x
-                end = mDependRange
+                end = dependRange
             }
-            TYPE.VERTICAL -> {
-                start = mDependY
+            Type.VERTICAL -> {
+                start = dependY
                 current = dependency.y
-                end = mDependRange
+                end = dependRange
             }
         }
-
         // Percentage Calculate.. 0.0 ~ 1.0
         percent = abs(current - start) / abs(end - start)
-
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "onUpdateCal\t${percent}")
+        if (percent.isNaN()) {
+            TranslationBehavior.LogD("is NAN")
+            percent = 0.0F
         }
+
+        TranslationBehavior.LogD("onUpdateCal\t${percent}")
 
         // onReDraw
         onRedraw(child, if (percent > 1F) 1F else percent)

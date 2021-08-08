@@ -270,7 +270,9 @@ class ProgressView @JvmOverloads constructor(
                 drawRect(fgRectF, fgPaint)
                 return@runCatching this
             }.also {
-                surfaceHolder.unlockCanvasAndPost(it.getOrNull())
+                kotlin.runCatching {
+                    surfaceHolder.unlockCanvasAndPost(it.getOrNull())
+                }
             }
         }
 
