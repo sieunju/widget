@@ -33,7 +33,7 @@
         <!-- [e] TranslationBehavior Attr -->
     </declare-styleable>
 
-    <!-- ProgressView Attr [Start] -->
+    <!-- [s] ProgressView Attr -->
     <declare-styleable name="ProgressView">
         <attr name="progressType" format="enum"> <!-- 수평 or 수직 상태 -->
             <enum name="horizontal" value="0" />
@@ -49,4 +49,23 @@
         <attr name="progressMin" format="integer" /> <!-- 최소 진행값 -->
     </declare-styleable>
     <!-- ProgressView Attr [End] -->
+
+    <!-- [s] CustomTextView Attr -->
+    <declare-styleable name="CustomTextView">
+        <attr name="textViewIsAuto" format="boolean" /> <!-- 속성으로 표현할건지 코드로 표현 할건지 Default true -->
+        <attr name="textViewDefState" format="boolean" /> <!-- Default 상태 -->
+        <attr name="textViewCorner" format="dimension" /> <!-- Corner Radius -->
+        <attr name="textViewTxtColor" format="color" /> <!-- Enable or Default TextColor -->
+        <attr name="textViewBgColor" format="color" /> <!-- Enable or Default Bg Color -->
+        <attr name="textViewBorder" format="dimension" /> <!-- Enable or Default Border Width -->
+        <attr name="textViewBorderColor" format="color" /> <!--Enable or Default Border Color  -->
+        <attr name="textViewDisableTxtColor" format="color" /> <!-- Disable or Not Selected Text Color-->
+        <attr name="textViewDisableBgColor" format="color" /> <!-- Disable or Not Selected Bg Color -->
+        <attr name="textViewDisableBorder" format="dimension" /> <!-- Disable or Not Selected Border Width -->
+        <attr name="textViewDisableBorderColor" format="color" /> <!-- Disable Or Not Selected Border Color -->
+        <attr name="textViewAutoMaxSize" format="integer"/> <!-- Auto Sizing Max Size -->
+        <attr name="textViewAutoMinSize" format="integer"/> <!-- Auto Sizing Min Size -->
+    </declare-styleable>
+    <!-- [e] CustomTextView Attr -->
+
 </resources>
