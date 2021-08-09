@@ -73,30 +73,29 @@ class ProgressView @JvmOverloads constructor(
     private var currentLife = Life.NOT_DRAW
 
     init {
-        if (!isInEditMode) {
-            context.obtainStyledAttributes(attrs, R.styleable.ProgressView).run {
-                try {
-                    bgColor = getColor(R.styleable.ProgressView_progressBgColor, Color.BLACK)
-                    type = Type.values()[getInt(R.styleable.ProgressView_progressType, 0)]
-                    max = getInt(R.styleable.ProgressView_progressMax, 100)
-                    // set Start Progress
-                    currentProgress = getInt(R.styleable.ProgressView_progressMin, 0)
 
-                    gradientInfo.apply {
-                        radius = getDimensionPixelOffset(R.styleable.ProgressView_progressRadius, 0)
-                        startColor =
-                            getColor(R.styleable.ProgressView_progressStartColor, Color.BLACK)
-                        centerColor =
-                            getColor(R.styleable.ProgressView_progressCenterColor, Color.BLACK)
-                        endColor = getColor(R.styleable.ProgressView_progressEndColor, Color.BLACK)
-                        location = getFloat(R.styleable.ProgressView_progressCenterXY, 0F)
-                    }
+        context.obtainStyledAttributes(attrs, R.styleable.ProgressView).run {
+            try {
+                bgColor = getColor(R.styleable.ProgressView_progressBgColor, Color.BLACK)
+                type = Type.values()[getInt(R.styleable.ProgressView_progressType, 0)]
+                max = getInt(R.styleable.ProgressView_progressMax, 100)
+                // set Start Progress
+                currentProgress = getInt(R.styleable.ProgressView_progressMin, 0)
 
-                } catch (_: Exception) {
-
+                gradientInfo.apply {
+                    radius = getDimensionPixelOffset(R.styleable.ProgressView_progressRadius, 0)
+                    startColor =
+                        getColor(R.styleable.ProgressView_progressStartColor, Color.BLACK)
+                    centerColor =
+                        getColor(R.styleable.ProgressView_progressCenterColor, Color.BLACK)
+                    endColor = getColor(R.styleable.ProgressView_progressEndColor, Color.BLACK)
+                    location = getFloat(R.styleable.ProgressView_progressCenterXY, 0F)
                 }
-                recycle()
+
+            } catch (_: Exception) {
+
             }
+            recycle()
         }
         // 기본 SurfaceView 투명화
         setZOrderOnTop(true)

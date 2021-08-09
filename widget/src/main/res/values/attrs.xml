@@ -68,4 +68,17 @@
     </declare-styleable>
     <!-- [e] CustomTextView Attr -->
 
+    <!-- [s] CustomLayout Attr -->
+    <declare-styleable name="CustomLayout">
+        <attr name="layoutDefState" format="boolean" />
+        <attr name="layoutCorner" format="dimension" />
+        <attr name="layoutBg_color" format="color" />
+        <attr name="layoutBorder" format="dimension" />
+        <attr name="layoutBorderColor" format="color" />
+        <attr name="layoutDisableBgColor" format="color" />
+        <attr name="layoutDisableBorder" format="dimension" />
+        <attr name="layoutDisableBorderColor" format="color" />
+    </declare-styleable>
+    <!-- [e] CustomLayout Attr -->
+
 </resources>

@@ -1,8 +1,7 @@
 package com.hmju.visual
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
@@ -10,13 +9,20 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fragment, MainFragment())
+            addToBackStack(null)
+            commit()
+        }
     }
 
-    fun moveProgress(v : View) {
-        startActivity(Intent(this, ProgressViewActivity::class.java))
+    override fun onBackPressed() {
+        Log.d("Logger","Count ${supportFragmentManager.backStackEntryCount}")
+        if(supportFragmentManager.backStackEntryCount > 1) {
+            supportFragmentManager.popBackStack()
+        } else {
+            finishAffinity()
+        }
     }
-
-	fun moveBehavior(v : View){
-		startActivity(Intent(this,TranslationBehaviorActivity::class.java))
-	}
 }
