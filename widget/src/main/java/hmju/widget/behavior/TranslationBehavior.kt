@@ -46,8 +46,10 @@ class TranslationBehavior @JvmOverloads constructor(
     private var endWidth: Int = 0                      // 원하는 Child View 너비
     private var endHeight: Int = 0                     // 원하는 Child View 높이
 
-    private var endXType: Type = Type.START            // 이동하고 싶은 X 좌표의 기준 (Dependency View 의 X 위치값 기준.)
-    private var endYType: Type = Type.START            // 이동하고 싶은 Y 좌표의 기준 (Dependency View 의 Y 위치값 기준.)
+    private var endXType: Type =
+        Type.START            // 이동하고 싶은 X 좌표의 기준 (Dependency View 의 X 위치값 기준.)
+    private var endYType: Type =
+        Type.START            // 이동하고 싶은 Y 좌표의 기준 (Dependency View 의 Y 위치값 기준.)
     private var startAlpha: Float = 0F
     private var endAlpha: Float = 0.0f
 
@@ -59,31 +61,26 @@ class TranslationBehavior @JvmOverloads constructor(
     init {
         context.obtainStyledAttributes(attrs, R.styleable.TranslationBehavior).run {
             try {
-
                 getString(R.styleable.TranslationBehavior_behaviorEndX)?.let {
                     val split = it.split(",")
+                    // $(s or e -> Optional},${Location X -> Required}
                     when (split.size) {
-                        // ChildY Format 형태를 암묵적으로 표시한 경우.
                         1 -> endX = split[0].strToDp(context)
-                        // ChildY Format 형태를 명시적으로 표시한 경우.
                         2 -> {
-                            // 끝 기준인경우 Type 값 변경.
                             if (Type.END.value == split[0]) {
                                 endXType = Type.END
                             }
                             endX = split[1].strToDp(context)
                         }
-                        else -> throw IllegalArgumentException("behavior_childX does not match the format type. ex.) s,73 or 73")
+                        else -> throw IllegalArgumentException("behaviorEndX does not match the format type. ex.) s,73 or 73")
                     }
                 }
 
                 getString(R.styleable.TranslationBehavior_behaviorEndY)?.let {
                     val split = it.split(",")
-
+                    // $(s or e -> Optional},${Location Y -> Required}
                     when (split.size) {
-                        // ChildY Format 형태를 암묵적으로 표시한 경우.
                         1 -> endY = split[0].strToDp(context).plus(context.statusBarHeight())
-                        // ChildY Format 형태를 명시적으로 표시한 경우.
                         2 -> {
                             // 끝 기준인경우 Type 값 변경.
                             if (Type.END.value == split[0]) {
@@ -91,7 +88,7 @@ class TranslationBehavior @JvmOverloads constructor(
                             }
                             endY = split[1].strToDp(context).plus(context.statusBarHeight())
                         }
-                        else -> throw IllegalArgumentException("behavior_childX does not match the format type. ex.) s,73 or 73")
+                        else -> throw IllegalArgumentException("behaviorEndY does not match the format type. ex.) s,73 or 73")
                     }
                 }
 

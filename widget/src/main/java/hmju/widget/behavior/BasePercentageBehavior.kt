@@ -34,7 +34,7 @@ abstract class BasePercentageBehavior<V : View> @JvmOverloads internal construct
      */
     abstract fun onRedraw(child: V, percent: Float)
 
-    protected val ctx = context
+    private val ctx = context
 
     //[s]=====================AttributeSet Variable=====================//
     enum class Type {
@@ -64,7 +64,7 @@ abstract class BasePercentageBehavior<V : View> @JvmOverloads internal construct
                 // 해당 속성값 셋팅 하였는지 체크.
                 if (dependId == 0) {
                     // Dependency Id 값을 셋팅 안안하는 경우 NullPointerException Throw
-                    throw NullPointerException("behavior_dependId is a required attribute.")
+                    throw NullPointerException("behaviorDependId is a required attribute.")
                 }
                 dependType =
                     Type.values()[getInt(R.styleable.TranslationBehavior_behaviorDependType, 1)]
