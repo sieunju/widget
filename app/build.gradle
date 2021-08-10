@@ -49,9 +49,8 @@ dependencies {
     implementation deps.common.constraint_layout
     implementation deps.common.material
 
-    implementation(deps.rxjava.base)
-    implementation(deps.rxjava.android)
-    implementation(deps.rxjava.kotlin)
+    implementation(deps.coroutines.base)
+    implementation(deps.coroutines.android)
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

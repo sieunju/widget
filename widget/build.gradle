@@ -38,4 +38,5 @@ dependencies {
     implementation deps.common.appCompat
     implementation deps.common.constraint_layout
     implementation deps.common.material
+
 }
