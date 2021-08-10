@@ -25,19 +25,27 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_margin="15dp"
-            app:layoutBg_color="#673AB7"
-            app:layoutBorder="10dp"
-            app:layoutBorderColor="#00BCD4"
             app:layoutCorner="20dp">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgThumb"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_launcher_background" />
+                android:scaleType="centerCrop" />
 
         </hmju.widget.view.CustomLayout>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        <hmju.widget.view.CustomLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="15dp"
+            android:elevation="5dp"
+            app:layoutBg_color="#673AB7"
+            app:layoutBorder="10dp"
+            app:layoutBorderColor="#0B5B65"
+            app:layoutCorner="20dp">
 
+
+        </hmju.widget.view.CustomLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>
