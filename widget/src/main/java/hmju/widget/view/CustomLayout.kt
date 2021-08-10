@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.ColorInt
+import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.drawToBitmap
 import hmju.widget.R
@@ -92,6 +93,8 @@ class CustomLayout @JvmOverloads constructor(
             }
             recycle()
         }
+
+        clipToOutline = true
     }
 
     override fun setSelected(selected: Boolean) {
@@ -113,65 +116,6 @@ class CustomLayout @JvmOverloads constructor(
         }
         super.setEnabled(enabled)
     }
-
-    override fun addView(child: View?, params: ViewGroup.LayoutParams?) {
-        super.addView(child, params)
-        LogD("AddView $child")
-        if(child is ImageView) {
-            child.post {
-                child.setImageBitmap(getRoundCornerBitmap(child.drawToBitmap(),corner))
-            }
-        }
-    }
-
-    private fun getRoundCornerBitmap(bitmap : Bitmap, corner : Float) : Bitmap{
-        val output = Bitmap.createBitmap(bitmap.width,bitmap.height, Bitmap.Config.ARGB_8888)
-        Canvas(output).apply {
-            val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-            val rect = Rect(0,0,bitmap.width,bitmap.height)
-            val rectF = RectF(rect)
-            drawARGB(0,0,0,0)
-            paint.color = Color.WHITE
-            drawRoundRect(rectF,corner,corner,paint)
-            paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-            drawBitmap(output,rect,rect,paint)
-        }
-        return output
-    }
-
-    private val bgRectF: RectF by lazy {
-        RectF().apply {
-            left = 0F
-            top = 0F
-        }
-    }
-
-    private val bgPaint: Paint by lazy { Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.WHITE
-        xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OUT)
-    } }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val width = MeasureSpec.getSize(widthMeasureSpec)
-        val height = MeasureSpec.getSize(heightMeasureSpec)
-        bgRectF.right = width.toFloat()
-        bgRectF.bottom = height.toFloat()
-    }
-
-    override fun setBackground(background: Drawable?) {
-        super.setBackground(background)
-        LogD("setBackground !!!!")
-    }
-
-//    override fun onDraw(canvas: Canvas?) {
-//        canvas?.run {
-//            LogD("onDraw $this")
-////            drawColor(bgPaint.color,PorterDuff.Mode.SRC_IN)
-//            drawColor(Color.BLACK,PorterDuff.Mode.CLEAR)
-//            drawRoundRect(bgRectF, corner, corner, bgPaint)
-//        }
-//    }
 
     /**
      * setEnable Drawable Code Type
