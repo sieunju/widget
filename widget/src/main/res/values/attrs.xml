@@ -72,7 +72,7 @@
     <declare-styleable name="CustomLayout">
         <attr name="layoutDefState" format="boolean" />
         <attr name="layoutCorner" format="dimension" />
-        <attr name="layoutBg_color" format="color" />
+        <attr name="layoutBgColor" format="color" />
         <attr name="layoutBorder" format="dimension" />
         <attr name="layoutBorderColor" format="color" />
         <attr name="layoutDisableBgColor" format="color" />

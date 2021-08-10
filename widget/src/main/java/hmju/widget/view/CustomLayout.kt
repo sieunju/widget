@@ -48,7 +48,7 @@ class CustomLayout @JvmOverloads constructor(
                 val defState = getBoolean(R.styleable.CustomLayout_layoutDefState, true)
                 corner = getDimension(R.styleable.CustomLayout_layoutCorner, -1F)
 
-                var color = getColor(R.styleable.CustomLayout_layoutBg_color, Color.WHITE)
+                var color = getColor(R.styleable.CustomLayout_layoutBgColor, Color.WHITE)
                 var strokeWidth =
                     getDimensionPixelSize(R.styleable.CustomLayout_layoutBorder, NO_ID)
                 var strokeColor = getColor(R.styleable.CustomLayout_layoutBorderColor, NO_ID)
