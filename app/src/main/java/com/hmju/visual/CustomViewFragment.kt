@@ -16,7 +16,7 @@ import java.net.URL
 
 class CustomViewFragment : Fragment(R.layout.fragment_custom_view) {
 
-    private val TEMP_URL = "https://t1.daumcdn.net/cfile/tistory/2658DF455549EC2425"
+    private val TEMP_URL = "https://memo.qtzz.synology.me/resource/logo.png"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

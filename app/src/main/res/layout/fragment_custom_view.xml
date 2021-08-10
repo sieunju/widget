@@ -25,6 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_margin="15dp"
+            app:layoutBgColor="@color/purple_700"
             app:layoutCorner="20dp">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -36,15 +37,14 @@
         </hmju.widget.view.CustomLayout>
 
         <hmju.widget.view.CustomLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_margin="15dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="10dp"
             android:elevation="5dp"
-            app:layoutBg_color="#673AB7"
-            app:layoutBorder="10dp"
-            app:layoutBorderColor="#0B5B65"
-            app:layoutCorner="20dp">
-
+            app:layoutBgColor="@color/purple_500"
+            app:layoutBorder="5dp"
+            app:layoutBorderColor="@color/teal_200"
+            app:layoutCorner="50dp">
 
         </hmju.widget.view.CustomLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
