@@ -165,7 +165,7 @@
                 android:scaleType="centerCrop" />
 
         </hmju.widget.view.CustomLayout>
-            ~~~
+        ~~~
         - *attrs*
         ~~~
         <declare-styleable name="CustomTextView">
@@ -196,6 +196,6 @@
         </declare-styleable>
         ~~~
         - *예시 화면*  
-        <img width="50%" src="https://user-images.githubusercontent.com/33802191/128981833-26fdf4a3-fb58-4f2c-b028-f9b0f392af54.jpg"/>  
+        <img width="40%" src="https://user-images.githubusercontent.com/33802191/128981833-26fdf4a3-fb58-4f2c-b028-f9b0f392af54.jpg"/>  
         
 #### ps. ___현재 버전에서는 autoTextSize 구현이 안되어 있습니다. 향후 버전에 업데이트 할 예정입니다.___
