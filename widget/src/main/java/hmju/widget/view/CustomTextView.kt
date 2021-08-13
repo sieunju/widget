@@ -30,7 +30,7 @@ class CustomTextView @JvmOverloads constructor(
 
 	companion object {
 		private const val TAG = "CustomTextView"
-		private const val DEBUG = true
+		private const val DEBUG = false
 		fun LogD(msg: String) {
 			if (DEBUG) {
 				Log.d(TAG, msg)
@@ -131,13 +131,6 @@ class CustomTextView @JvmOverloads constructor(
 			} catch (_: Exception) {
 			}
 			recycle()
-//            }
-//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-//                setTextAppearance(R.style.TextViewStyle)
-//            } else {
-//                @Suppress("DEPRECATION")
-//                setTextAppearance(context, R.style.TextViewStyle)
-//            }
 		}
 	}
 
@@ -254,24 +247,24 @@ class CustomTextView @JvmOverloads constructor(
 		super.setLineSpacing(add, mult)
 	}
 
-	override fun setText(text: CharSequence?, type: BufferType?) {
-		if (isAutoSizing) {
-			text?.let { txt ->
-				LogD("Text $txt")
-				for (size in autoMaxSize downTo 1) {
-					val layout = textLayout(txt)
-					LogD("setText ${layout.lineCount} TextSize ${size}")
-					if (layout.lineCount > maxLines) {
-						setTextSize(TypedValue.COMPLEX_UNIT_DIP, size.toFloat().dp)
-					} else {
-						LogD("나갑니다.")
-						return@let
-					}
-				}
-			}
-		}
-		super.setText(text, type)
-	}
+// 	override fun setText(text: CharSequence?, type: BufferType?) {
+// 		if (isAutoSizing) {
+// 			text?.let { txt ->
+// 				LogD("Text $txt")
+// 				for (size in autoMaxSize downTo 1) {
+// 					val layout = textLayout(txt)
+// 					LogD("setText ${layout.lineCount} TextSize ${size}")
+// 					if (layout.lineCount > maxLines) {
+// 						setTextSize(TypedValue.COMPLEX_UNIT_DIP, size.toFloat().dp)
+// 					} else {
+// 						LogD("나갑니다.")
+// 						return@let
+// 					}
+// 				}
+// 			}
+// 		}
+// 		super.setText(text, type)
+// 	}
 
 	override fun setTextSize(size: Float) {
 		super.setTextSize(size)
