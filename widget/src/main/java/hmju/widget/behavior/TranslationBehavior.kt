@@ -28,7 +28,7 @@ class TranslationBehavior @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "TranslationBehavior"
-        private const val DEBUG = true
+        private const val DEBUG = false
         fun LogD(msg: String) {
             if (DEBUG) {
                 Log.d(TAG, msg)
