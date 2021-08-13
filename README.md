@@ -21,6 +21,7 @@
     - *App Module Gradle*
     ~~~
     dependencies {
+    	Latest Version: 0.0.3
         implementation 'com.github.sieunju:widget:$version'
     }
     ~~~
