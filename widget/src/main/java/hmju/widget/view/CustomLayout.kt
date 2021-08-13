@@ -28,7 +28,7 @@ class CustomLayout @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "CustomLayout"
-        private const val DEBUG = true
+        private const val DEBUG = false
         fun LogD(msg: String) {
             if (DEBUG) {
                 Log.d(TAG, msg)
