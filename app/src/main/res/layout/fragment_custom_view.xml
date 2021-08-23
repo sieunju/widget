@@ -13,10 +13,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <hmju.widget.view.CustomTextView
+            android:id="@+id/tvAuto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="20dp"
             android:padding="15dp"
-            android:text="텍스트!"
+            android:text="안녕하세요 오토 싸이징 테스트 입니다..."
+            app:textViewAutoMaxSize="40dp"
+            app:textViewAutoMinSize="1dp"
             app:textViewBgColor="#673AB7"
             app:textViewCorner="5dp"
             app:textViewTxtColor="#FFFFFF" />
