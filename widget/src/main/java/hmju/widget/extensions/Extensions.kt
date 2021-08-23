@@ -28,6 +28,11 @@ val Float.dp: Float
         Resources.getSystem().displayMetrics
     )
 
+val Float.toSize: Float
+    get() = this / Resources.getSystem().displayMetrics.density
+val Int.toSize: Int
+    get() = this / Resources.getSystem().displayMetrics.density.toInt()
+
 
 /**
  * Get Status Bar Height
