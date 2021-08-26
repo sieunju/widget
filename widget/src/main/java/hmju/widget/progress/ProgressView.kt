@@ -281,7 +281,7 @@ class ProgressView @JvmOverloads constructor(
          */
         internal fun draw() {
             runCatching {
-                this.run()
+                thread.submit(this)
             }.onFailure {
                 LogD("Draw Error\t${it.message}")
             }
