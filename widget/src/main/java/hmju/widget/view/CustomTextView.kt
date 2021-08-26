@@ -29,7 +29,7 @@ class CustomTextView @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "CustomTextView"
-        private const val DEBUG = true
+        private const val DEBUG = false
         fun LogD(msg: String) {
             if (DEBUG) {
                 Log.d(TAG, msg)
@@ -252,29 +252,29 @@ class CustomTextView @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        if (isAutoSizing) {
-            post {
-                try {
-                    val maxSize = autoMaxSize.toInt().toSize
-                    for (size in maxSize downTo 1) {
-                        val txtLayout = textLayout(text)
-                        LogD("onMeasure $size  ${txtLayout.lineCount}")
-                        if(size == 1 && txtLayout.lineCount > maxLines) {
-                            isAutoSizing = false
-                            return@post
-                        }
-                        if(txtLayout.lineCount > maxLines) {
-                            textSize = size.toFloat()
-                        } else {
-                            LogD("나갑니다~")
-                            break
-                        }
-                    }
-                } catch (ex : Exception) {
-                    LogD("Error $ex")
-                }
-            }
-        }
+//        if (isAutoSizing) {
+//            post {
+//                try {
+//                    val maxSize = autoMaxSize.toInt().toSize
+//                    for (size in maxSize downTo 1) {
+//                        val txtLayout = textLayout(text)
+//                        LogD("onMeasure $size  ${txtLayout.lineCount}")
+//                        if(size == 1 && txtLayout.lineCount > maxLines) {
+//                            isAutoSizing = false
+//                            return@post
+//                        }
+//                        if(txtLayout.lineCount > maxLines) {
+//                            textSize = size.toFloat()
+//                        } else {
+//                            LogD("나갑니다~")
+//                            break
+//                        }
+//                    }
+//                } catch (ex : Exception) {
+//                    LogD("Error $ex")
+//                }
+//            }
+//        }
     }
 
     @Suppress("DEPRECATION")
