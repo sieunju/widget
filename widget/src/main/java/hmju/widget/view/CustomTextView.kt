@@ -15,16 +15,15 @@ import hmju.widget.R
 import hmju.widget.extensions.toSize
 
 /**
- * Description : AppCompatTextView 기반의
- * Corner, Border, BgColor 등등 drawable 사용하지 않고 코드로
- * 처리 할수 있는 TextView Class
+ * Description : Corner, Border, AutoTextSize 비/활성화 상태에 따라서도
+ * 처리 해주는 AppCompatTextView 기반의 View Class
  *
  * Created by hmju on 2021-08-09
  */
 class CustomTextView @JvmOverloads constructor(
-        ctx: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    ctx: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : AppCompatTextView(ctx, attrs, defStyleAttr) {
 
     companion object {
@@ -38,8 +37,8 @@ class CustomTextView @JvmOverloads constructor(
     }
 
     data class Item(
-            @ColorInt var txtColor: Int = Color.BLACK,
-            var drawable: GradientDrawable? = null
+        @ColorInt var txtColor: Int = Color.BLACK,
+        var drawable: GradientDrawable? = null
     ) {
         var corner: Float = -1F
             set(value) {
@@ -71,70 +70,68 @@ class CustomTextView @JvmOverloads constructor(
     init {
         context.obtainStyledAttributes(attrs, R.styleable.CustomTextView).run {
             try {
-                if (getBoolean(R.styleable.CustomTextView_textViewIsAuto, true)) {
-                    val corner = getDimension(R.styleable.CustomTextView_textViewCorner, -1F)
-                    val defState = getBoolean(R.styleable.CustomTextView_textViewDefState, true)
-                    var txtColor =
-                            getColor(R.styleable.CustomTextView_textViewTxtColor, Color.BLACK)
-                    var bgColor =
-                            getColor(R.styleable.CustomTextView_textViewBgColor, Color.WHITE)
-                    var strokeWidth =
-                            getDimensionPixelSize(R.styleable.CustomTextView_textViewBorder, -1)
-                    var strokeColor =
-                            getColor(R.styleable.CustomTextView_textViewBorderColor, NO_ID)
+                val corner = getDimension(R.styleable.CustomTextView_textViewCorner, -1F)
+                val defState = getBoolean(R.styleable.CustomTextView_textViewDefState, true)
+                var txtColor =
+                    getColor(R.styleable.CustomTextView_textViewTxtColor, Color.BLACK)
+                var bgColor =
+                    getColor(R.styleable.CustomTextView_textViewBgColor, Color.WHITE)
+                var strokeWidth =
+                    getDimensionPixelSize(R.styleable.CustomTextView_textViewBorder, -1)
+                var strokeColor =
+                    getColor(R.styleable.CustomTextView_textViewBorderColor, NO_ID)
 
-                    enableItem.apply {
-                        this.txtColor = txtColor
-                        this.drawable = GradientDrawable(
-                                GradientDrawable.Orientation.BL_TR,
-                                intArrayOf(bgColor, bgColor)
-                        )
-                        this.corner = corner
-                        this.setStroke(strokeWidth, strokeColor)
-                    }
+                enableItem.apply {
+                    this.txtColor = txtColor
+                    this.drawable = GradientDrawable(
+                        GradientDrawable.Orientation.BL_TR,
+                        intArrayOf(bgColor, bgColor)
+                    )
+                    this.corner = corner
+                    this.setStroke(strokeWidth, strokeColor)
+                }
 
-                    txtColor =
-                            getColor(R.styleable.CustomTextView_textViewDisableTxtColor, Color.BLACK)
-                    bgColor =
-                            getColor(R.styleable.CustomTextView_textViewDisableBgColor, Color.WHITE)
-                    strokeWidth =
-                            getDimensionPixelSize(R.styleable.CustomTextView_textViewDisableBorder, -1)
-                    strokeColor =
-                            getColor(R.styleable.CustomTextView_textViewDisableBorderColor, NO_ID)
+                txtColor =
+                    getColor(R.styleable.CustomTextView_textViewDisableTxtColor, Color.BLACK)
+                bgColor =
+                    getColor(R.styleable.CustomTextView_textViewDisableBgColor, Color.WHITE)
+                strokeWidth =
+                    getDimensionPixelSize(R.styleable.CustomTextView_textViewDisableBorder, -1)
+                strokeColor =
+                    getColor(R.styleable.CustomTextView_textViewDisableBorderColor, NO_ID)
 
-                    disableItem.apply {
-                        this.txtColor = txtColor
-                        this.drawable = GradientDrawable(
-                                GradientDrawable.Orientation.BL_TR,
-                                intArrayOf(bgColor, bgColor)
-                        )
-                        this.corner = corner
-                        this.setStroke(strokeWidth, strokeColor)
-                    }
+                disableItem.apply {
+                    this.txtColor = txtColor
+                    this.drawable = GradientDrawable(
+                        GradientDrawable.Orientation.BL_TR,
+                        intArrayOf(bgColor, bgColor)
+                    )
+                    this.corner = corner
+                    this.setStroke(strokeWidth, strokeColor)
+                }
 
-                    //Default State
-                    background = if (defState) {
-                        setTextColor(enableItem.txtColor)
-                        enableItem.drawable
-                    } else {
-                        setTextColor(disableItem.txtColor)
-                        disableItem.drawable
-                    }
+                //Default State
+                background = if (defState) {
+                    setTextColor(enableItem.txtColor)
+                    enableItem.drawable
+                } else {
+                    setTextColor(disableItem.txtColor)
+                    disableItem.drawable
+                }
 
-                    // Auto Size
-                    autoMaxSize =
-                            getDimension(R.styleable.CustomTextView_textViewAutoMaxSize, -1F)
-                    autoMinSize =
-                            getDimension(R.styleable.CustomTextView_textViewAutoMinSize, -1F)
-                    isAutoSizing = autoMaxSize != -1F && autoMinSize != -1F
+                // Auto Size
+                autoMaxSize =
+                    getDimension(R.styleable.CustomTextView_textViewAutoMaxSize, -1F)
+                autoMinSize =
+                    getDimension(R.styleable.CustomTextView_textViewAutoMinSize, -1F)
+                isAutoSizing = autoMaxSize != -1F && autoMinSize != -1F
 
 
-                    if (isAutoSizing) {
-                        // MaxLines 가 정해져 있지 않으면 1로 치환
-                        if (maxLines == Int.MAX_VALUE) maxLines = 1
-                        textSize = autoMaxSize.toSize
+                if (isAutoSizing) {
+                    // MaxLines 가 정해져 있지 않으면 1로 치환
+                    if (maxLines == Int.MAX_VALUE) maxLines = 1
+                    textSize = autoMaxSize.toSize
 //                        this@CustomTextView.text = text
-                    }
                 }
             } catch (_: Exception) {
             }
@@ -175,21 +172,21 @@ class CustomTextView @JvmOverloads constructor(
      *
      */
     fun setEnableDrawable(
-            @ColorInt color: Int,
-            corner: Float,
-            strokeWidth: Int,
-            @ColorInt strokeColor: Int
+        @ColorInt color: Int,
+        corner: Float,
+        strokeWidth: Int,
+        @ColorInt strokeColor: Int
     ) {
         enableItem.drawable = null
         enableItem.drawable =
-                GradientDrawable(GradientDrawable.Orientation.BL_TR, intArrayOf(color, color)).apply {
-                    if (corner != -1F) {
-                        cornerRadius = corner
-                    }
-                    if (strokeWidth != NO_ID && strokeColor != NO_ID) {
-                        setStroke(strokeWidth, strokeColor)
-                    }
+            GradientDrawable(GradientDrawable.Orientation.BL_TR, intArrayOf(color, color)).apply {
+                if (corner != -1F) {
+                    cornerRadius = corner
                 }
+                if (strokeWidth != NO_ID && strokeColor != NO_ID) {
+                    setStroke(strokeWidth, strokeColor)
+                }
+            }
         performUpdate()
     }
 
@@ -211,21 +208,21 @@ class CustomTextView @JvmOverloads constructor(
      *
      */
     fun setDisableDrawable(
-            @ColorInt color: Int,
-            corner: Float,
-            strokeWidth: Int,
-            @ColorInt strokeColor: Int
+        @ColorInt color: Int,
+        corner: Float,
+        strokeWidth: Int,
+        @ColorInt strokeColor: Int
     ) {
         disableItem.drawable = null
         disableItem.drawable =
-                GradientDrawable(GradientDrawable.Orientation.BL_TR, intArrayOf(color, color)).apply {
-                    if (corner != -1F) {
-                        cornerRadius = corner
-                    }
-                    if (strokeWidth != NO_ID && strokeColor != NO_ID) {
-                        setStroke(strokeWidth, strokeColor)
-                    }
+            GradientDrawable(GradientDrawable.Orientation.BL_TR, intArrayOf(color, color)).apply {
+                if (corner != -1F) {
+                    cornerRadius = corner
                 }
+                if (strokeWidth != NO_ID && strokeColor != NO_ID) {
+                    setStroke(strokeWidth, strokeColor)
+                }
+            }
         performUpdate()
     }
 
@@ -281,11 +278,11 @@ class CustomTextView @JvmOverloads constructor(
     private fun textLayout(text: CharSequence): Layout {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return StaticLayout.Builder.obtain(
-                    text,
-                    0,
-                    text.length,
-                    paint,
-                    width - (paddingLeft + paddingRight)
+                text,
+                0,
+                text.length,
+                paint,
+                width - (paddingLeft + paddingRight)
             ).apply {
                 setAlignment(Layout.Alignment.ALIGN_NORMAL)
                 setLineSpacing(lineSpacingExtra, lineSpacingMultiplier)
@@ -294,11 +291,11 @@ class CustomTextView @JvmOverloads constructor(
             }.build()
         } else {
             return StaticLayout(
-                    text, paint,
-                    width - (paddingLeft + paddingRight),
-                    Layout.Alignment.ALIGN_NORMAL,
-                    lineSpacingMultiplier,
-                    lineSpacingExtra, false
+                text, paint,
+                width - (paddingLeft + paddingRight),
+                Layout.Alignment.ALIGN_NORMAL,
+                lineSpacingMultiplier,
+                lineSpacingExtra, false
             )
         }
     }

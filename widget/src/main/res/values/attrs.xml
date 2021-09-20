@@ -52,7 +52,6 @@
 
     <!-- [s] CustomTextView Attr -->
     <declare-styleable name="CustomTextView">
-        <attr name="textViewIsAuto" format="boolean" /> <!-- 속성으로 표현할건지 코드로 표현 할건지 Default true -->
         <attr name="textViewDefState" format="boolean" /> <!-- Default 상태 -->
         <attr name="textViewCorner" format="dimension" /> <!-- Corner Radius -->
         <attr name="textViewTxtColor" format="color" /> <!-- Enable or Default TextColor -->

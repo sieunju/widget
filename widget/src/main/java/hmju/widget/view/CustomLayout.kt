@@ -1,22 +1,17 @@
 package hmju.widget.view
 
 import android.content.Context
-import android.graphics.*
-import android.graphics.drawable.Drawable
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.annotation.ColorInt
-import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.drawToBitmap
 import hmju.widget.R
 
 /**
- * Description :
+ * Description : Corner, Border 비/활성화 상태에 따라서도
+ * 처리 해주는 ConstraintLayout 기반의 View Class
  *
  * Created by juhongmin on 8/9/21
  */
@@ -40,13 +35,11 @@ class CustomLayout @JvmOverloads constructor(
     private var disableDrawable: GradientDrawable? = null
     private var isClicked: Boolean = true
 
-    private var corner: Float = 0F
-
     init {
         context.obtainStyledAttributes(attrs, R.styleable.CustomLayout).run {
             try {
                 val defState = getBoolean(R.styleable.CustomLayout_layoutDefState, true)
-                corner = getDimension(R.styleable.CustomLayout_layoutCorner, -1F)
+                val corner = getDimension(R.styleable.CustomLayout_layoutCorner, -1F)
 
                 var color = getColor(R.styleable.CustomLayout_layoutBgColor, Color.WHITE)
                 var strokeWidth =
