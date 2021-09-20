@@ -41,6 +41,14 @@ class MainFragment : Fragment(R.layout.fragment_main){
                     commit()
                 }
             }
+
+            findViewById<Button>(R.id.parallax).setOnClickListener {
+                parentFragmentManager.beginTransaction().apply {
+                    replace(R.id.fragment,ParallaxViewHolderFragment())
+                    addToBackStack(null)
+                    commit()
+                }
+            }
         }
     }
 }

@@ -24,14 +24,6 @@ class CustomViewFragment : Fragment(R.layout.fragment_custom_view) {
         super.onViewCreated(view, savedInstanceState)
         with(view) {
 
-            findViewById<CustomTextView>(R.id.tvButton1).setOnClickListener {
-                it.isSelected = !it.isSelected
-            }
-
-            findViewById<CustomLayout>(R.id.clButton2).setOnClickListener {
-                it.isSelected = !it.isSelected
-            }
-
             GlobalScope.launch(Dispatchers.Main) {
                 findViewById<AppCompatImageView>(R.id.imgThumb)
                     .setImageBitmap(imageBitmap(TEMP_URL))
