@@ -117,16 +117,18 @@ class ParallaxView @JvmOverloads constructor(
 	 * 스크롤 위치에 따라 높이를 재조정 처리하는 함수.
 	 */
 	private fun resizeHeight() {
-		val current: Double = (bottom + top).toDouble() / 2F
+		val current: Float = (bottom + top).toFloat() / 2F
 		if (current in endPoint..startPoint) {
 			var percent = (kotlin.math.abs(current - startPoint) / kotlin.math.abs(startPoint - endPoint)).toFloat()
 			percent = percent.coerceAtMost(1.0F)
+			LogD("Percent ${percent}")
 			val resizeHeight = ceil((calculation * percent) + parallaxMinHeight).toInt()
 			if (layoutParams.height != resizeHeight) {
 				layoutParams = layoutParams.also { it.height = resizeHeight }
 			}
 			listener?.onPercent(percent)
 		} else {
+			LogD("Other Current ${current}")
 			// 위에 있는 경우
 			if (current < endPoint) {
 				if (layoutParams.height != parallaxMaxHeight) {
