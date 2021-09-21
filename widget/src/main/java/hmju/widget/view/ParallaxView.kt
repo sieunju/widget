@@ -19,14 +19,14 @@ import kotlin.math.ceil
  * Created by juhongmin on 9/20/21
  */
 class ParallaxView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+		context: Context,
+		attrs: AttributeSet? = null,
+		defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), ViewTreeObserver.OnScrollChangedListener {
 
 	companion object {
 		private const val TAG = "ParallaxView"
-		private const val DEBUG = true
+		private const val DEBUG = false
 		fun LogD(msg: String) {
 			if (DEBUG) {
 				Log.d(TAG, msg)
@@ -118,12 +118,10 @@ class ParallaxView @JvmOverloads constructor(
 	 */
 	private fun resizeHeight() {
 		val current: Double = (bottom + top).toDouble() / 2F
-//		LogD("Scroll ${current}")
 		if (current in endPoint..startPoint) {
 			var percent = (kotlin.math.abs(current - startPoint) / kotlin.math.abs(startPoint - endPoint)).toFloat()
 			percent = percent.coerceAtMost(1.0F)
 			val resizeHeight = ceil((calculation * percent) + parallaxMinHeight).toInt()
-			LogD("Percent $percent")
 			if (layoutParams.height != resizeHeight) {
 				layoutParams = layoutParams.also { it.height = resizeHeight }
 			}
