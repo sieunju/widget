@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hmju.widget.view.ParallaxView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parallax"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:parallaxEndPer="50"
+    app:parallaxMaxHeight="200dp"
+    app:parallaxMinHeight="50dp"
+    app:parallaxStartPer="20">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgThumb"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/ic_launcher_background" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/vAlpha"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#65000000" />
+
+</hmju.widget.view.ParallaxView>

@@ -2,13 +2,13 @@
 <resources>
     <declare-styleable name="TranslationBehavior">
         <!-- [s] BasePercentageBehavior Attr -->
-        <attr name="behaviorDependId" format="reference"/> <!-- Dependency View Id -->
+        <attr name="behaviorDependId" format="reference" /> <!-- Dependency View Id -->
         <attr name="behaviorDependType" format="enum"> <!-- Dependency View Type -->
-            <enum name="horizontal" value="0"/>
-            <enum name="vertical" value="1"/>
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
         </attr>
         <attr name="behaviorDependPin" format="dimension" /> <!-- Dependency Pin Height or Width-->
-        <attr name="behaviorDependRange" format="dimension"/> <!-- Dependency Action Range -->
+        <attr name="behaviorDependRange" format="dimension" /> <!-- Dependency Action Range -->
         <!-- [e] BasePercentageBehavior Attr -->
 
         <!-- [s] TranslationBehavior Attr -->
@@ -18,18 +18,18 @@
             @param End Location X -> 33(dp) s or e 기준으로 Child View 를 마지막에 위치 하고 싶은 Y 좌표.
             ex.) 23 or s,33
          -->
-        <attr name="behaviorEndX" format="string"/>
+        <attr name="behaviorEndX" format="string" />
         <!-- Child View End Y Location
             Format {$Standard , End Location Y}
             @param Standard -> s or e (없어도 됨.)
             @param End Location Y -> 33(dp) s or e 기준으로 Child View 를 마지막에 위치 하고 싶은 Y 좌표.
             ex.) 23 or s,33
          -->
-        <attr name="behaviorEndY" format="string"/>
-        <attr name="behaviorEndAlpha" format="float"/> <!-- Child View End Alpha -->
+        <attr name="behaviorEndY" format="string" />
+        <attr name="behaviorEndAlpha" format="float" /> <!-- Child View End Alpha -->
 
-        <attr name="behaviorEndWidth" format="dimension"/>   <!-- Child View End Width -->
-        <attr name="behaviorEndHeight" format="dimension"/> <!-- Child View End Height -->
+        <attr name="behaviorEndWidth" format="dimension" />   <!-- Child View End Width -->
+        <attr name="behaviorEndHeight" format="dimension" /> <!-- Child View End Height -->
         <!-- [e] TranslationBehavior Attr -->
     </declare-styleable>
 
@@ -62,8 +62,8 @@
         <attr name="textViewDisableBgColor" format="color" /> <!-- Disable or Not Selected Bg Color -->
         <attr name="textViewDisableBorder" format="dimension" /> <!-- Disable or Not Selected Border Width -->
         <attr name="textViewDisableBorderColor" format="color" /> <!-- Disable Or Not Selected Border Color -->
-        <attr name="textViewAutoMaxSize" format="dimension"/> <!-- Auto Sizing Max Size -->
-        <attr name="textViewAutoMinSize" format="dimension"/> <!-- Auto Sizing Min Size -->
+        <attr name="textViewAutoMaxSize" format="dimension" /> <!-- Auto Sizing Max Size -->
+        <attr name="textViewAutoMinSize" format="dimension" /> <!-- Auto Sizing Min Size -->
     </declare-styleable>
     <!-- [e] CustomTextView Attr -->
 
@@ -79,5 +79,16 @@
         <attr name="layoutDisableBorderColor" format="color" />
     </declare-styleable>
     <!-- [e] CustomLayout Attr -->
+
+    <!-- [s] ParallaxView Attr -->
+    <declare-styleable name="ParallaxView">
+        <attr name="parallaxStartDp" format="dimension" /> <!-- 디바이스 하단 기준 시작점 고정 DP -->
+        <attr name="parallaxEndDp" format="dimension" /> <!-- 디바이스 상단 기준 종료점 고정 DP -->
+        <attr name="parallaxStartPer" format="integer" /> <!-- 디바이스 하단 기준 시작점 0~100% -->
+        <attr name="parallaxEndPer" format="integer" /> <!-- 디바이스 하단 기준 종료점 0~100% -->
+        <attr name="parallaxMaxHeight" format="dimension"/>
+        <attr name="parallaxMinHeight" format="dimension"/>
+    </declare-styleable>
+    <!-- [e] ParallaxView Attr -->
 
 </resources>

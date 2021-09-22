@@ -16,7 +16,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:onClick="moveProgress"
             android:text="ProgressView" />
 
         <Button
@@ -24,7 +23,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:onClick="moveBehavior"
             android:text="Behavior" />
 
         <Button
@@ -32,8 +30,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:onClick="moveProgress"
             android:text="View" />
+
+        <Button
+            android:id="@+id/parallax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="parallax" />
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>
