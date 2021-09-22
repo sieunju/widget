@@ -21,7 +21,7 @@
     - *App Module Gradle*
     ~~~
     dependencies {
-    	Latest Version: 0.0.3
+    	Latest Version: 0.0.4
     	implementation 'com.github.sieunju:widget:$version'
     }
     ~~~
@@ -197,6 +197,44 @@
         </declare-styleable>
         ~~~
         - *예시 화면*  
-        <img width="40%" src="https://user-images.githubusercontent.com/33802191/128981833-26fdf4a3-fb58-4f2c-b028-f9b0f392af54.jpg"/>  
+        <img width="40%" src="https://user-images.githubusercontent.com/33802191/128981833-26fdf4a3-fb58-4f2c-b028-f9b0f392af54.jpg"/>
+	
+    * ### ParallaxView
+        - *간단 설명*
+            - RecyclerView 에서 헤더 뿐만 아니라 다른 영역에서 점점 펼쳐지는 ViewHolder를 구현하고 싶을때  
+            ParallaxView로 간단하게 해결하실수 있습니다.
+            - 함수
+                - setListener(ParallaxView.Listener)
+                점점 펼쳐지는거 이외에 다른 Ui적인 처리를 하고 싶을때 리스너를 통해 콜백을 받고  
+                앎맞게 처리 하면 됩니다.
+            - ___점점 펼쳐지는 ViewHolder의 root 위치에 해당 View를 넣어야 합니다.(ConstraintLayout 이기 때문에  
+            안에 뷰를 그리는데 문제가 없습니다.___
+        - *xml*
+        ~~~
+        <hmju.widget.view.ParallaxView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:parallaxEndPer="50"
+            app:parallaxMaxHeight="200dp"
+            app:parallaxMinHeight="50dp"
+            app:parallaxStartPer="20">
+            ...
         
-#### ps. ___현재 버전에서는 autoTextSize 구현이 안되어 있습니다. 향후 버전에 업데이트 할 예정입니다.___
+        </hmju.widget.view.ParallaxView>
+        ~~~
+        - *attrs*
+        ~~~
+        <declare-styleable name="ParallaxView">
+            <attr name="parallaxStartDp" format="dimension" /> <!-- 디바이스 하단 기준 시작점 고정 DP -->
+            <attr name="parallaxEndDp" format="dimension" /> <!-- 디바이스 상단 기준 종료점 고정 DP -->
+            <attr name="parallaxStartPer" format="integer" /> <!-- 디바이스 하단 기준 시작점 0~100% -->
+            <attr name="parallaxEndPer" format="integer" /> <!-- 디바이스 하단 기준 종료점 0~100% -->
+            <attr name="parallaxMaxHeight" format="dimension"/> <!-- 뷰가 펼쳐졌을때 최대 높이값 기본값은 뷰의 기본 높이값-->
+            <attr name="parallaxMinHeight" format="dimension"/> <!-- 뷰가 접혔을때 최소 높이값-->
+        </declare-styleable>
+        ~~~
+        
+        - *영상*  
+        ![parallax_example](https://user-images.githubusercontent.com/33802191/134207715-ac351527-0d1d-4611-9305-3033bcfc93fd.gif)
