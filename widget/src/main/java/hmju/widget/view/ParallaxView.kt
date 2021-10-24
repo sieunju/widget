@@ -1,12 +1,17 @@
 package hmju.widget.view
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.util.AttributeSet
+import android.util.IntProperty
 import android.util.Log
-import android.view.ViewGroup
+import android.view.View
 import android.view.ViewTreeObserver
 import androidx.annotation.FloatRange
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.animation.addListener
+import androidx.core.animation.addPauseListener
+import androidx.recyclerview.widget.RecyclerView
 import hmju.widget.R
 import hmju.widget.extensions.deviceHeight
 import hmju.widget.extensions.dp
@@ -26,7 +31,8 @@ class ParallaxView @JvmOverloads constructor(
 
 	companion object {
 		private const val TAG = "ParallaxView"
-		private const val DEBUG = false
+		private const val DEBUG = true
+		var TAG_CNT: Int = 0
 		fun LogD(msg: String) {
 			if (DEBUG) {
 				Log.d(TAG, msg)
@@ -44,13 +50,15 @@ class ParallaxView @JvmOverloads constructor(
 	}
 
 	private val deviceY: Int by lazy { context.deviceHeight() }
-	private var startPoint: Double = 0.0 // 디바이스 하단 기준 시작점
-	private var endPoint: Double = 0.0 // 디바이스 하단 기준 종료점
+	private var startPoint: Float = 0.0F // 디바이스 하단 기준 시작점
+	private var endPoint: Float = 0.0F // 디바이스 하단 기준 종료점
 	private var viewHeight: Int = 0
 	private var calculation: Int = 0
 	private var parallaxMaxHeight: Int = 0
 	private var parallaxMinHeight: Int = 0
 	private var listener: Listener? = null
+	private var isAttached = false
+	private lateinit var parentRecyclerView: RecyclerView
 
 	init {
 		context.obtainStyledAttributes(attrs, R.styleable.ParallaxView).run {
@@ -69,15 +77,15 @@ class ParallaxView @JvmOverloads constructor(
 
 					// 퍼센트도 아닌 경우 기본 기준인 40% ~ 80%
 					if (start == -1 || end == -1) {
-						startPoint = deviceY - (deviceY.toDouble() * (40F / 100F))
-						endPoint = (deviceY.toDouble() * (20F / 100F))
+						startPoint = deviceY - (deviceY * (40F / 100F))
+						endPoint = (deviceY * (20F / 100F))
 					} else {
-						startPoint = deviceY - (deviceY.toDouble() * (start.toFloat() / 100F))
-						endPoint = (deviceY.toDouble() * (100F - end.toFloat()) / 100F)
+						startPoint = deviceY - (deviceY * (start.toFloat() / 100F))
+						endPoint = (deviceY * (100F - end.toFloat()) / 100F)
 					}
 				} else {
-					startPoint = deviceY - start.toDouble()
-					endPoint = end.toDouble()
+					startPoint = deviceY - start.toFloat()
+					endPoint = end.toFloat()
 				}
 
 				parallaxMaxHeight =
@@ -93,9 +101,15 @@ class ParallaxView @JvmOverloads constructor(
 			recycle()
 		}
 
+		tag = TAG_CNT
+		TAG_CNT++
+
 		post {
-			if (parent is ViewGroup) {
-				(parent as ViewGroup).viewTreeObserver.addOnScrollChangedListener(this)
+			if (parent is RecyclerView) {
+				parentRecyclerView = parent as RecyclerView
+				parentRecyclerView.viewTreeObserver.addOnScrollChangedListener(this)
+			} else {
+				throw ClassCastException("부모뷰는 RecyclerView 이어야 합니다.")
 			}
 
 			this.viewHeight = height
@@ -113,6 +127,30 @@ class ParallaxView @JvmOverloads constructor(
 		this.listener = listener
 	}
 
+	override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+		super.onLayout(changed, left, top, right, bottom)
+//		LogD("onLayout ${top} ${bottom}")
+	}
+
+	override fun onAttachedToWindow() {
+		super.onAttachedToWindow()
+		isAttached = true
+		val current: Float = (bottom + top).toFloat() / 2F
+//		if(current < endPoint) {
+//			LogD("Attach 위에 있다. ${current} ${layoutParams.height}")
+//		} else if(current > startPoint){
+//			LogD("Attach 아래에 있다. ${current} ${layoutParams.height}")
+//		}
+	}
+
+	override fun onDetachedFromWindow() {
+		super.onDetachedFromWindow()
+		isAttached = false
+		if(layoutParams.height != parallaxMaxHeight) {
+			layoutParams = layoutParams.also { it.height = parallaxMaxHeight }
+		}
+	}
+
 	/**
 	 * 스크롤 위치에 따라 높이를 재조정 처리하는 함수.
 	 */
@@ -121,27 +159,58 @@ class ParallaxView @JvmOverloads constructor(
 		if (current in endPoint..startPoint) {
 			var percent = (kotlin.math.abs(current - startPoint) / kotlin.math.abs(startPoint - endPoint)).toFloat()
 			percent = percent.coerceAtMost(1.0F)
-			LogD("Percent ${percent}")
+			// LogD("Percent ${percent}")
 			val resizeHeight = ceil((calculation * percent) + parallaxMinHeight).toInt()
 			if (layoutParams.height != resizeHeight) {
 				layoutParams = layoutParams.also { it.height = resizeHeight }
 			}
 			listener?.onPercent(percent)
 		} else {
-			LogD("Other Current ${current}")
-			// 위에 있는 경우
-			if (current < endPoint) {
-				if (layoutParams.height != parallaxMaxHeight) {
+			// LogD("Other Current  ${isAttached} ${current}")
+			val pos = parentRecyclerView.getChildLayoutPosition(this)
+			if (pos == RecyclerView.NO_POSITION) {
+				if(layoutParams.height != parallaxMaxHeight) {
+					LogD("안보이는 위치에서 높이값 Before ${layoutParams.height}")
 					layoutParams = layoutParams.also { it.height = parallaxMaxHeight }
+					LogD("안보이는 위치에서 높이값 After ${layoutParams.height}")
 				}
+//				if (layoutParams.height != parallaxMaxHeight) {
+//					LogD("안보이는 위치 Before ${top} ${bottom}")
+//					val tempTop = bottom - parallaxMaxHeight
+//					top = tempTop
+//					requestLayout()
+//					LogD("안보이는 위치 After ${top} ${bottom}")
+////					layoutParams = layoutParams.also { it.height = parallaxMaxHeight }
+//				}
 				listener?.onPercent(1.0F)
 			} else {
-				// 아래에 있는 경우
-				if (layoutParams.height != parallaxMinHeight) {
-					layoutParams = layoutParams.also { it.height = parallaxMinHeight }
+				if (current < endPoint) {
+					if (layoutParams.height != parallaxMaxHeight) {
+						layoutParams = layoutParams.also { it.height = parallaxMaxHeight }
+					}
+					listener?.onPercent(1.0F)
+				} else {
+					if (layoutParams.height != parallaxMinHeight) {
+						layoutParams = layoutParams.also { it.height = parallaxMinHeight }
+					}
+					listener?.onPercent(0.0F)
 				}
-				listener?.onPercent(0.0F)
 			}
+//			LogD("Position ${pos}  ${layoutParams.height}")
+
+//			// 위에 있는 경우
+//			if (current < endPoint) {
+//				if (layoutParams.height != parallaxMaxHeight) {
+//					layoutParams = layoutParams.also { it.height = parallaxMaxHeight }
+//				}
+//				listener?.onPercent(1.0F)
+//			} else {
+//				// 아래에 있는 경우
+//				if (layoutParams.height != parallaxMinHeight) {
+//					layoutParams = layoutParams.also { it.height = parallaxMinHeight }
+//				}
+//				listener?.onPercent(0.0F)
+//			}
 		}
 	}
 
