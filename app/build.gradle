@@ -5,13 +5,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion build_versions.compile_sdk
-    buildToolsVersion build_versions.build_tools
+    compileSdkVersion buildVersions.compileSdk
+    buildToolsVersion buildVersions.buildTools
 
     defaultConfig {
         applicationId "com.hmju.visual"
-        minSdkVersion 21
-        targetSdkVersion 30
+        minSdkVersion buildVersions.minSdk
+        targetSdkVersion buildVersions.targetSdk
         versionCode 1
         versionName "1.0"
         archivesBaseName = "widget" + versionName + "_" + versionCode
@@ -45,9 +45,9 @@ dependencies {
 
     implementation deps.kotlin.stdlib
     implementation deps.kotlin.core
-    implementation deps.common.appCompat
-    implementation deps.common.constraint_layout
-    implementation deps.common.material
+    implementation deps.androidx.appCompat
+    implementation deps.androidx.constraintLayout
+    implementation deps.androidx.material
 
     implementation(deps.coroutines.base)
     implementation(deps.coroutines.android)
