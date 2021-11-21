@@ -49,6 +49,14 @@ class MainFragment : Fragment(R.layout.fragment_main){
                     commit()
                 }
             }
+
+            findViewById<Button>(R.id.flexible).setOnClickListener {
+                parentFragmentManager.beginTransaction().apply {
+                    replace(R.id.fragment,FlexibleImageViewFragment())
+                    addToBackStack(null)
+                    commit()
+                }
+            }
         }
     }
 }

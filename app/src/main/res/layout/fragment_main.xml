@@ -39,6 +39,14 @@
             android:layout_gravity="center"
             android:text="parallax" />
 
+        <Button
+            android:id="@+id/flexible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="flexible" />
+
+
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

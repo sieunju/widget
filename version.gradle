@@ -71,6 +71,14 @@ coroutines.base = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.corou
 coroutines.android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
 deps.coroutines = coroutines
 
+/* Glide */
+def glide = [:]
+versions.glide = "4.11.0"
+glide.base = "com.github.bumptech.glide:glide:$versions.glide"
+glide.okhttp = "com.github.bumptech.glide:okhttp3-integration:$versions.glide"
+glide.compiler = "com.github.bumptech.glide:compiler:$versions.glide"
+deps.glide = glide
+
 ext.deps = deps
 
 static def addRepos(RepositoryHandler handler) {
