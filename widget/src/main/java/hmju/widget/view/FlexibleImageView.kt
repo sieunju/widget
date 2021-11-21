@@ -4,10 +4,7 @@ import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.PointF
-import android.graphics.RectF
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.util.Log
@@ -18,8 +15,13 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
+import hmju.widget.ImageLoader
 import hmju.widget.flexible.FlexibleStateItem
 import hmju.widget.flexible.decector.MoveGestureDetector
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.*
 
 /**
@@ -77,6 +79,36 @@ open class FlexibleImageView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Load Url Http or content://
+     * @param url Request Url
+     */
+    fun loadUrl(url: String) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val bitmap = if (url.startsWith("http")) {
+                ImageLoader.loadBitmapHttp(url)
+            } else {
+                ImageLoader.loadBitmapFile(context, url)
+            }
+            if (bitmap != null) {
+                LogD("Before Bitmap w ${bitmap.width} h ${bitmap.height}")
+                val pair = cropBitmap(bitmap)
+                bitmap.recycle()
+
+                withContext(Dispatchers.Main) {
+                    stateItem.imgWidth = pair.first.width
+                    stateItem.imgHeight = pair.first.height
+                    stateItem.scale = pair.second
+                    stateItem.minScale = 1F
+                    LogD("StateItem $stateItem")
+                    setImageBitmap(pair.first)
+                }
+            } else {
+                LogD("Bitmap Null ")
+            }
+        }
+    }
+
     fun resetView() {
         stateItem.reset()
         isMultiTouch = false
@@ -85,6 +117,12 @@ open class FlexibleImageView @JvmOverloads constructor(
         alpha = 1F
     }
 
+    /**
+     * Get Row Point
+     * @param ev 터이 이벤트!
+     * @param index 터치한 인덱스
+     * @param point Current Point
+     */
     private fun getRowPoint(ev: MotionEvent, index: Int, point: PointF) {
         val location = intArrayOf(0, 0)
         getLocationOnScreen(location)
@@ -213,19 +251,59 @@ open class FlexibleImageView @JvmOverloads constructor(
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         viewWidth = MeasureSpec.getSize(widthMeasureSpec)
         viewHeight = MeasureSpec.getSize(heightMeasureSpec)
+        // LogD("onMeasure $viewWidth  $viewHeight")
     }
 
-    override fun setImageDrawable(drawable: Drawable?) {
-        super.setImageDrawable(drawable)
-        if (drawable != null) {
-            stateItem.imgWidth = viewWidth
-            stateItem.imgHeight = viewHeight
-            stateItem.minScale = 1F
+    /**
+     * 이미지 View 너비 높이에 맞게 줄이거나 늘리는 처리 함수
+     * @param bitmap Source Bitmap
+     * @return 알맞게 Scale 한 비트맵, 해당 비트맵과 뷰의 Max Scale 값
+     */
+    private suspend fun cropBitmap(bitmap: Bitmap): Pair<Bitmap,Float> {
+        return withContext(Dispatchers.Default) {
+            var xScale: Float = viewWidth.toFloat() / bitmap.width.toFloat()
+            var yScale: Float = viewHeight.toFloat() / bitmap.height.toFloat()
+            // 가장 큰 비율 가져옴
+            var maxScale = Math.max(xScale,yScale)
+
+            val scaledWidth = maxScale * bitmap.width
+            val scaledHeight = maxScale * bitmap.height
+
+            xScale = scaledWidth / viewWidth.toFloat()
+            yScale = scaledHeight/ viewHeight.toFloat()
+            maxScale = Math.max(xScale,yScale)
+            Bitmap.createScaledBitmap(bitmap, scaledWidth.toInt(), scaledHeight.toInt(), true) to maxScale
+        }
+    }
+
+    override fun setImageBitmap(bm: Bitmap?) {
+        super.setImageBitmap(bm)
+        if(bm == null) return
+
+        // 알파값을 줘서 이미지를 전달 한다.
+        ObjectAnimator.ofFloat(this@FlexibleImageView,View.ALPHA,0F,1.0F).apply {
+            duration = 200
+            interpolator = AccelerateDecelerateInterpolator()
+            start()
         }
     }
 
     /**
+     * Controls how the image should be resized or moved to match the size
+     * of this ImageView.
+     *
+     * @param scaleType The desired scaling mode.
+     *
+     * @attr ref android.R.styleable#ImageView_scaleType
+     */
+    override fun setScaleType(scaleType: ScaleType?) {
+        super.setScaleType(ScaleType.FIT_CENTER)
+    }
+
+    /**
      * Image 위치값 연산 처리 함수.
+     * 이미지 현재 너비 와 높이 값과 현재 포커싱 잡힌 X,Y 값을 기준으로
+     * Top, Left, Right, Bottom 값들을 구할수 있다.
      */
     private fun computeImageLocation(): RectF? {
         if (viewWidth == -1 || viewHeight == -1 ||
@@ -265,7 +343,7 @@ open class FlexibleImageView @JvmOverloads constructor(
             diffFocusY += Math.abs(rect.bottom - viewHeight)
         }
 
-        LogD("computeInBoundary $diffFocusX  $diffFocusY")
+        // LogD("computeInBoundary $diffFocusX  $diffFocusY")
 
         // 변경점이 없으면 아래 로직 패스 한다.
         if (diffFocusX == 0F && diffFocusY == 0F) {
@@ -290,7 +368,6 @@ open class FlexibleImageView @JvmOverloads constructor(
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             val scale = stateItem.scale * detector.scaleFactor
 
-            LogD("Scale $scale")
             prevScale = scale
 
             // 범위 를 넘어 가는 경우 false 리턴.
@@ -306,7 +383,6 @@ open class FlexibleImageView @JvmOverloads constructor(
         override fun onScaleEnd(detector: ScaleGestureDetector?) {
             // 이미지 확대 축소 제한
             if (prevScale < stateItem.minScale) {
-                LogD("확대 축소를 제자리로 합니다.")
                 scaleTargetAni(stateItem.minScale)
             }
         }
@@ -319,11 +395,14 @@ open class FlexibleImageView @JvmOverloads constructor(
             val list = mutableListOf(
                 PropertyValuesHolder.ofFloat(View.SCALE_X, targetScale),
                 PropertyValuesHolder.ofFloat(View.SCALE_Y, targetScale),
-                PropertyValuesHolder.ofFloat(View.TRANSLATION_X,0F),
-                PropertyValuesHolder.ofFloat(View.TRANSLATION_Y,0F)
+                PropertyValuesHolder.ofFloat(View.TRANSLATION_X, 0F),
+                PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0F)
             )
 
-            ObjectAnimator.ofPropertyValuesHolder(this@FlexibleImageView, *list.toList().toTypedArray()).apply {
+            ObjectAnimator.ofPropertyValuesHolder(
+                this@FlexibleImageView,
+                *list.toList().toTypedArray()
+            ).apply {
                 duration = 200
                 interpolator = AccelerateDecelerateInterpolator()
                 doOnStart { isTouchLock = true }
@@ -347,6 +426,7 @@ open class FlexibleImageView @JvmOverloads constructor(
 
         override fun onMove(detector: MoveGestureDetector): Boolean {
             val delta = detector.currentFocus
+
             stateItem.focusX += delta.x
             stateItem.focusY += delta.y
             return true
@@ -354,6 +434,7 @@ open class FlexibleImageView @JvmOverloads constructor(
 
         override fun onMoveEnd(detector: MoveGestureDetector) {
             computeImageLocation()?.also { rect ->
+                LogD("Location ${stateItem.focusX} ${stateItem.focusY} L ${rect.left} R ${rect.right} T ${rect.top} B ${rect.bottom}")
                 val pair = computeInBoundary(rect) ?: return
 
                 focusTargetAni(
@@ -380,7 +461,7 @@ open class FlexibleImageView @JvmOverloads constructor(
          * @param targetY Target Y 좌표
          */
         private fun focusTargetAni(targetX: Float, targetY: Float) {
-            LogD("Ani $targetX $targetY")
+            // LogD("Ani $targetX $targetY")
             val pvhX = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, targetX)
             val pvhY = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, targetY)
             ObjectAnimator.ofPropertyValuesHolder(this@FlexibleImageView, pvhX, pvhY).apply {
@@ -388,6 +469,7 @@ open class FlexibleImageView @JvmOverloads constructor(
                 interpolator = AccelerateDecelerateInterpolator()
                 doOnStart { isTouchLock = true }
                 doOnEnd {
+                    LogD("TargetX $targetX  ${this@FlexibleImageView.translationX}")
                     stateItem.focusX = this@FlexibleImageView.translationX
                     stateItem.focusY = this@FlexibleImageView.translationY
                     invalidate()
