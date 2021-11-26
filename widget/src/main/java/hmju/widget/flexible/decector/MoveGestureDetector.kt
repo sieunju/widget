@@ -10,7 +10,7 @@ import android.view.MotionEvent
  *
  * Created by juhongmin on 11/21/21
  */
-class MoveGestureDetector(private val ctx: Context, private val listener: OnMoveGestureListener) :
+class MoveGestureDetector(private val listener: OnMoveGestureListener) :
     BaseGestureDetector() {
 
     interface OnMoveGestureListener {
