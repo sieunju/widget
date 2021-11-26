@@ -5,14 +5,15 @@ import android.animation.PropertyValuesHolder
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.annotation.MainThread
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.animation.addListener
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import hmju.widget.ImageLoader
@@ -29,196 +30,272 @@ import kotlin.math.*
  *
  * Created by juhongmin on 11/21/21
  */
-open class FlexibleImageView @JvmOverloads constructor(
-    ctx: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+class FlexibleImageView @JvmOverloads constructor(
+        ctx: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
 ) : AppCompatImageView(ctx, attrs, defStyleAttr) {
-    companion object {
-        const val MAX_SCALE_FACTOR = 10.0F
-        const val MIN_SCALE_FACTOR = 0.3F
-        const val MAX_CLICK_DISTANCE = 4
-        const val MAX_LONG_CLICK_DISTANCE = 16
+	companion object {
+		const val MAX_SCALE_FACTOR = 10.0F
+		const val MIN_SCALE_FACTOR = 0.3F
+		const val MAX_LONG_CLICK_DISTANCE = 16
 
-        private const val TAG = "FlexibleImageView"
-        private const val DEBUG = true
-        fun LogD(msg: String) {
-            if (DEBUG) {
-                Log.d(TAG, msg)
-            }
-        }
-    }
+		private const val TAG = "FlexibleImageView"
+		private const val DEBUG = true
+		fun LogD(msg: String) {
+			if (DEBUG) {
+				Log.d(TAG, msg)
+			}
+		}
+	}
 
-    private val scaleGestureDetector: ScaleGestureDetector by lazy {
-        ScaleGestureDetector(ctx, ScaleListener())
-    }
+	private val scaleGestureDetector: ScaleGestureDetector by lazy {
+		ScaleGestureDetector(ctx, ScaleListener())
+	}
 
-    private val moveGestureDetector: MoveGestureDetector by lazy {
-        MoveGestureDetector(ctx, MoveListener())
-    }
+	private val moveGestureDetector: MoveGestureDetector by lazy {
+		MoveGestureDetector(MoveListener())
+	}
 
-    var stateItem = FlexibleStateItem(
-        scale = 1.0F,
-        focusX = 0F,
-        focusY = 0F,
-        rotationDegree = 0F,
-        flipX = 1F,
-        flipY = 1F
+	var stateItem = FlexibleStateItem(
+            scale = 1.0F,
+            focusX = 0F,
+            focusY = 0F,
+            rotationDegree = 0F,
+            flipX = 1F,
+            flipY = 1F
     )
 
-    private var isMultiTouch: Boolean = false
-    private var moveDistance: Double = 0.0
-    private var touchPoint = PointF()
-    private var viewWidth = -1
-    private var viewHeight = -1
-    private var isTouchLock: Boolean = false // 애니메이션 동작중 터치 잠금하기위한 Flag 값
+	private var isMultiTouch: Boolean = false
+	private var moveDistance: Double = 0.0
+	private var touchPoint = PointF()
+	private var viewWidth = -1
+	private var viewHeight = -1
+	private var isTouchLock: Boolean = false // 애니메이션 동작중 터치 잠금하기위한 Flag 값
 
-    init {
-        if (isInEditMode) {
-            setBackgroundColor(Color.BLACK)
-        }
-    }
+	init {
+		if (isInEditMode) {
+			setBackgroundColor(Color.BLACK)
+		}
+	}
 
-    /**
-     * Load Url Http or content://
-     * @param url Request Url
-     */
-    fun loadUrl(url: String) {
-        GlobalScope.launch(Dispatchers.IO) {
-            val bitmap = if (url.startsWith("http")) {
-                ImageLoader.loadBitmapHttp(url)
-            } else {
-                ImageLoader.loadBitmapFile(context, url)
-            }
-            if (bitmap != null) {
-                LogD("Before Bitmap w ${bitmap.width} h ${bitmap.height}")
-                val pair = cropBitmap(bitmap)
-                bitmap.recycle()
+	/**
+	 * Load Url Http or content://
+	 * @param url Request Url
+	 */
+	fun loadUrl(url: String) {
+		GlobalScope.launch(Dispatchers.IO) {
+			val bitmap = if (url.startsWith("http")) {
+				ImageLoader.loadBitmapHttp(url)
+			} else {
+				ImageLoader.loadBitmapFile(context, url)
+			}
+			if (bitmap != null) {
+				resetView()
+				withContext(Dispatchers.Main) {
+					LogD("Before Bitmap w ${bitmap.width} h ${bitmap.height}")
+					val pair = cropBitmap(bitmap)
+					// 비트맵의 주소값이 서로 다른 경우 Recycle 처리
+					if (bitmap !== pair.first && !bitmap.isRecycled) {
+						bitmap.recycle()
+					}
 
-                withContext(Dispatchers.Main) {
-                    stateItem.imgWidth = pair.first.width
-                    stateItem.imgHeight = pair.first.height
-                    stateItem.scale = pair.second
-                    stateItem.minScale = 1F
-                    LogD("StateItem $stateItem")
-                    setImageBitmap(pair.first)
-                }
-            } else {
-                LogD("Bitmap Null ")
-            }
-        }
-    }
+					stateItem.imgWidth = (pair.first.width.toFloat() / pair.second).toInt()
+					stateItem.imgHeight = (pair.first.height.toFloat() / pair.second).toInt()
+					stateItem.scale = pair.second
+					stateItem.startScale = pair.second
+					stateItem.minScale = 1F
+					LogD("StateItem Scale ${stateItem.scale} ${stateItem.currentImgWidth} ${stateItem.currentImgHeight}")
+					setImageBitmap(pair.first)
+				}
+			} else {
+				LogD("Bitmap Null ")
+			}
+		}
+	}
 
-    fun resetView() {
-        stateItem.reset()
-        isMultiTouch = false
-        moveDistance = 0.0
-        touchPoint = PointF()
-        alpha = 1F
-    }
+	/**
+	 * 이미지를 가운데로 옮기고 꽉차게 처리
+	 * UiThread 에서 이 함수를 실행 해야 합니다.
+	 */
+	@MainThread
+	fun centerAndCrop() {
+		// 애니메이션 처리 유무 검사
+		if (stateItem.imgWidth == 0 || stateItem.imgHeight == 0 ||
+				stateItem.scale == stateItem.startScale) return
 
-    /**
-     * Get Row Point
-     * @param ev 터이 이벤트!
-     * @param index 터치한 인덱스
-     * @param point Current Point
-     */
-    private fun getRowPoint(ev: MotionEvent, index: Int, point: PointF) {
-        val location = intArrayOf(0, 0)
-        getLocationOnScreen(location)
+		ObjectAnimator.ofPropertyValuesHolder(
+                this,
+                PropertyValuesHolder.ofFloat(View.SCALE_X, stateItem.startScale),
+                PropertyValuesHolder.ofFloat(View.SCALE_Y, stateItem.startScale),
+                PropertyValuesHolder.ofFloat(View.TRANSLATION_X, 0F),
+                PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0F)
+        ).apply {
+			duration = 200
+			interpolator = AccelerateDecelerateInterpolator()
+			addListener(
+                    onStart = {
+                        isTouchLock = true
+                    },
+                    onEnd = {
+                        stateItem.scale = this@FlexibleImageView.scaleX
+                        stateItem.focusX = this@FlexibleImageView.translationX
+                        stateItem.focusY = this@FlexibleImageView.translationY
+                        invalidate()
+                        isTouchLock = false
+                    }
+            )
+			start()
+		}
+	}
 
-        var x = ev.getX(index)
-        var y = ev.getY(index)
+	/**
+	 * 이미지를 가운데로 옮기고
+	 * UiThread 에서 이 함수를 실행 해야 합니다.
+	 */
+	@MainThread
+	fun centerAndFit() {
+		// 애니메이션 처리 유무 검사
+		if (stateItem.imgWidth == 0 || stateItem.imgHeight == 0 || stateItem.scale == stateItem.minScale) return
 
-        x *= scaleX
-        y *= scaleY
+		ObjectAnimator.ofPropertyValuesHolder(
+                this,
+                PropertyValuesHolder.ofFloat(View.SCALE_X, stateItem.minScale),
+                PropertyValuesHolder.ofFloat(View.SCALE_Y, stateItem.minScale),
+                PropertyValuesHolder.ofFloat(View.TRANSLATION_X, 0F),
+                PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0F)
+        ).apply {
+			duration = 200
+			interpolator = AccelerateDecelerateInterpolator()
+			addListener(
+                    onStart = {
+                        isTouchLock = true
+                    },
+                    onEnd = {
+                        stateItem.scale = this@FlexibleImageView.scaleX
+                        stateItem.focusX = this@FlexibleImageView.translationX
+                        stateItem.focusY = this@FlexibleImageView.translationY
+                        invalidate()
+                        isTouchLock = false
+                    }
+            )
+			start()
+		}
+	}
 
-        var angle = Math.toDegrees(atan2(y.toDouble(), x.toDouble()))
-        angle += rotation
+	/**
+	 * View 및 데이터 리셋 처리 함수
+	 */
+	private fun resetView() {
+		stateItem.reset()
+		isMultiTouch = false
+		moveDistance = 0.0
+		touchPoint = PointF()
+		alpha = 1F
+	}
 
-        val length = PointF.length(x, y)
-        x = (length * cos(Math.toRadians(angle)) + location[0]).toFloat()
-        y = (length * sin(Math.toRadians(angle)) + location[1]).toFloat()
+	/**
+	 * Get Row Point
+	 * @param ev 터이 이벤트!
+	 * @param index 터치한 인덱스
+	 * @param point Current Point
+	 */
+	private fun getRowPoint(ev: MotionEvent, index: Int, point: PointF) {
+		val location = intArrayOf(0, 0)
+		getLocationOnScreen(location)
 
-        point.set(x, y)
-    }
+		var x = ev.getX(index)
+		var y = ev.getY(index)
 
-    @SuppressLint("Recycle")
-    override fun onTouchEvent(ev: MotionEvent): Boolean {
-        if (!isEnabled) {
-            return false
-        } else if (isTouchLock) {
-            return false
-        }
+		x *= scaleX
+		y *= scaleY
 
-        // compute trans from
-        val prop = arrayOfNulls<MotionEvent.PointerProperties>(ev.pointerCount)
-        val cords = arrayOfNulls<MotionEvent.PointerCoords>(ev.pointerCount)
+		var angle = Math.toDegrees(atan2(y.toDouble(), x.toDouble()))
+		angle += rotation
 
-        // get First Coords
-        ev.getPointerCoords(0, MotionEvent.PointerCoords())
+		val length = PointF.length(x, y)
+		x = (length * cos(Math.toRadians(angle)) + location[0]).toFloat()
+		y = (length * sin(Math.toRadians(angle)) + location[1]).toFloat()
 
-        for (i in 0 until ev.pointerCount) {
-            val properties = MotionEvent.PointerProperties()
-            ev.getPointerProperties(i, properties)
-            prop[i] = properties
+		point.set(x, y)
+	}
 
-            val cod = MotionEvent.PointerCoords()
-            ev.getPointerCoords(i, cod)
+	@SuppressLint("Recycle")
+	override fun onTouchEvent(ev: MotionEvent): Boolean {
+		if (!isEnabled) {
+			return false
+		} else if (isTouchLock) {
+			return false
+		}
 
-            val rawPos = PointF()
-            getRowPoint(ev, i, rawPos)
-            cod.x = rawPos.x
-            cod.y = rawPos.y
-            cords[i] = cod
-        }
+		// compute trans from
+		val prop = arrayOfNulls<MotionEvent.PointerProperties>(ev.pointerCount)
+		val cords = arrayOfNulls<MotionEvent.PointerCoords>(ev.pointerCount)
 
-        val baseMotionEvent = MotionEvent.obtain(
-            ev.downTime,
-            ev.eventTime,
-            ev.action,
-            ev.pointerCount,
-            prop,
-            cords,
-            ev.metaState,
-            ev.buttonState,
-            ev.xPrecision,
-            ev.xPrecision,
-            ev.deviceId,
-            ev.edgeFlags,
-            ev.source,
-            ev.flags
+		// get First Coords
+		ev.getPointerCoords(0, MotionEvent.PointerCoords())
+
+		for (i in 0 until ev.pointerCount) {
+			val properties = MotionEvent.PointerProperties()
+			ev.getPointerProperties(i, properties)
+			prop[i] = properties
+
+			val cod = MotionEvent.PointerCoords()
+			ev.getPointerCoords(i, cod)
+
+			val rawPos = PointF()
+			getRowPoint(ev, i, rawPos)
+			cod.x = rawPos.x
+			cod.y = rawPos.y
+			cords[i] = cod
+		}
+
+		val baseMotionEvent = MotionEvent.obtain(
+                ev.downTime,
+                ev.eventTime,
+                ev.action,
+                ev.pointerCount,
+                prop,
+                cords,
+                ev.metaState,
+                ev.buttonState,
+                ev.xPrecision,
+                ev.xPrecision,
+                ev.deviceId,
+                ev.edgeFlags,
+                ev.source,
+                ev.flags
         )
 
-        scaleGestureDetector.onTouchEvent(baseMotionEvent)
-        moveGestureDetector.onTouchEvent(baseMotionEvent)
+		scaleGestureDetector.onTouchEvent(baseMotionEvent)
+		moveGestureDetector.onTouchEvent(baseMotionEvent)
 
-        computeClickEvent(ev)
-        super.onTouchEvent(ev)
+		computeClickEvent(ev)
+		super.onTouchEvent(ev)
 
-        // Canvas Draw
-        invalidate()
-        return true
-    }
+		// Canvas Draw
+		invalidate()
+		return true
+	}
 
-    override fun performClick(): Boolean {
-        return if (isMultiTouch || moveDistance > MAX_LONG_CLICK_DISTANCE) {
-            false
-        } else {
-            super.performLongClick()
-        }
-    }
+	override fun performClick(): Boolean {
+		return if (isMultiTouch || moveDistance > MAX_LONG_CLICK_DISTANCE) {
+			false
+		} else {
+			super.performClick()
+		}
+	}
 
-    override fun performLongClick(): Boolean {
-        return if (isMultiTouch || moveDistance > MAX_LONG_CLICK_DISTANCE) {
-            false
-        } else {
-            super.performLongClick()
-        }
-    }
+	override fun performLongClick(): Boolean {
+		return if (isMultiTouch || moveDistance > MAX_LONG_CLICK_DISTANCE) {
+			false
+		} else {
+			super.performLongClick()
+		}
+	}
 
-    private fun computeClickEvent(ev: MotionEvent) {
-        when (ev.action) {
+	private fun computeClickEvent(ev: MotionEvent) {
+		when (ev.action) {
             MotionEvent.ACTION_DOWN -> {
                 isMultiTouch = ev.pointerCount >= 2
                 touchPoint = PointF(ev.rawX, ev.rawY)
@@ -234,249 +311,213 @@ open class FlexibleImageView @JvmOverloads constructor(
                 moveDistance = getDistance(PointF(ev.rawX, ev.rawY), touchPoint)
 
             }
-        }
-    }
+		}
+	}
 
-    override fun onDraw(canvas: Canvas?) {
-        translationX = stateItem.focusX
-        translationY = stateItem.focusY
-        scaleY = stateItem.scaleX
-        scaleX = stateItem.scaleY
-        rotation = stateItem.rotationDegree
-        // LogD("onDraw $stateItem")
-        super.onDraw(canvas)
-    }
+	override fun onDraw(canvas: Canvas?) {
+		translationX = stateItem.focusX
+		translationY = stateItem.focusY
+		scaleY = stateItem.scaleX
+		scaleX = stateItem.scaleY
+		rotation = stateItem.rotationDegree
+		// LogD("onDraw $stateItem")
+		super.onDraw(canvas)
+	}
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        viewWidth = MeasureSpec.getSize(widthMeasureSpec)
-        viewHeight = MeasureSpec.getSize(heightMeasureSpec)
-        // LogD("onMeasure $viewWidth  $viewHeight")
-    }
+	override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+		viewWidth = MeasureSpec.getSize(widthMeasureSpec)
+		viewHeight = MeasureSpec.getSize(heightMeasureSpec)
+		// LogD("onMeasure $viewWidth  $viewHeight")
+	}
 
-    /**
-     * 이미지 View 너비 높이에 맞게 줄이거나 늘리는 처리 함수
-     * @param bitmap Source Bitmap
-     * @return 알맞게 Scale 한 비트맵, 해당 비트맵과 뷰의 Max Scale 값
-     */
-    private suspend fun cropBitmap(bitmap: Bitmap): Pair<Bitmap,Float> {
-        return withContext(Dispatchers.Default) {
-            var xScale: Float = viewWidth.toFloat() / bitmap.width.toFloat()
-            var yScale: Float = viewHeight.toFloat() / bitmap.height.toFloat()
-            // 가장 큰 비율 가져옴
-            var maxScale = Math.max(xScale,yScale)
+	/**
+	 * 이미지 View 너비 높이에 맞게 줄이거나 늘리는 처리 함수
+	 * @param bitmap Source Bitmap
+	 * @return 알맞게 Scale 한 비트맵, 해당 비트맵과 뷰의 Max Scale 값
+	 */
+	private suspend fun cropBitmap(bitmap: Bitmap): Pair<Bitmap, Float> {
+		return withContext(Dispatchers.Default) {
+			var xScale: Float = viewWidth.toFloat() / bitmap.width.toFloat()
+			var yScale: Float = viewHeight.toFloat() / bitmap.height.toFloat()
+			// 가장 큰 비율 가져옴
+			var maxScale = Math.max(xScale, yScale)
 
-            val scaledWidth = maxScale * bitmap.width
-            val scaledHeight = maxScale * bitmap.height
+			val scaledWidth = maxScale * bitmap.width
+			val scaledHeight = maxScale * bitmap.height
 
-            xScale = scaledWidth / viewWidth.toFloat()
-            yScale = scaledHeight/ viewHeight.toFloat()
-            maxScale = Math.max(xScale,yScale)
-            Bitmap.createScaledBitmap(bitmap, scaledWidth.toInt(), scaledHeight.toInt(), true) to maxScale
-        }
-    }
+			xScale = scaledWidth / viewWidth.toFloat()
+			yScale = scaledHeight / viewHeight.toFloat()
+			maxScale = Math.max(xScale, yScale)
+			Bitmap.createScaledBitmap(bitmap, scaledWidth.toInt(), scaledHeight.toInt(), true) to maxScale
+		}
+	}
 
-    override fun setImageBitmap(bm: Bitmap?) {
-        super.setImageBitmap(bm)
-        if(bm == null) return
+	override fun setImageBitmap(bm: Bitmap?) {
+		super.setImageBitmap(bm)
+		if (bm == null) return
 
-        // 알파값을 줘서 이미지를 전달 한다.
-        ObjectAnimator.ofFloat(this@FlexibleImageView,View.ALPHA,0F,1.0F).apply {
-            duration = 200
-            interpolator = AccelerateDecelerateInterpolator()
-            start()
-        }
-    }
+		// 알파값을 줘서 이미지를 전달 한다.
+		ObjectAnimator.ofFloat(this@FlexibleImageView, View.ALPHA, 0F, 1.0F).apply {
+			duration = 200
+			interpolator = AccelerateDecelerateInterpolator()
+			start()
+		}
+	}
 
-    /**
-     * Controls how the image should be resized or moved to match the size
-     * of this ImageView.
-     *
-     * @param scaleType The desired scaling mode.
-     *
-     * @attr ref android.R.styleable#ImageView_scaleType
-     */
-    override fun setScaleType(scaleType: ScaleType?) {
-        super.setScaleType(ScaleType.FIT_CENTER)
-    }
+	/**
+	 * Controls how the image should be resized or moved to match the size
+	 * of this ImageView.
+	 *
+	 * @param scaleType The desired scaling mode.
+	 *
+	 * @attr ref android.R.styleable#ImageView_scaleType
+	 */
+	override fun setScaleType(scaleType: ScaleType?) {
+		super.setScaleType(ScaleType.FIT_CENTER)
+	}
 
-    /**
-     * Image 위치값 연산 처리 함수.
-     * 이미지 현재 너비 와 높이 값과 현재 포커싱 잡힌 X,Y 값을 기준으로
-     * Top, Left, Right, Bottom 값들을 구할수 있다.
-     */
-    private fun computeImageLocation(): RectF? {
-        if (viewWidth == -1 || viewHeight == -1 ||
-            stateItem.currentImgWidth == -1F ||
-            stateItem.currentImgHeight == -1F
-        ) return null
+	/**
+	 * Image 위치값 연산 처리 함수.
+	 * 이미지 현재 너비 와 높이 값과 현재 포커싱 잡힌 X,Y 값을 기준으로
+	 * Top, Left, Right, Bottom 값들을 구할수 있다.
+	 */
+	private fun computeImageLocation(): RectF? {
+		if (viewWidth == -1 || viewHeight == -1 ||
+				stateItem.currentImgWidth == -1F ||
+				stateItem.currentImgHeight == -1F
+		) return null
 
-        val imgWidth = stateItem.currentImgWidth
-        val imgHeight = stateItem.currentImgHeight
-        val focusX = stateItem.focusX
-        val focusY = stateItem.focusY
+		val imgWidth = stateItem.currentImgWidth
+		val imgHeight = stateItem.currentImgHeight
+		val focusX = stateItem.focusX
+		val focusY = stateItem.focusY
 
-        val imgTop = (focusY + (viewHeight / 2F)) - imgHeight / 2F
-        val imgLeft = (focusX + (viewWidth / 2F)) - imgWidth / 2F
-        val imgRight = (focusX + (viewWidth / 2F)) + imgWidth / 2F
-        val imgBottom = (focusY + (viewHeight / 2F)) + imgHeight / 2F
-        return RectF(imgLeft, imgTop, imgRight, imgBottom)
-    }
+		val imgTop = (focusY + (viewHeight / 2F)) - imgHeight / 2F
+		val imgLeft = (focusX + (viewWidth / 2F)) - imgWidth / 2F
+		val imgRight = (focusX + (viewWidth / 2F)) + imgWidth / 2F
+		val imgBottom = (focusY + (viewHeight / 2F)) + imgHeight / 2F
+		return RectF(imgLeft, imgTop, imgRight, imgBottom)
+	}
 
-    /**
-     * View 영역 밖으로 나갔는지 유무 함수.
-     * @param rect Current Image Location
-     */
-    private fun computeInBoundary(rect: RectF): Pair<Float, Float>? {
-        var diffFocusX = 0F
-        var diffFocusY = 0F
+	/**
+	 * View 영역 밖으로 나갔는지 유무 함수.
+	 * @param rect Current Image Location
+	 */
+	private fun computeInBoundary(rect: RectF): Pair<Float, Float>? {
+		var diffFocusX = 0F
+		var diffFocusY = 0F
 
-        if (rect.left > 0) {
-            diffFocusX -= Math.abs(rect.left)
-        } else if (rect.right < viewWidth) {
-            diffFocusX += Math.abs(rect.right - viewWidth)
-        }
+		if (rect.left > 0) {
+			diffFocusX -= Math.abs(rect.left)
+		} else if (rect.right < viewWidth) {
+			diffFocusX += Math.abs(rect.right - viewWidth)
+		}
 
-        if (rect.top > 0) {
-            diffFocusY -= Math.abs(rect.top)
-        } else if (rect.bottom < viewHeight) {
-            diffFocusY += Math.abs(rect.bottom - viewHeight)
-        }
+		if (rect.top > 0) {
+			diffFocusY -= Math.abs(rect.top)
+		} else if (rect.bottom < viewHeight) {
+			diffFocusY += Math.abs(rect.bottom - viewHeight)
+		}
 
-        // LogD("computeInBoundary $diffFocusX  $diffFocusY")
+		// LogD("computeInBoundary $diffFocusX  $diffFocusY")
 
-        // 변경점이 없으면 아래 로직 패스 한다.
-        if (diffFocusX == 0F && diffFocusY == 0F) {
-            return null
-        }
+		// 변경점이 없으면 아래 로직 패스 한다.
+		if (diffFocusX == 0F && diffFocusY == 0F) {
+			return null
+		}
 
-        return Pair(diffFocusX, diffFocusY)
-    }
+		return Pair(diffFocusX, diffFocusY)
+	}
 
-    private fun getDistance(point1: PointF, point2: PointF): Double {
-        return sqrt(
-            (point1.x - point2.x).toDouble().pow(2.0) + (point1.y - point2.y).toDouble()
-                .pow(2.0)
+	private fun getDistance(point1: PointF, point2: PointF): Double {
+		return sqrt(
+                (point1.x - point2.x).toDouble().pow(2.0) + (point1.y - point2.y).toDouble()
+                        .pow(2.0)
         )
-    }
+	}
+
+	/**
+	 * 제 위치로 가기 위한 애니메이션 처리 함수
+	 * @param targetX Target X 좌표
+	 * @param targetY Target Y 좌표
+	 */
+	private fun focusTargetAni(targetX: Float, targetY: Float) {
+		// LogD("Ani $targetX $targetY")
+		val pvhX = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, targetX)
+		val pvhY = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, targetY)
+		ObjectAnimator.ofPropertyValuesHolder(this@FlexibleImageView, pvhX, pvhY).apply {
+			duration = 200
+			interpolator = AccelerateDecelerateInterpolator()
+			doOnStart { isTouchLock = true }
+			doOnEnd {
+				stateItem.focusX = this@FlexibleImageView.translationX
+				stateItem.focusY = this@FlexibleImageView.translationY
+				invalidate()
+				isTouchLock = false
+			}
+			start()
+		}
+	}
+
+	inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+
+		var prevScale = 0.5F
+
+		override fun onScale(detector: ScaleGestureDetector): Boolean {
+			val scale = stateItem.scale * detector.scaleFactor
+
+			prevScale = scale
+
+			// 범위 를 넘어 가는 경우 false 리턴.
+			if (scale <= MIN_SCALE_FACTOR || scale >= MAX_SCALE_FACTOR) {
+				return false
+			}
+
+			stateItem.scale = scale
+
+			return true
+		}
+
+		override fun onScaleEnd(detector: ScaleGestureDetector?) {
+			// 이미지 확대 축소 제한
+			if (prevScale < stateItem.minScale) {
+				centerAndFit()
+			}
+		}
+	}
+
+	inner class MoveListener : MoveGestureDetector.Companion.SimpleOnMoveGestureListener() {
+
+		override fun onMoveBegin(detector: MoveGestureDetector): Boolean {
+			return true
+		}
+
+		override fun onMove(detector: MoveGestureDetector): Boolean {
+			val delta = detector.currentFocus
+
+			stateItem.focusX += delta.x
+			stateItem.focusY += delta.y
+			return true
+		}
+
+		override fun onMoveEnd(detector: MoveGestureDetector) {
+			computeImageLocation()?.also { rect ->
+				// LogD("Location ${stateItem.focusX} ${stateItem.focusY} L ${rect.left} R ${rect.right} T ${rect.top} B ${rect.bottom}")
+				val pair = computeInBoundary(rect) ?: return
+				// Scale 1이거나 옆에 여백이 있는 경우 원위치
+				if (stateItem.scale == 1F || (stateItem.currentImgWidth < viewWidth
+								|| stateItem.currentImgHeight < viewHeight)) {
+					focusTargetAni(0F, 0F)
+				} else {
+					focusTargetAni(
+                            stateItem.focusX.plus(pair.first),
+                            stateItem.focusY.plus(pair.second)
+                    )
+				}
+			}
+		}
 
 
-    inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-
-        var prevScale = 0.5F
-
-        override fun onScale(detector: ScaleGestureDetector): Boolean {
-            val scale = stateItem.scale * detector.scaleFactor
-
-            prevScale = scale
-
-            // 범위 를 넘어 가는 경우 false 리턴.
-            if (scale <= MIN_SCALE_FACTOR || scale >= MAX_SCALE_FACTOR) {
-                return false
-            }
-
-            stateItem.scale = scale
-
-            return true
-        }
-
-        override fun onScaleEnd(detector: ScaleGestureDetector?) {
-            // 이미지 확대 축소 제한
-            if (prevScale < stateItem.minScale) {
-                scaleTargetAni(stateItem.minScale)
-            }
-        }
-
-        /**
-         * 제 위치로 가기 위한 애니메이션 처리 함수
-         * @param targetScale Target Scale 좌표
-         */
-        private fun scaleTargetAni(targetScale: Float) {
-            val list = mutableListOf(
-                PropertyValuesHolder.ofFloat(View.SCALE_X, targetScale),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, targetScale),
-                PropertyValuesHolder.ofFloat(View.TRANSLATION_X, 0F),
-                PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0F)
-            )
-
-            ObjectAnimator.ofPropertyValuesHolder(
-                this@FlexibleImageView,
-                *list.toList().toTypedArray()
-            ).apply {
-                duration = 200
-                interpolator = AccelerateDecelerateInterpolator()
-                doOnStart { isTouchLock = true }
-                doOnEnd {
-                    stateItem.scale = this@FlexibleImageView.scaleX
-                    stateItem.focusX = this@FlexibleImageView.translationX
-                    stateItem.focusY = this@FlexibleImageView.translationY
-                    invalidate()
-                    isTouchLock = false
-                }
-                start()
-            }
-        }
-    }
-
-    inner class MoveListener : MoveGestureDetector.Companion.SimpleOnMoveGestureListener() {
-
-        override fun onMoveBegin(detector: MoveGestureDetector): Boolean {
-            return true
-        }
-
-        override fun onMove(detector: MoveGestureDetector): Boolean {
-            val delta = detector.currentFocus
-
-            stateItem.focusX += delta.x
-            stateItem.focusY += delta.y
-            return true
-        }
-
-        override fun onMoveEnd(detector: MoveGestureDetector) {
-            computeImageLocation()?.also { rect ->
-                LogD("Location ${stateItem.focusX} ${stateItem.focusY} L ${rect.left} R ${rect.right} T ${rect.top} B ${rect.bottom}")
-                val pair = computeInBoundary(rect) ?: return
-
-                focusTargetAni(
-                    stateItem.focusX.plus(pair.first),
-                    stateItem.focusY.plus(pair.second)
-                )
-
-//                if (pair.first != 0F) {
-//                    stateItem.focusX += pair.first
-//                }
-//
-//                if (pair.second != 0F) {
-//                    stateItem.focusY += pair.second
-//                }
-//
-//                // ReDraw
-//                invalidate()
-            }
-        }
-
-        /**
-         * 제 위치로 가기 위한 애니메이션 처리 함수
-         * @param targetX Target X 좌표
-         * @param targetY Target Y 좌표
-         */
-        private fun focusTargetAni(targetX: Float, targetY: Float) {
-            // LogD("Ani $targetX $targetY")
-            val pvhX = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, targetX)
-            val pvhY = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, targetY)
-            ObjectAnimator.ofPropertyValuesHolder(this@FlexibleImageView, pvhX, pvhY).apply {
-                duration = 200
-                interpolator = AccelerateDecelerateInterpolator()
-                doOnStart { isTouchLock = true }
-                doOnEnd {
-                    LogD("TargetX $targetX  ${this@FlexibleImageView.translationX}")
-                    stateItem.focusX = this@FlexibleImageView.translationX
-                    stateItem.focusY = this@FlexibleImageView.translationY
-                    invalidate()
-                    isTouchLock = false
-                }
-                start()
-            }
-        }
-    }
+	}
 }
