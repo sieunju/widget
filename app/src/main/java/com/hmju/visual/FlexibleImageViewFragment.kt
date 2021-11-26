@@ -1,15 +1,15 @@
 package com.hmju.visual
 
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import hmju.widget.view.FlexibleImageView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Description : 이미지 이동 및 확대가 가능한 뷰 테스트용 Fragment
@@ -34,40 +34,14 @@ class FlexibleImageViewFragment : Fragment(R.layout.fragment_flexibleimageview) 
         super.onViewCreated(view, savedInstanceState)
         imageView = view.findViewById(R.id.imgThumb)
         var imageUrl = "content://media/external/images/media/439"
-        imageUrl = "https://picsum.photos/id/0/5616/3744"
+        //imageUrl = "https://picsum.photos/id/0/5616/3744"
+        imageUrl = "content://media/external/images/media/515"
         imageView.loadUrl(imageUrl)
-//        Glide.with(imageView)
-//            .asBitmap()
-//            .load(imageUrl)
-//            .into(object : CustomTarget<Bitmap?>() {
-//                /**
-//                 * The method that will be called when the resource load has finished.
-//                 *
-//                 * @param resource the loaded resource.
-//                 */
-//                override fun onResourceReady(
-//                    resource: Bitmap,
-//                    transition: Transition<in Bitmap?>?
-//                ) {
-//                    FlexibleImageView.LogD("onResourceReady ${resource.width}  ${resource.height}")
-//                }
-//
-//                /**
-//                 * A **mandatory** lifecycle callback that is called when a load is cancelled and its resources
-//                 * are freed.
-//                 *
-//                 *
-//                 * You **must** ensure that any current Drawable received in [.onResourceReady] is no longer used before redrawing the container (usually a View) or changing its
-//                 * visibility.
-//                 *
-//                 * @param placeholder The placeholder drawable to optionally show, or null.
-//                 */
-//                override fun onLoadCleared(placeholder: Drawable?) {
-//                    FlexibleImageView.LogD("Error  ${placeholder.toString()}")
-//                }
-//            })
-//        Glide.with(imageView)
-//            .load("https://picsum.photos/id/0/5616/3744")
-//            .into(imageView)
+        view.findViewById<Button>(R.id.cropButton).setOnClickListener {
+            imageView.centerAndCrop()
+        }
+        view.findViewById<Button>(R.id.fitButton).setOnClickListener {
+            imageView.centerAndFit()
+        }
     }
 }
