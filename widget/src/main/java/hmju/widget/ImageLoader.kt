@@ -24,6 +24,7 @@ internal object ImageLoader {
 
     /**
      * Load Bitmap Http 통신으로 받아 오는 타입
+     * No Cache Mode
      * @param url Load Url
      */
     @JvmStatic
@@ -36,6 +37,7 @@ internal object ImageLoader {
 
     /**
      * Request Bitmap
+     * No Cache Mode
      */
     private fun requestBitmap(url: String): Bitmap? {
         return try {
