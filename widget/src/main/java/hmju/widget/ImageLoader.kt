@@ -72,7 +72,10 @@ internal object ImageLoader {
                         context.contentResolver,
                         Uri.parse(url)
                     )
-                )
+                ) { decoder: ImageDecoder, _: ImageDecoder.ImageInfo?, _: ImageDecoder.Source? ->
+                    decoder.isMutableRequired = true
+                    decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+                }
             } else {
                 MediaStore.Images.Media.getBitmap(context.contentResolver, Uri.parse(url))
             }
