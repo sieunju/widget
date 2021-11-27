@@ -5,6 +5,10 @@ import android.animation.PropertyValuesHolder
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
+import android.renderscript.Element
+import android.renderscript.RenderScript
+import android.renderscript.ScriptIntrinsicBlur
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -25,15 +29,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.*
 
+
 /**
  * Description : 이동, 확대가 가능한 ImageView
  *
  * Created by juhongmin on 11/21/21
  */
 class FlexibleImageView @JvmOverloads constructor(
-        ctx: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+		ctx: Context,
+		attrs: AttributeSet? = null,
+		defStyleAttr: Int = 0
 ) : AppCompatImageView(ctx, attrs, defStyleAttr) {
 	companion object {
 		const val MAX_SCALE_FACTOR = 10.0F
@@ -58,13 +63,13 @@ class FlexibleImageView @JvmOverloads constructor(
 	}
 
 	var stateItem = FlexibleStateItem(
-            scale = 1.0F,
-            focusX = 0F,
-            focusY = 0F,
-            rotationDegree = 0F,
-            flipX = 1F,
-            flipY = 1F
-    )
+			scale = 1.0F,
+			focusX = 0F,
+			focusY = 0F,
+			rotationDegree = 0F,
+			flipX = 1F,
+			flipY = 1F
+	)
 
 	private var isMultiTouch: Boolean = false
 	private var moveDistance: Double = 0.0
@@ -77,6 +82,10 @@ class FlexibleImageView @JvmOverloads constructor(
 		if (isInEditMode) {
 			setBackgroundColor(Color.BLACK)
 		}
+		val rs = RenderScript.create(context)
+		val script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs))
+		script.setRadius(15F)
+
 	}
 
 	/**
@@ -93,7 +102,6 @@ class FlexibleImageView @JvmOverloads constructor(
 			if (bitmap != null) {
 				resetView()
 				withContext(Dispatchers.Main) {
-					LogD("Before Bitmap w ${bitmap.width} h ${bitmap.height}")
 					val pair = cropBitmap(bitmap)
 					// 비트맵의 주소값이 서로 다른 경우 Recycle 처리
 					if (bitmap !== pair.first && !bitmap.isRecycled) {
@@ -105,7 +113,6 @@ class FlexibleImageView @JvmOverloads constructor(
 					stateItem.scale = pair.second
 					stateItem.startScale = pair.second
 					stateItem.minScale = 1F
-					LogD("StateItem Scale ${stateItem.scale} ${stateItem.currentImgWidth} ${stateItem.currentImgHeight}")
 					setImageBitmap(pair.first)
 				}
 			} else {
@@ -119,32 +126,32 @@ class FlexibleImageView @JvmOverloads constructor(
 	 * UiThread 에서 이 함수를 실행 해야 합니다.
 	 */
 	@MainThread
-	fun centerAndCrop() {
+	fun centerCrop() {
 		// 애니메이션 처리 유무 검사
 		if (stateItem.imgWidth == 0 || stateItem.imgHeight == 0 ||
 				stateItem.scale == stateItem.startScale) return
 
 		ObjectAnimator.ofPropertyValuesHolder(
-                this,
-                PropertyValuesHolder.ofFloat(View.SCALE_X, stateItem.startScale),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, stateItem.startScale),
-                PropertyValuesHolder.ofFloat(View.TRANSLATION_X, 0F),
-                PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0F)
-        ).apply {
+				this,
+				PropertyValuesHolder.ofFloat(View.SCALE_X, stateItem.startScale),
+				PropertyValuesHolder.ofFloat(View.SCALE_Y, stateItem.startScale),
+				PropertyValuesHolder.ofFloat(View.TRANSLATION_X, 0F),
+				PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0F)
+		).apply {
 			duration = 200
 			interpolator = AccelerateDecelerateInterpolator()
 			addListener(
-                    onStart = {
-                        isTouchLock = true
-                    },
-                    onEnd = {
-                        stateItem.scale = this@FlexibleImageView.scaleX
-                        stateItem.focusX = this@FlexibleImageView.translationX
-                        stateItem.focusY = this@FlexibleImageView.translationY
-                        invalidate()
-                        isTouchLock = false
-                    }
-            )
+					onStart = {
+						isTouchLock = true
+					},
+					onEnd = {
+						stateItem.scale = this@FlexibleImageView.scaleX
+						stateItem.focusX = this@FlexibleImageView.translationX
+						stateItem.focusY = this@FlexibleImageView.translationY
+						invalidate()
+						isTouchLock = false
+					}
+			)
 			start()
 		}
 	}
@@ -154,32 +161,43 @@ class FlexibleImageView @JvmOverloads constructor(
 	 * UiThread 에서 이 함수를 실행 해야 합니다.
 	 */
 	@MainThread
-	fun centerAndFit() {
+	fun fitCenter() {
 		// 애니메이션 처리 유무 검사
 		if (stateItem.imgWidth == 0 || stateItem.imgHeight == 0 || stateItem.scale == stateItem.minScale) return
 
 		ObjectAnimator.ofPropertyValuesHolder(
-                this,
-                PropertyValuesHolder.ofFloat(View.SCALE_X, stateItem.minScale),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, stateItem.minScale),
-                PropertyValuesHolder.ofFloat(View.TRANSLATION_X, 0F),
-                PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0F)
-        ).apply {
+				this,
+				PropertyValuesHolder.ofFloat(View.SCALE_X, stateItem.minScale),
+				PropertyValuesHolder.ofFloat(View.SCALE_Y, stateItem.minScale),
+				PropertyValuesHolder.ofFloat(View.TRANSLATION_X, 0F),
+				PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0F)
+		).apply {
 			duration = 200
 			interpolator = AccelerateDecelerateInterpolator()
 			addListener(
-                    onStart = {
-                        isTouchLock = true
-                    },
-                    onEnd = {
-                        stateItem.scale = this@FlexibleImageView.scaleX
-                        stateItem.focusX = this@FlexibleImageView.translationX
-                        stateItem.focusY = this@FlexibleImageView.translationY
-                        invalidate()
-                        isTouchLock = false
-                    }
-            )
+					onStart = {
+						isTouchLock = true
+					},
+					onEnd = {
+						stateItem.scale = this@FlexibleImageView.scaleX
+						stateItem.focusX = this@FlexibleImageView.translationX
+						stateItem.focusY = this@FlexibleImageView.translationY
+						invalidate()
+						isTouchLock = false
+					}
+			)
 			start()
+		}
+	}
+
+	/**
+	 * 배경 Bluer 처리
+	 */
+	fun blurBackground() {
+		if (drawable is BitmapDrawable) {
+			(drawable as BitmapDrawable).run {
+
+			}
 		}
 	}
 
@@ -251,21 +269,21 @@ class FlexibleImageView @JvmOverloads constructor(
 		}
 
 		val baseMotionEvent = MotionEvent.obtain(
-                ev.downTime,
-                ev.eventTime,
-                ev.action,
-                ev.pointerCount,
-                prop,
-                cords,
-                ev.metaState,
-                ev.buttonState,
-                ev.xPrecision,
-                ev.xPrecision,
-                ev.deviceId,
-                ev.edgeFlags,
-                ev.source,
-                ev.flags
-        )
+				ev.downTime,
+				ev.eventTime,
+				ev.action,
+				ev.pointerCount,
+				prop,
+				cords,
+				ev.metaState,
+				ev.buttonState,
+				ev.xPrecision,
+				ev.xPrecision,
+				ev.deviceId,
+				ev.edgeFlags,
+				ev.source,
+				ev.flags
+		)
 
 		scaleGestureDetector.onTouchEvent(baseMotionEvent)
 		moveGestureDetector.onTouchEvent(baseMotionEvent)
@@ -294,33 +312,44 @@ class FlexibleImageView @JvmOverloads constructor(
 		}
 	}
 
+	/**
+	 * 클릭 이벤트 계산 처리 함수
+	 */
 	private fun computeClickEvent(ev: MotionEvent) {
 		when (ev.action) {
-            MotionEvent.ACTION_DOWN -> {
-                isMultiTouch = ev.pointerCount >= 2
-                touchPoint = PointF(ev.rawX, ev.rawY)
-            }
-            MotionEvent.ACTION_MOVE,
-            MotionEvent.ACTION_CANCEL,
-            MotionEvent.ACTION_UP -> {
-                if (ev.pointerCount > 1) {
-                    isMultiTouch = true
-                    return
-                }
+			MotionEvent.ACTION_DOWN -> {
+				isMultiTouch = ev.pointerCount >= 2
+				touchPoint = PointF(ev.rawX, ev.rawY)
+			}
+			MotionEvent.ACTION_MOVE,
+			MotionEvent.ACTION_CANCEL,
+			MotionEvent.ACTION_UP -> {
+				if (ev.pointerCount > 1) {
+					isMultiTouch = true
+					return
+				}
 
-                moveDistance = getDistance(PointF(ev.rawX, ev.rawY), touchPoint)
+				moveDistance = getDistance(PointF(ev.rawX, ev.rawY), touchPoint)
 
-            }
+			}
 		}
 	}
 
 	override fun onDraw(canvas: Canvas?) {
-		translationX = stateItem.focusX
-		translationY = stateItem.focusY
-		scaleY = stateItem.scaleX
-		scaleX = stateItem.scaleY
-		rotation = stateItem.rotationDegree
-		// LogD("onDraw $stateItem")
+		if (translationX != stateItem.focusX) {
+			translationX = stateItem.focusX
+		}
+		if (translationY != stateItem.focusY) {
+			translationY = stateItem.focusY
+		}
+		if (scaleX != stateItem.scaleX) {
+			scaleX = stateItem.scaleX
+		}
+		if (scaleY != stateItem.scaleY) {
+			scaleY = stateItem.scaleY
+		}
+
+		// rotation = stateItem.rotationDegree 회전은 나중에 처리 할 예정
 		super.onDraw(canvas)
 	}
 
@@ -328,7 +357,6 @@ class FlexibleImageView @JvmOverloads constructor(
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 		viewWidth = MeasureSpec.getSize(widthMeasureSpec)
 		viewHeight = MeasureSpec.getSize(heightMeasureSpec)
-		// LogD("onMeasure $viewWidth  $viewHeight")
 	}
 
 	/**
@@ -420,8 +448,6 @@ class FlexibleImageView @JvmOverloads constructor(
 			diffFocusY += Math.abs(rect.bottom - viewHeight)
 		}
 
-		// LogD("computeInBoundary $diffFocusX  $diffFocusY")
-
 		// 변경점이 없으면 아래 로직 패스 한다.
 		if (diffFocusX == 0F && diffFocusY == 0F) {
 			return null
@@ -432,9 +458,9 @@ class FlexibleImageView @JvmOverloads constructor(
 
 	private fun getDistance(point1: PointF, point2: PointF): Double {
 		return sqrt(
-                (point1.x - point2.x).toDouble().pow(2.0) + (point1.y - point2.y).toDouble()
-                        .pow(2.0)
-        )
+				(point1.x - point2.x).toDouble().pow(2.0) + (point1.y - point2.y).toDouble()
+						.pow(2.0)
+		)
 	}
 
 	/**
@@ -442,7 +468,7 @@ class FlexibleImageView @JvmOverloads constructor(
 	 * @param targetX Target X 좌표
 	 * @param targetY Target Y 좌표
 	 */
-	private fun focusTargetAni(targetX: Float, targetY: Float) {
+	private fun handleTargetTranslation(targetX: Float, targetY: Float) {
 		// LogD("Ani $targetX $targetY")
 		val pvhX = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, targetX)
 		val pvhY = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, targetY)
@@ -482,7 +508,7 @@ class FlexibleImageView @JvmOverloads constructor(
 		override fun onScaleEnd(detector: ScaleGestureDetector?) {
 			// 이미지 확대 축소 제한
 			if (prevScale < stateItem.minScale) {
-				centerAndFit()
+				fitCenter()
 			}
 		}
 	}
@@ -508,12 +534,12 @@ class FlexibleImageView @JvmOverloads constructor(
 				// Scale 1이거나 옆에 여백이 있는 경우 원위치
 				if (stateItem.scale == 1F || (stateItem.currentImgWidth < viewWidth
 								|| stateItem.currentImgHeight < viewHeight)) {
-					focusTargetAni(0F, 0F)
+					handleTargetTranslation(0F, 0F)
 				} else {
-					focusTargetAni(
-                            stateItem.focusX.plus(pair.first),
-                            stateItem.focusY.plus(pair.second)
-                    )
+					handleTargetTranslation(
+							stateItem.focusX.plus(pair.first),
+							stateItem.focusY.plus(pair.second)
+					)
 				}
 			}
 		}
