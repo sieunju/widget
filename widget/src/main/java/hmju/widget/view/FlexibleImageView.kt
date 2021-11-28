@@ -5,10 +5,6 @@ import android.animation.PropertyValuesHolder
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
-import android.renderscript.Element
-import android.renderscript.RenderScript
-import android.renderscript.ScriptIntrinsicBlur
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -82,10 +78,6 @@ class FlexibleImageView @JvmOverloads constructor(
 		if (isInEditMode) {
 			setBackgroundColor(Color.BLACK)
 		}
-		val rs = RenderScript.create(context)
-		val script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs))
-		script.setRadius(15F)
-
 	}
 
 	/**
@@ -187,17 +179,6 @@ class FlexibleImageView @JvmOverloads constructor(
 					}
 			)
 			start()
-		}
-	}
-
-	/**
-	 * 배경 Bluer 처리
-	 */
-	fun blurBackground() {
-		if (drawable is BitmapDrawable) {
-			(drawable as BitmapDrawable).run {
-
-			}
 		}
 	}
 
@@ -543,7 +524,5 @@ class FlexibleImageView @JvmOverloads constructor(
 				}
 			}
 		}
-
-
 	}
 }

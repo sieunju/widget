@@ -33,11 +33,13 @@ android {
 
 dependencies {
 
-    implementation deps.kotlin.stdlib
-    implementation deps.kotlin.core
-    implementation deps.androidx.appCompat
-    implementation deps.androidx.constraintLayout
-    implementation deps.androidx.material
+    implementation(deps.kotlin.stdlib)
+    implementation(deps.kotlin.core)
+    implementation(deps.androidx.appCompat)
+    implementation(deps.androidx.constraintLayout)
+    implementation(deps.androidx.material)
+    implementation(deps.androidx.palette)
     implementation(deps.coroutines.base)
     implementation(deps.coroutines.android)
+
 }
