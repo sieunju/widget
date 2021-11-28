@@ -239,3 +239,46 @@
         
         - *영상*  
         ![parallax_example](https://user-images.githubusercontent.com/33802191/134207715-ac351527-0d1d-4611-9305-3033bcfc93fd.gif)
+
+    * ### FlexibleImageView
+        - *간단 설명*
+            - 사진을 Scale 및 Move를 이용해서 저장하고 싶은 이미지를 편집 할수 있는 ImageView 기반 클래스입니다.   
+            참고: 인스타 피드 추가
+        - *xml*
+            - FlexibleImageView는 절대 단독적으로 있으면 안됩니다. FrameLayout 이나 ConstraintLayout 어떤 레이아웃에 감싸야 합니다.   
+            궁금 하시다면 단독적으로 해보시길.. :)
+        ~~~
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clFlexible"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="50dp"
+            android:background="#FFFFFF"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <hmju.widget.view.FlexibleImageView
+                android:id="@+id/imgThumb"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        ~~~
+        - *Public Function*
+            - loadUrl(url : String)
+                - 외부 이미지 주소나 갤러리 이미지 URL을 호출하면 해당 이미지 뷰에 렌더링 처리하는 함수입니다.
+            - centerCrop
+                - 이미지 리소스를 뷰 너비 와 높이를 비율에 맞게 꽉채우는 함수입니다. 
+                - Like ImageView ScaleType: CenterCrop 과 동일 합니다. 
+                - 단, Gesture 를 통해 이미지를 다시 확대하거나 축소 할 수 있습니다.
+            - fitCenter
+                - 이미지 리소스를 뷰 너비 or 높이 둘중하나에 맞춰서 확대 처리하는 함수입니다.
+                - Like ImageView ScaleType: FitCenter 와 동일 합니다.
+                - 단, Gesture 를 통해 이미지를 다시 확대하거나 축소 할 수 있습니다.
+            - captureBitmap(callback : (Bitmap) -> Unit) (확장 함수)
+                - FlexibleImage 를 감싸고 있는 뷰를 기준으로 캡처하여 Bitmap 으로 치환하여 콜백 처리하는 확장 함수입니다.   
+                
+        - *영상*   
+        
+         ![flexibleimageview-test](https://user-images.githubusercontent.com/33802191/143772342-892044a6-eee7-4e12-aecf-28799496ad38.gif)
