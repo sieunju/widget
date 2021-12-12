@@ -109,7 +109,7 @@ class FlexibleImageView @JvmOverloads constructor(
                 val pair = cropBitmap(bitmap)
                 // 비트맵의 주소값이 서로 다른 경우 Recycle 처리
                 if (bitmap !== pair.first && !bitmap.isRecycled) {
-                    bitmap.recycle()
+                    // bitmap.recycle()
                 }
 
                 stateItem.run {
