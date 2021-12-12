@@ -275,9 +275,43 @@
                 - 이미지 리소스를 뷰 너비 or 높이 둘중하나에 맞춰서 확대 처리하는 함수입니다.
                 - Like ImageView ScaleType: FitCenter 와 동일 합니다.
                 - 단, Gesture 를 통해 이미지를 다시 확대하거나 축소 할 수 있습니다.
-            - captureBitmap(callback : (Bitmap) -> Unit) (확장 함수)
-                - FlexibleImage 를 감싸고 있는 뷰를 기준으로 캡처하여 Bitmap 으로 치환하여 콜백 처리하는 확장 함수입니다.   
-                
+             
+        - *Extension Function*
+            - captureBitmap(callback : (Bitmap) -> Unit) (Deprecated)
+                - FlexibleImage 를 감싸고 있는 뷰를 기준으로 캡처하여 Bitmap 으로 치환하여 콜백 처리하는 확장 함수입니다.  
+            - captureBitmap() : Bitmap
+                - FlexibleImage 를 감싸고 있는 뷰를 기준으로 캡처하여 Bitmap 으로 치환하여 리턴하는 확장 함수입니다.
+            - backgroundCaptureBitmap() : Bitmap
+                - FlexibleImage 를 통해 움직인 이미지 좌표를 기준 및 이미지에 사용한 Bitmap 을 가지고 백그라운드 상태로 캡처 할수 있는 확장 함수
+                - Glide ImageLoader 를 이용한 예시입니다. 참고 하시면 되겠습니다 :)
+                    ~~~
+                    Glide.with(requireContext())
+                        .asDrawable()
+                        .load(imageUrl)
+                        .into(object : CustomTarget<Drawable?>() {
+
+                            override fun onResourceReady(
+                                resource: Drawable,
+                                transition: Transition<in Drawable?>?
+                            ) {
+                                val bitmapDrawable = resource as BitmapDrawable
+                                GlobalScope.launch {
+                                    val bitmap = withContext(Dispatchers.IO) {
+                                        backgroundCaptureBitmap(
+                                            bitmapDrawable.bitmap,
+                                            flexibleImage.getStateItem(),
+                                            flexibleCaptureView.width,
+                                            flexibleCaptureView.height
+                                        )
+                                }
+                                withContext(Dispatchers.Main) {
+                                    view.findViewById<AppCompatImageView>(R.id.imgCapture)
+                                        .setImageBitmap(bitmap)
+                                }
+                            }
+                        }
+                    })
+                    ~~~
         - *영상*   
         
          ![flexibleimageview-test](https://user-images.githubusercontent.com/33802191/143772342-892044a6-eee7-4e12-aecf-28799496ad38.gif)
