@@ -5,6 +5,7 @@ import android.animation.PropertyValuesHolder
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -42,7 +43,7 @@ class FlexibleImageView @JvmOverloads constructor(
         const val MAX_LONG_CLICK_DISTANCE = 16
 
         private const val TAG = "FlexibleImageView"
-        private const val DEBUG = true
+        private const val DEBUG = false
         fun LogD(msg: String) {
             if (DEBUG) {
                 Log.d(TAG, msg)
@@ -58,7 +59,7 @@ class FlexibleImageView @JvmOverloads constructor(
         MoveGestureDetector(MoveListener())
     }
 
-    var stateItem = FlexibleStateItem(
+    private var stateItem = FlexibleStateItem(
         scale = 1.0F,
         focusX = 0F,
         focusY = 0F,
@@ -111,11 +112,14 @@ class FlexibleImageView @JvmOverloads constructor(
                     bitmap.recycle()
                 }
 
-                stateItem.imgWidth = (pair.first.width.toFloat() / pair.second).toInt()
-                stateItem.imgHeight = (pair.first.height.toFloat() / pair.second).toInt()
-                stateItem.scale = pair.second
-                stateItem.startScale = pair.second
-                stateItem.minScale = 1F
+                stateItem.run {
+                    imgWidth = (pair.first.width.toFloat() / pair.second).toInt()
+                    imgHeight = (pair.first.height.toFloat() / pair.second).toInt()
+                    scale = pair.second
+                    startScale = pair.second
+                    minScale = 1F
+                }
+
                 setImageBitmap(pair.first)
             }
         }
@@ -192,6 +196,27 @@ class FlexibleImageView @JvmOverloads constructor(
     }
 
     /**
+     * 해당 이미지의 비트맵과 현재까지 이동한 좌표에 대한 정보를
+     * 리턴하는 함수
+     * @return 이미지의 현재 좌표
+     */
+    fun getStateItem(): RectF? {
+        return computeImageLocation()
+    }
+
+    /**
+     * 해당 이미지 비트맵 Getter 처리함수
+     */
+    @Throws(IllegalArgumentException::class)
+    fun getImageBitmap(): Bitmap {
+        if (drawable is BitmapDrawable) {
+            return (drawable as BitmapDrawable).bitmap
+        } else {
+            throw IllegalArgumentException("Not Bitmap Drawable")
+        }
+    }
+
+    /**
      * View 및 데이터 리셋 처리 함수
      */
     private fun resetView() {
@@ -204,7 +229,7 @@ class FlexibleImageView @JvmOverloads constructor(
 
     /**
      * Get Row Point
-     * @param ev 터이 이벤트!
+     * @param ev 터치 이벤트!
      * @param index 터치한 인덱스
      * @param point Current Point
      */
@@ -228,7 +253,7 @@ class FlexibleImageView @JvmOverloads constructor(
         point.set(x, y)
     }
 
-    @SuppressLint("Recycle")
+    @SuppressLint("Recycle", "ClickableViewAccessibility")
     override fun onTouchEvent(ev: MotionEvent): Boolean {
         if (!isEnabled) {
             return false
@@ -359,14 +384,14 @@ class FlexibleImageView @JvmOverloads constructor(
             var xScale: Float = viewWidth.toFloat() / bitmap.width.toFloat()
             var yScale: Float = viewHeight.toFloat() / bitmap.height.toFloat()
             // 가장 큰 비율 가져옴
-            var maxScale = Math.max(xScale, yScale)
+            var maxScale = xScale.coerceAtLeast(yScale)
 
             val scaledWidth = maxScale * bitmap.width
             val scaledHeight = maxScale * bitmap.height
 
             xScale = scaledWidth / viewWidth.toFloat()
             yScale = scaledHeight / viewHeight.toFloat()
-            maxScale = Math.max(xScale, yScale)
+            maxScale = xScale.coerceAtLeast(yScale)
             Bitmap.createScaledBitmap(
                 bitmap,
                 scaledWidth.toInt(),
@@ -374,10 +399,6 @@ class FlexibleImageView @JvmOverloads constructor(
                 true
             ) to maxScale
         }
-    }
-
-    override fun setImageBitmap(bm: Bitmap?) {
-        super.setImageBitmap(bm)
     }
 
     /**
@@ -419,10 +440,9 @@ class FlexibleImageView @JvmOverloads constructor(
      * View 영역 밖으로 나갔는지 유무 함수.
      * @param rect Current Image Location
      */
-    private fun computeInBoundary(rect: RectF): Pair<Float, Float>? {
+    private fun computeInBoundary(rect: RectF): Pair<Float, Float> {
         var diffFocusX = 0F
         var diffFocusY = 0F
-
 
         // 좌우 모자란 부분이 있는 경우 -> X 좌표 가운데
         // MinScale 이 1.0 이하인 경우에만 존재
@@ -431,26 +451,34 @@ class FlexibleImageView @JvmOverloads constructor(
             return Pair(-stateItem.focusX, -stateItem.focusY)
         }
 
-        if (rect.width() < viewWidth) {
-            // 좌우 공간이 부족한 경우
-            diffFocusX = -stateItem.focusX
-        } else if (rect.left > 0) {
-            // 왼쪽에 빈공간이 있는 경우
-            diffFocusX = -Math.abs(rect.left)
-        } else if (rect.right < viewWidth) {
-            // 오른쪽에 빈공간이 있는 경우
-            diffFocusX = Math.abs(rect.right - viewWidth)
+        when {
+            rect.width() < viewWidth -> {
+                // 좌우 공간이 부족한 경우
+                diffFocusX = -stateItem.focusX
+            }
+            rect.left > 0 -> {
+                // 왼쪽에 빈공간이 있는 경우
+                diffFocusX = -abs(rect.left)
+            }
+            rect.right < viewWidth -> {
+                // 오른쪽에 빈공간이 있는 경우
+                diffFocusX = abs(rect.right - viewWidth)
+            }
         }
 
-        if (rect.height() < viewHeight) {
-            // 상하 공간이 부족한 경우
-            diffFocusY = -stateItem.focusY
-        } else if (rect.top > 0) {
-            // 위쪽에 빈공간이 있는 경우
-            diffFocusY = -Math.abs(rect.top)
-        } else if (rect.bottom < viewHeight) {
-            // 아래쪽에 빈공간이 있는 경우
-            diffFocusY = Math.abs(rect.bottom - viewHeight)
+        when {
+            rect.height() < viewHeight -> {
+                // 상하 공간이 부족한 경우
+                diffFocusY = -stateItem.focusY
+            }
+            rect.top > 0 -> {
+                // 위쪽에 빈공간이 있는 경우
+                diffFocusY = -abs(rect.top)
+            }
+            rect.bottom < viewHeight -> {
+                // 아래쪽에 빈공간이 있는 경우
+                diffFocusY = abs(rect.bottom - viewHeight)
+            }
         }
 
         return Pair(diffFocusX, diffFocusY)
@@ -488,7 +516,7 @@ class FlexibleImageView @JvmOverloads constructor(
 
     inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
-        var prevScale = 0.5F
+        private var prevScale = 0.5F
 
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             val scale = stateItem.scale * detector.scaleFactor
