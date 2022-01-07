@@ -8,8 +8,15 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.RectF
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.ColorInt
+import androidx.annotation.LayoutRes
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import androidx.lifecycle.LifecycleOwner
+import androidx.viewpager2.widget.ViewPager2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -158,4 +165,43 @@ fun backgroundCaptureBitmap(
         drawBitmap(tempBitmap, null, srcRectF, null)
     }
     return bitmap
+}
+
+/**
+ * isFakeDragging Check Current Item 처리 함수
+ */
+fun ViewPager2.currentItem(pos: Int, smoothScroll: Boolean = true) {
+    if (isFakeDragging) {
+        endFakeDrag()
+    }
+    setCurrentItem(pos, smoothScroll)
+}
+
+/**
+ * CustomView initBinding Function..
+ * Invalid LayoutId or Not LifecycleOwner Extension
+ * T -> Not Support Class
+ * @param layoutId View Layout Id
+ * @param lifecycleOwner View LifecycleOwner
+ * @param isAdd 이 함수 내에서 View 를 추가 할건지? Default true,
+ * @param apply 고차 함수. (Optional)
+ */
+inline fun <reified T : ViewDataBinding> ViewGroup.initBinding(
+    @LayoutRes layoutId: Int,
+    lifecycleOwner: LifecycleOwner,
+    isAdd: Boolean = true,
+    apply: T.() -> Unit = {}
+): T {
+    val viewRoot = LayoutInflater.from(context).inflate(layoutId, this, false)
+    val binding: T = DataBindingUtil.bind(viewRoot)
+        ?: throw NullPointerException("Invalid LayoutId")
+    binding.lifecycleOwner = lifecycleOwner
+
+    if (isAdd) {
+        addView(binding.root)
+    }
+
+    binding.apply(apply)
+
+    return binding
 }
