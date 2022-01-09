@@ -11,7 +11,6 @@ import androidx.annotation.Dimension
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.viewpager2.widget.ViewPager2
-import hmju.widget.BR
 import hmju.widget.R
 import hmju.widget.databinding.VChildLineTabLayoutBinding
 import hmju.widget.extensions.currentItem
@@ -114,7 +113,6 @@ class LinePagerTabLayout @JvmOverloads constructor(
     override fun onCreate() {
         super.onCreate()
         currentPosition.observe(this, {
-            LogD("CurrPosition $it")
             updateTab(it)
         })
     }
@@ -225,8 +223,8 @@ class LinePagerTabLayout @JvmOverloads constructor(
                 false
             ) {
                 this.lifecycleOwner = this@LinePagerTabLayout
-                setVariable(BR.listener, tabListener)
-                setVariable(BR.item, data)
+                setVariable(hmju.widget.BR.listener, tabListener)
+                setVariable(hmju.widget.BR.item, data)
                 data.view = this.root
 
                 // 특정 탭 레이아웃들 인디게이터 사이즈 처리
@@ -289,7 +287,6 @@ class LinePagerTabLayout @JvmOverloads constructor(
     }
 
     override fun onPageScrollStated(state: Int) {
-        LogD("onPageScrollStated $state")
         if (ViewPager2.SCROLL_STATE_IDLE == state) {
             currentPosition.value = currentPos
         }
