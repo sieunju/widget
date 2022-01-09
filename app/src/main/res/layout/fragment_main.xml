@@ -46,6 +46,13 @@
             android:layout_gravity="center"
             android:text="flexible" />
 
+        <Button
+            android:id="@+id/tabLayout"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:text="tabLayout"
+            android:layout_height="wrap_content"/>
+
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>

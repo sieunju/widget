@@ -1,6 +1,7 @@
 package hmju.widget.extensions
 
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.res.Resources
 import android.content.res.TypedArray
 import android.graphics.Bitmap
@@ -15,6 +16,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.widget.ViewPager2
 import kotlinx.coroutines.Dispatchers
@@ -85,7 +87,11 @@ fun Context.isNavigationBar(): Boolean {
     return id > 0 && resources.getBoolean(id)
 }
 
-// MultiPle Null Check.
+/**
+ * 외 / 내부 여러 변수들의 NullCheck 를 하고자 무분별한 ?.let or ?.run 남용을 막기위해
+ * 만든 함수 3개의 변수를 체크하는 함수
+ * @return let 확장함수와 동일하게 고차함수 중간에 리턴 형태를 변경할수 있다.
+ */
 inline fun <A, B, R> multiNullCheck(a: A?, b: B?, function: (A, B) -> R): R? {
     return if (a != null && b != null) {
         function(a, b)
@@ -94,10 +100,33 @@ inline fun <A, B, R> multiNullCheck(a: A?, b: B?, function: (A, B) -> R): R? {
     }
 }
 
-// MultiPle Null Check.
+/**
+ * 외 / 내부 여러 변수들의 NullCheck 를 하고자 무분별한 ?.let or ?.run 남용을 막기위해
+ * 만든 함수 3개의 변수를 체크하는 함수
+ * @return let 확장함수와 동일하게 고차함수 중간에 리턴 형태를 변경할수 있다.
+ */
 inline fun <A, B, C, R> multiNullCheck(a: A?, b: B?, c: C?, function: (A, B, C) -> R): R? {
     return if (a != null && b != null && c != null) {
         function(a, b, c)
+    } else {
+        null
+    }
+}
+
+/**
+ * 외 / 내부 여러 변수들의 NullCheck 를 하고자 무분별한 ?.let or ?.run 남용을 막기위해
+ * 만든 함수 3개의 변수를 체크하는 함수
+ * @return let 확장함수와 동일하게 고차함수 중간에 리턴 형태를 변경할수 있다.
+ */
+inline fun <A, B, C, D, R> multiNullCheck(
+    a: A?,
+    b: B?,
+    c: C?,
+    d: D?,
+    function: (A, B, C, D) -> R
+): R? {
+    return if (a != null && b != null && c != null && d != null) {
+        function(a, b, c, d)
     } else {
         null
     }
@@ -204,4 +233,23 @@ inline fun <reified T : ViewDataBinding> ViewGroup.initBinding(
     binding.apply(apply)
 
     return binding
+}
+
+/**
+ * FragmentActivity 가져오는 View 기반 확장 함수
+ * @return FragmentActivity Nullable
+ */
+fun View.getFragmentActivity(): FragmentActivity? {
+    if (context is FragmentActivity) {
+        return context as FragmentActivity
+    } else if (context is ContextWrapper) {
+        var tmpContext = this.context
+        while (tmpContext is ContextWrapper) {
+            if (tmpContext is FragmentActivity) {
+                return tmpContext
+            }
+            tmpContext = tmpContext.baseContext
+        }
+    }
+    return null
 }

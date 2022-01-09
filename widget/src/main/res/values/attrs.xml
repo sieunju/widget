@@ -101,14 +101,19 @@
         <attr name="tabIsChangeTextStyle" format="boolean" />
         <attr name="tabTextColor" format="color" />
         <attr name="tabDisableTextColor" format="color" />
+        <attr name="tabBottomLineColor" format="color" />
         <attr name="tabBottomLineHeight" format="dimension" />
     </declare-styleable>
     <!-- [e] BaseTabLayout Style -->
 
+    <!-- [s] LinePagerTabLayout Attr -->
     <declare-styleable name="LinePagerTabLayout">
         <attr name="tabIndicatorHeight" format="dimension" />
         <attr name="tabIndicatorColor" format="color" />
+        <attr name="tabIndicatorCorner" format="dimension" />
         <attr name="tabScrollOffset" format="dimension" />
+        <attr name="tabIndicatorPadding" format="dimension" />
     </declare-styleable>
+    <!-- [e] LinePagerTabLayout Attr -->
 
 </resources>

@@ -1,13 +1,14 @@
 package hmju.widget.binding
 
+import android.graphics.Typeface
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.Dimension
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.BindingAdapter
 import androidx.viewpager2.widget.ViewPager2
 import hmju.widget.tablayout.LinePagerTabLayout
 import hmju.widget.tablayout.PagerTabItem
-import hmju.widget.tablayout.PagerTabType
 
 /**
  * Description : CustomBindingAdapter
@@ -54,6 +55,35 @@ object CustomBindingAdapter {
         this.isSelected = isSelected == true
     }
 
+    @JvmStatic
+    @BindingAdapter("android:visibility")
+    fun View.setVisibility(
+        isVisible: Boolean?
+    ) {
+        visibility = if (isVisible == true) View.VISIBLE else View.GONE
+    }
+
+    /**
+     * set Typeface TextView
+     */
+    @JvmStatic
+    @BindingAdapter("android:textStyle")
+    fun setTextViewTypeFace(
+        textView: AppCompatTextView,
+        style: String
+    ) {
+        when (style) {
+            "bold" -> {
+                textView.setTypeface(textView.typeface, Typeface.BOLD)
+            }
+            "normal" -> {
+                textView.setTypeface(textView.typeface, Typeface.NORMAL)
+            }
+            else -> {
+            }
+        }
+    }
+
     /**
      * LinePagerTabLayout Set DataList 처리 함수
      * @param viewPager CurrentViewPager
@@ -62,16 +92,15 @@ object CustomBindingAdapter {
      * @param fixedSize 고정으로 가득 채울 사이즈
      */
     @JvmStatic
-    @BindingAdapter(value = ["viewPager", "type", "menuList", "fixedSize"], requireAll = false)
+    @BindingAdapter(value = ["viewPager", "menuList", "fixedSize"], requireAll = false)
     fun setLineTabDataList(
         view: LinePagerTabLayout,
         viewPager: ViewPager2,
-        type: PagerTabType?,
         dataList: List<PagerTabItem>?,
         fixedSize: Int?
     ) {
         view.viewPager = viewPager
         view.fixedSize = fixedSize ?: -1
-        view.setDataList(type ?: PagerTabType.DEFAULT, dataList)
+        view.setDataList(dataList)
     }
 }

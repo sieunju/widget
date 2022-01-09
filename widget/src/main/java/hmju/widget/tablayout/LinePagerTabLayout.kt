@@ -1,21 +1,23 @@
 package hmju.widget.tablayout
 
 import android.content.Context
-import android.content.ContextWrapper
-import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import androidx.annotation.Dimension
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.FragmentActivity
-import hmju.widget.R
+import androidx.lifecycle.MutableLiveData
+import androidx.viewpager2.widget.ViewPager2
 import hmju.widget.BR
+import hmju.widget.R
+import hmju.widget.databinding.VChildLineTabLayoutBinding
 import hmju.widget.extensions.currentItem
+import hmju.widget.extensions.getFragmentActivity
 import hmju.widget.extensions.initBinding
+import hmju.widget.extensions.multiNullCheck
 
 /**
  * Description : Line Pager TabLayout
@@ -30,7 +32,7 @@ class LinePagerTabLayout @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "LinePagerTabLayout"
-        private const val DEBUG = false
+        private const val DEBUG = true
         fun LogD(msg: String) {
             if (DEBUG) {
                 Log.d(TAG, msg)
@@ -47,14 +49,21 @@ class LinePagerTabLayout @JvmOverloads constructor(
                 currentPos = pos
                 // ViewPager Animation 인경우
                 viewPager?.currentItem(pos, true)
-                updateTab(pos)
             }
         }
     }
 
+    // [s] Attribute Set Variable
     @Dimension
-    private var indicatorHeight: Float = -1F
+    private val indicatorHeight: Float
+
+    @Dimension
+    private val indicatorCorner: Float
     private var scrollingOffset = 0
+
+    @Dimension
+    private val indicatorPadding: Float
+    // [e] Attribute Set Variable
 
     private val indicatorPaint: Paint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -64,6 +73,7 @@ class LinePagerTabLayout @JvmOverloads constructor(
 
     private val tabContainer: hmju.widget.databinding.VLineTabLayoutBinding
     private val dataList: MutableList<PagerTabItem> by lazy { mutableListOf() }
+    private val currentPosition: MutableLiveData<Int> by lazy { MutableLiveData() }
 
     var fixedSize: Int = -1
 
@@ -71,87 +81,116 @@ class LinePagerTabLayout @JvmOverloads constructor(
     private var currentPos: Int = 0 // 현재 위치값.
     private var posScrollOffset: Float = -1F // Scroll Offset.
     private var lastScrollX = 0
+    private val indicatorRectF = RectF()
+    private val bottomLineRectF = RectF()
 
     init {
         setWillNotDraw(false)
 
-        // 속성 값 세팅
-        attrs?.run {
-            val attr: TypedArray =
-                context.obtainStyledAttributes(this, R.styleable.LinePagerTabLayout)
-            try {
-                val color = attr.getColor(
-                    R.styleable.LinePagerTabLayout_tabIndicatorColor,
-                    NO_ID
-                )
-                if (color != NO_ID) {
-                    indicatorPaint.color = color
-                }
-                indicatorHeight =
-                    attr.getDimension(R.styleable.LinePagerTabLayout_tabIndicatorHeight, -1F)
-                scrollingOffset = attr.getDimensionPixelOffset(
-                    R.styleable.LinePagerTabLayout_tabScrollOffset,
-                    0
-                )
-            } finally {
-                attr.recycle()
+        context.obtainStyledAttributes(attrs, R.styleable.LinePagerTabLayout).run {
+            val indicatorColor = getColor(
+                R.styleable.LinePagerTabLayout_tabIndicatorColor,
+                NO_ID
+            )
+            if (indicatorColor != NO_ID) {
+                indicatorPaint.color = indicatorColor
             }
+
+            indicatorHeight = getDimension(R.styleable.LinePagerTabLayout_tabIndicatorHeight, -1F)
+            indicatorCorner = getDimension(R.styleable.LinePagerTabLayout_tabIndicatorCorner, 0F)
+            indicatorPadding = getDimension(R.styleable.LinePagerTabLayout_tabIndicatorPadding, 0F)
+            scrollingOffset =
+                getDimensionPixelOffset(R.styleable.LinePagerTabLayout_tabScrollOffset, 0)
+            recycle()
         }
 
         tabContainer = initBinding(R.layout.v_line_tab_layout, this)
 
-        if (bottomLineHeight == NO_ID) {
-            tabContainer.isLine = false
-        } else {
-            tabContainer.isLine = true
-            tabContainer.lineHeight = bottomLineHeight
-        }
-
         if (!isInEditMode) {
-            // DefaultActivity
-            if (context is FragmentActivity) {
-                context.lifecycle.addObserver(this)
-            } else {
-                val baseContext = (context as ContextWrapper).baseContext
-                if (baseContext is FragmentActivity) {
-                    baseContext.lifecycle.addObserver(this)
-                }
-            }
+            this.getFragmentActivity()?.lifecycle?.addObserver(this)
         }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        currentPosition.observe(this, {
+            LogD("CurrPosition $it")
+            updateTab(it)
+        })
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
         if (tabCount == 0 || indicatorHeight == -1F) return
+        if (canvas == null) return
 
-        // RootView 에서 Draw 해서 표현
-        with(tabContainer.linerLayout) {
-            val currentTab: View? =
-                if (this.childCount > currentPos) getChildAt(currentPos) else null
-            var lineLeft: Float = currentTab?.left?.toFloat() ?: 0F
-            var lineRight: Float = currentTab?.right?.toFloat() ?: 0F
+        drawBottomLine(canvas)
+        drawLine(canvas, currentPos, posScrollOffset)
+    }
 
-            LogD("LineLeft $lineLeft LineRight $lineRight Offset ${posScrollOffset}")
+    /**
+     * DrawLine
+     */
+    private fun drawLine(canvas: Canvas, currPos: Int, scrollOffset: Float) {
+        // 초기 Top or Bottom 셋팅
+        if (indicatorRectF.top == 0F && height > 0) {
+            indicatorRectF.top = height - indicatorHeight
+            indicatorRectF.bottom = height.toFloat()
+        }
 
-            // Scroll 하는 경우 Indicator 자연스럽게 넘어가기 위한 로직.
-            if (posScrollOffset > 0F && currentPos < tabCount - 1) {
-                val nextTab = getChildAt(currentPos + 1)
-                lineLeft = (posScrollOffset * nextTab.left + (1F - posScrollOffset) * lineLeft)
-                lineRight = (posScrollOffset * nextTab.right + (1F - posScrollOffset) * lineRight)
+        // Scroll 할때만 처리
+        if (scrollOffset > 0F && currentPos < tabCount.minus(1)) {
+            tabContainer.linerLayout.runCatching {
+                multiNullCheck(
+                    dataList[currPos].view,
+                    dataList[currPos.plus(1)].view
+                ) { currTab, nextTab ->
+                    var left =
+                        (scrollOffset * nextTab.left
+                                + (1F - scrollOffset) * currTab.left)
+                    var right =
+                        (scrollOffset * nextTab.right
+                                + (1F - scrollOffset) * currTab.right)
+                    left += indicatorPadding
+                    right -= indicatorPadding
+
+                    indicatorRectF.left = left
+                    indicatorRectF.right = right
+                }
             }
+        }
 
-            canvas?.drawRect(
-                lineLeft,
-                height - indicatorHeight,
-                lineRight,
-                height.toFloat(),
+        // Timber.d("Draw Rect $indicatorRectF")
+        // Indicator Draw
+        if (indicatorCorner > 0) {
+            canvas.drawRoundRect(
+                indicatorRectF,
+                indicatorCorner,
+                indicatorCorner,
+                indicatorPaint
+            )
+        } else {
+            canvas.drawRect(
+                indicatorRectF,
                 indicatorPaint
             )
         }
     }
 
-    fun setDataList(childLayoutType: PagerTabType, list: List<PagerTabItem>?) {
+    private fun drawBottomLine(canvas: Canvas) {
+        // BottomLine Draw
+        if (bottomLineHeight > 0F) {
+            canvas.drawRect(bottomLineRectF, bottomLinePaint)
+            canvas.save()
+        }
+    }
+
+    /**
+     * Set Data List
+     * @param list 데이터 리스트
+     */
+    fun setDataList(list: List<PagerTabItem>?) {
         if (list == null) return
 
         tabCount = list.size
@@ -179,23 +218,29 @@ class LinePagerTabLayout @JvmOverloads constructor(
             data.disableTxtColor = disableTxtColor
 
             data.txtSize = textSize
-            data.isChangeTextStyle = isChangeTextStyle
 
-            val itemBinding = initBinding<ViewDataBinding>(
-                childLayoutType.layoutId,
+            initBinding<VChildLineTabLayoutBinding>(
+                R.layout.v_child_line_tab_layout,
                 this,
                 false
             ) {
+                this.lifecycleOwner = this@LinePagerTabLayout
                 setVariable(BR.listener, tabListener)
                 setVariable(BR.item, data)
+                data.view = this.root
+
+                // 특정 탭 레이아웃들 인디게이터 사이즈 처리
+                if (index == 0) {
+                    this.root.post {
+                        indicatorRectF.left = this.root.left.plus(indicatorPadding)
+                        indicatorRectF.right = this.root.right.minus(indicatorPadding)
+                        this@LinePagerTabLayout.invalidate()
+                    }
+                }
+                tabContainer.linerLayout.addView(this.root)
             }
-
-            (itemBinding.root as LinearLayoutCompat).layoutParams = layoutParams
-            tabContainer.linerLayout.addView(itemBinding.root)
-
-            // Redraw
-            invalidate()
         }
+
         dataList.clear()
         dataList.addAll(list)
     }
@@ -203,7 +248,7 @@ class LinePagerTabLayout @JvmOverloads constructor(
     /**
      * Update Tab Style.
      */
-    fun updateTab(pos: Int) {
+    private fun updateTab(pos: Int) {
         dataList.forEach { data ->
             data.isSelected?.value = data.pos == pos
         }
@@ -230,11 +275,7 @@ class LinePagerTabLayout @JvmOverloads constructor(
         }
     }
 
-    override fun onPageSelect(pos: Int) {
-        LogD("onPageSelect $pos CurrentPos $currentPos")
-
-        updateTab(pos)
-    }
+    override fun onPageSelect(pos: Int) {}
 
     override fun onPageScroll(pos: Int, offset: Float) {
         currentPos = pos
@@ -248,8 +289,9 @@ class LinePagerTabLayout @JvmOverloads constructor(
     }
 
     override fun onPageScrollStated(state: Int) {
-//        if (ViewPager2.SCROLL_STATE_IDLE == state) {
-//            updateTab(currentPos)
-//        }
+        LogD("onPageScrollStated $state")
+        if (ViewPager2.SCROLL_STATE_IDLE == state) {
+            currentPosition.value = currentPos
+        }
     }
 }
