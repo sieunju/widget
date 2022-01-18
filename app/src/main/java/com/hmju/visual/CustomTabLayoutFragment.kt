@@ -39,10 +39,10 @@ class CustomTabLayoutFragment : Fragment(R.layout.fragment_custom_tab_layout) {
             GlobalScope.launch(Dispatchers.Main) {
                 val tabList = mutableListOf<PagerTabItem>()
                 val colorList = mutableListOf<Int>()
-                tabList.add(PagerTabItem("홈"))
-                tabList.add(PagerTabItem("브랜드"))
-                tabList.add(PagerTabItem("세일"))
-                tabList.add(PagerTabItem("랭킹랭킹"))
+                tabList.add(PagerTabItem("TAB1"))
+                tabList.add(PagerTabItem("TAB2"))
+                tabList.add(PagerTabItem("TAB3"))
+                tabList.add(PagerTabItem("TAB4"))
 
                 colorList.add(Color.WHITE)
                 colorList.add(Color.WHITE)

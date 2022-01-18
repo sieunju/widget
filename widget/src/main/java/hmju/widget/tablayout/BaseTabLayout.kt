@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.HorizontalScrollView
 import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import androidx.viewpager2.widget.ViewPager2
@@ -28,6 +27,10 @@ abstract class BaseTabLayout @JvmOverloads constructor(
 
     interface Listener {
         fun onTabClick(pos: Int, view: View)
+    }
+
+    interface TabClickListener {
+        fun onTabClick(pos: Int)
     }
 
     abstract fun onPageSelect(pos: Int)
@@ -104,18 +107,12 @@ abstract class BaseTabLayout @JvmOverloads constructor(
             // 룩핀 탭 기본 스타일로 셋팅
             textSize = getDimensionPixelSize(R.styleable.BaseTabLayout_tabTextSize, 16.dp)
             isChangeTextStyle = getBoolean(R.styleable.BaseTabLayout_tabIsChangeTextStyle, true)
-            enableTxtColor = getColor(
-                R.styleable.BaseTabLayout_tabTextColor,
-                ContextCompat.getColor(context, android.R.color.black)
-            )
+            enableTxtColor = getColor(R.styleable.BaseTabLayout_tabTextColor, Color.BLACK)
             disableTxtColor =
-                getColor(
-                    R.styleable.BaseTabLayout_tabDisableTextColor,
-                    ContextCompat.getColor(context, android.R.color.darker_gray)
-                )
+                getColor(R.styleable.BaseTabLayout_tabDisableTextColor, Color.GRAY)
             bottomLineHeight =
                 getDimension(R.styleable.BaseTabLayout_tabBottomLineHeight, 0F)
-            bottomLinePaint.color = getColor(R.styleable.BaseTabLayout_tabBottomLineColor, NO_ID)
+            bottomLinePaint.color = getColor(R.styleable.BaseTabLayout_tabBottomLineColor, Color.LTGRAY)
 
             recycle()
         }
@@ -134,8 +131,7 @@ abstract class BaseTabLayout @JvmOverloads constructor(
             Lifecycle.Event.ON_RESUME -> onResume()
             Lifecycle.Event.ON_STOP -> onStop()
             Lifecycle.Event.ON_DESTROY -> onDestroy()
-            else -> {
-            }
+            else -> {}
         }
     }
 

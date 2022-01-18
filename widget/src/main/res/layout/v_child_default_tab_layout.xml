@@ -14,26 +14,19 @@
         <variable
             name="listener"
             type="hmju.widget.tablayout.BaseTabLayout.Listener" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:onClick="@{(v)->listener.onTabClick(item.pos,v)}"
-        android:orientation="horizontal"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:onClick="@{(v)->listener.onTabClick(item.pos,v)}">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{item.title}"
-            android:textColor="@{item.isSelected == true ? item.txtColor : item.disableTxtColor}"
-            android:textSize="@{item.txtSize}"
-            android:textStyle='@{item.isSelected == true ? "bold" : "medium"}'
-            app:isSelected="@{item.isSelected}"
+            android:textColor="@{item.isSelected() == true ? item.txtColor : item.disableTxtColor}"
+            android:textStyle='@{item.isSelected() == true ? "bold" : "normal"}'
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -41,6 +34,4 @@
             tools:text="제목텝" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </layout>

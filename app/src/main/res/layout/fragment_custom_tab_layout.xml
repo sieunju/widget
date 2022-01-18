@@ -13,6 +13,8 @@
         app:tabIndicatorCorner="2dp"
         app:tabIndicatorHeight="3dp"
         app:tabIndicatorPadding="3dp"
+        app:tabLineDivider="10dp"
+        app:tabLineSideSpace="20dp"
         app:tabType="scrollable" />
 
     <androidx.viewpager2.widget.ViewPager2

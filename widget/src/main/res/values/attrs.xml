@@ -91,7 +91,7 @@
     </declare-styleable>
     <!-- [e] ParallaxView Attr -->
 
-    <!-- [s] BaseTabLayout Style -->
+    <!-- [s] BaseTabLayout Attr -->
     <declare-styleable name="BaseTabLayout">
         <attr name="tabType" format="enum">
             <enum name="fixed" value="0" />
@@ -104,7 +104,7 @@
         <attr name="tabBottomLineColor" format="color" />
         <attr name="tabBottomLineHeight" format="dimension" />
     </declare-styleable>
-    <!-- [e] BaseTabLayout Style -->
+    <!-- [e] BaseTabLayout Attr -->
 
     <!-- [s] LinePagerTabLayout Attr -->
     <declare-styleable name="LinePagerTabLayout">
@@ -113,6 +113,8 @@
         <attr name="tabIndicatorCorner" format="dimension" />
         <attr name="tabScrollOffset" format="dimension" />
         <attr name="tabIndicatorPadding" format="dimension" />
+        <attr name="tabLineSideSpace" format="dimension"/>
+        <attr name="tabLineDivider" format="dimension"/>
     </declare-styleable>
     <!-- [e] LinePagerTabLayout Attr -->
 

@@ -29,7 +29,7 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8
     }
     buildFeatures {
-        dataBinding = true
+        dataBinding true
     }
 }
 
@@ -44,4 +44,6 @@ dependencies {
     implementation(deps.coroutines.base)
     implementation(deps.coroutines.android)
 
+    implementation(deps.lifecycle.base)
+    implementation(deps.lifecycle.livedata)
 }
