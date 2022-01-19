@@ -12,6 +12,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.viewpager2.widget.ViewPager2
 import hmju.widget.extensions.getFragmentActivity
+import hmju.widget.indicator.LineIndicator
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -25,16 +26,18 @@ import java.util.concurrent.TimeUnit
 @SuppressLint("ClickableViewAccessibility")
 class AutoScrollMediator(
     private val viewPager: ViewPager2,
-    private val delayTime: Long = 3000L
+    private val delayTime: Long = 3500L
 ) : LifecycleObserver {
     private var isStopByTouch = false
     private var disposable: Disposable? = null
     private var activity: FragmentActivity? = null
+        set(value) {
+            value?.lifecycle?.addObserver(this)
+            field = value
+        }
 
     init {
-        activity = viewPager.getFragmentActivity()?.apply {
-            lifecycle.addObserver(this@AutoScrollMediator)
-        }
+        activity = viewPager.getFragmentActivity()
 
         // ViewPager2 Touch Listener
         viewPager.getChildAt(0).setOnTouchListener { v, event ->
@@ -61,16 +64,19 @@ class AutoScrollMediator(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun onResume() {
+        LineIndicator.LogD("onResume")
         startAutoScroll()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun onStop() {
+        LineIndicator.LogD("onStop")
         stopAutoScroll()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun onDestroy() {
+        LineIndicator.LogD("onStop")
         activity?.lifecycle?.removeObserver(this)
     }
 
@@ -130,15 +136,5 @@ class AutoScrollMediator(
         animator.interpolator = interpolator
         animator.duration = duration
         animator.start()
-    }
-
-    /**
-     * AddObserver
-     * @param activity 자동으로 추가해주는 Observer 에서 Activity 찾지 못하는 경우
-     * 수동으로 처리하는 함수 like.. Hilt 를 사용하는 경우 기본 getFragmentActivity 확장함수에서는
-     * 찾지 못함.
-     */
-    fun addObserver(activity: FragmentActivity) {
-        activity.lifecycle.addObserver(this)
     }
 }

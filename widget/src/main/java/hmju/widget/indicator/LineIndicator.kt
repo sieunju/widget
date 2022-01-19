@@ -5,8 +5,10 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.util.Log
+import androidx.annotation.Dimension
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.viewpager2.widget.ViewPager2
 import hmju.widget.R
@@ -50,7 +52,9 @@ class LineIndicator @JvmOverloads constructor(
             }
             field = value
         }
-    var size: Int = 0
+
+    // 인디게이터를 표시할 데이터 사이즈
+    var contentsSize: Int = 0
         set(value) {
             LogD("Width $width")
             if (width > 0) {
@@ -64,8 +68,11 @@ class LineIndicator @JvmOverloads constructor(
     private var posScrollOffset: Float = -1F
 
     // [s] Attribute Set Variable
-    protected var type: Type = Type.FILL
-    protected var isInfinite: Boolean = false
+    private var type: Type = Type.FILL
+    private var isInfinite: Boolean = false
+
+    @Dimension
+    private val indicatorCorner: Float
     // [e] Attribute Set Variable
 
     init {
@@ -76,25 +83,30 @@ class LineIndicator @JvmOverloads constructor(
             isInfinite = getBoolean(R.styleable.LineIndicator_lineIndicatorIsInfinite, false)
             indicatorPaint.color =
                 getColor(R.styleable.LineIndicator_lineIndicatorColor, Color.BLACK)
-            setBackgroundColor(
-                getColor(
-                    R.styleable.LineIndicator_lineIndicatorBgColor,
-                    Color.LTGRAY
-                )
-            )
+            indicatorCorner = getDimension(R.styleable.LineIndicator_lineIndicatorCorner, 0F)
+            val bgColor = getColor(R.styleable.LineIndicator_lineIndicatorBgColor, Color.LTGRAY)
+
+            // BG 도 코너 맥이기
+            if (indicatorCorner > 0) {
+                background = GradientDrawable(
+                    GradientDrawable.Orientation.BL_TR,
+                    intArrayOf(bgColor, bgColor)
+                ).apply {
+                    cornerRadius = indicatorCorner
+                }
+            } else {
+                setBackgroundColor(bgColor)
+            }
+
             recycle()
         }
 
-        post {
-            indicatorRectF.top = 0F
-            indicatorRectF.left = 0F
-            indicatorRectF.bottom = height.toFloat()
-        }
+        clipToOutline = true
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        if (canvas == null || size == 0) return
+        if (canvas == null || contentsSize == 0) return
 
         if (indicatorRectF.top == 0F && height > 0) {
             indicatorRectF.top = 0F
@@ -103,28 +115,93 @@ class LineIndicator @JvmOverloads constructor(
 
         // Unit Width 설정
         if (unitWidth == 0) {
-            unitWidth = (width.toFloat() / size.toFloat()).toInt()
-            LogD("onDraw Width $unitWidth")
+            unitWidth = (width.toFloat() / contentsSize.toFloat()).toInt()
         }
 
         if (type == Type.FILL) {
-            drawIndicatorFill(canvas, currentPos, posScrollOffset)
+            computeIndicatorFill(getRealPosition(currentPos), posScrollOffset)
         } else {
-            drawIndicatorUnit(canvas, currentPos, posScrollOffset)
+            computeIndicatorUnit(getRealPosition(currentPos), posScrollOffset)
+        }
+
+        drawIndicator(canvas)
+    }
+
+    /**
+     * 인디게이터 가득 채우는 타입 게산
+     * 계산후 @see [indicatorRectF] 에 값을 셋팅한다.
+     * @param pos Target Position
+     * @param offset 스크롤 양
+     */
+    private fun computeIndicatorFill(pos: Int, offset: Float) {
+        val nextPos = pos.plus(1)
+        val currRight = (unitWidth * pos) + unitWidth
+        val nextRight = (unitWidth * nextPos) + unitWidth
+        val right = (offset * nextRight) + ((1F - offset) * currRight)
+        indicatorRectF.right = right
+    }
+
+    /**
+     * 인디게이터 단위로 채우는 타입 계산
+     * 계산후 @see [indicatorRectF] 에 값을 셋팅 한다.
+     * @param pos Target Position
+     * @param offset 스크롤 양
+     */
+    private fun computeIndicatorUnit(pos: Int, offset: Float) {
+        val nextPos = pos.plus(1)
+        val currLeft = unitWidth * pos
+        val currRight = (unitWidth * pos) + unitWidth
+        val nextLeft = unitWidth * nextPos
+        val nextRight = (unitWidth * nextPos) + unitWidth
+        val left = (offset * nextLeft) + ((1F - offset) * currLeft)
+        val right = (offset * nextRight) + ((1F - offset) * currRight)
+        indicatorRectF.left = left
+        indicatorRectF.right = right
+    }
+
+    /**
+     * 인디게이터 그리기
+     * @param canvas
+     */
+    private fun drawIndicator(canvas: Canvas) {
+        if (indicatorCorner > 0) {
+            canvas.drawRoundRect(
+                indicatorRectF,
+                indicatorCorner,
+                indicatorCorner,
+                indicatorPaint
+            )
+        } else {
+            canvas.drawRect(
+                indicatorRectF,
+                indicatorPaint
+            )
         }
     }
 
-    private fun drawIndicatorFill(canvas: Canvas, pos: Int, offset: Float) {
-
-    }
-
-    private fun drawIndicatorUnit(canvas: Canvas, pos: Int, offset: Float) {
-        if(pos < size.minus(1)) {
-            val nextPos = pos.plus(1)
-            val left = (offset * (unitWidth * nextPos)) + ((1F - offset) * unitWidth * pos)
-            val right = (offset * (unitWidth))
+    /**
+     * 무한 롤링인 경우 실제 포지션 값으로 리턴처리하는 함수
+     * @param pos Target Position
+     */
+    private fun getRealPosition(pos: Int): Int {
+        var index = pos
+        if (isInfinite) {
+            index = when (pos) {
+                0 -> {
+                    // Fake LastIndex
+                    contentsSize
+                }
+                contentsSize + 1 -> {
+                    // Fake FirstIndex
+                    0
+                }
+                else -> {
+                    pos.minus(1)
+                }
+            }
         }
-
+        LogD("RealPosition Size: $contentsSize CurrPos: $pos Index: $index")
+        return index
     }
 
     private val pageListener = object : ViewPager2.OnPageChangeCallback() {
@@ -140,6 +217,9 @@ class LineIndicator @JvmOverloads constructor(
                 // ReDraw
                 invalidate()
             }
+        }
+
+        override fun onPageSelected(pos: Int) {
         }
     }
 }
