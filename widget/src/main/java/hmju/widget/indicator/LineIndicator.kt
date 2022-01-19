@@ -26,7 +26,7 @@ class LineIndicator @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "LineIndicator"
-        private const val DEBUG = true
+        private const val DEBUG = false
         fun LogD(msg: String) {
             if (DEBUG) {
                 Log.d(TAG, msg)
@@ -181,6 +181,8 @@ class LineIndicator @JvmOverloads constructor(
 
     /**
      * 무한 롤링인 경우 실제 포지션 값으로 리턴처리하는 함수
+     * 무한 롤링 ViewPager2 구조
+     * Fake LastIndex | RealIndex | Fake FirstIndex
      * @param pos Target Position
      */
     private fun getRealPosition(pos: Int): Int {
@@ -200,7 +202,6 @@ class LineIndicator @JvmOverloads constructor(
                 }
             }
         }
-        LogD("RealPosition Size: $contentsSize CurrPos: $pos Index: $index")
         return index
     }
 
@@ -217,9 +218,6 @@ class LineIndicator @JvmOverloads constructor(
                 // ReDraw
                 invalidate()
             }
-        }
-
-        override fun onPageSelected(pos: Int) {
         }
     }
 }
