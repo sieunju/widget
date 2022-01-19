@@ -64,6 +64,14 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                     commit()
                 }
             }
+
+            findViewById<Button>(R.id.lineIndicator).setOnClickListener {
+                parentFragmentManager.beginTransaction().apply {
+                    replace(R.id.fragment, LineIndicatorFragment())
+                    addToBackStack(null)
+                    commit()
+                }
+            }
         }
     }
 }

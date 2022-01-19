@@ -53,6 +53,12 @@
             android:text="tabLayout"
             android:layout_height="wrap_content"/>
 
+        <Button
+            android:id="@+id/lineIndicator"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:text="LineIndicator"
+            android:layout_height="wrap_content"/>
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>
