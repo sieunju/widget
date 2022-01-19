@@ -191,7 +191,6 @@ class LinePagerTabLayout @JvmOverloads constructor(
             }
         }
 
-        // Timber.d("Draw Rect $indicatorRectF")
         // Indicator Draw
         if (indicatorCorner > 0) {
             canvas.drawRoundRect(
