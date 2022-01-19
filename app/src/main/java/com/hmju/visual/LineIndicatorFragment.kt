@@ -31,7 +31,7 @@ class LineIndicatorFragment : Fragment(R.layout.f_line_indicator) {
             val viewPager: ViewPager2 = findViewById(R.id.vp)
             unitIndicator.viewPager = viewPager
             fillIndicator.viewPager = viewPager
-            autoScrollMediator = AutoScrollMediator(viewPager, 1000L)
+            autoScrollMediator = AutoScrollMediator(viewPager, 3000L)
 
             val list = mutableListOf<Sample>()
             list.add(Sample(0, Color.BLACK))
