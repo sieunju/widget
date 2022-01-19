@@ -43,6 +43,9 @@ dependencies {
     implementation(deps.androidx.palette)
     implementation(deps.coroutines.base)
     implementation(deps.coroutines.android)
+    implementation(deps.rx.base)
+    implementation(deps.rx.android)
+    implementation(deps.rx.kotlin)
 
     implementation(deps.lifecycle.base)
     implementation(deps.lifecycle.livedata)

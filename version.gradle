@@ -79,6 +79,15 @@ glide.okhttp = "com.github.bumptech.glide:okhttp3-integration:$versions.glide"
 glide.compiler = "com.github.bumptech.glide:compiler:$versions.glide"
 deps.glide = glide
 
+/* RxJava */
+def rxjava = [:]
+versions.rxjava = "3.0.0"
+
+rxjava.base = "io.reactivex.rxjava3:rxjava:$versions.rxjava"
+rxjava.android = "io.reactivex.rxjava3:rxandroid:$versions.rxjava"
+rxjava.kotlin = "io.reactivex.rxjava3:rxkotlin:$versions.rxjava"
+deps.rx = rxjava
+
 ext.deps = deps
 
 static def addRepos(RepositoryHandler handler) {
