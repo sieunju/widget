@@ -26,7 +26,7 @@ class LineIndicator @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "LineIndicator"
-        private const val DEBUG = false
+        private const val DEBUG = true
         fun LogD(msg: String) {
             if (DEBUG) {
                 Log.d(TAG, msg)
@@ -54,15 +54,13 @@ class LineIndicator @JvmOverloads constructor(
         }
 
     // 인디게이터를 표시할 데이터 사이즈
-    var contentsSize: Int = 0
-        set(value) {
-            LogD("Width $width")
-            if (width > 0) {
-                unitWidth = (width.toFloat() / value.toFloat()).toInt()
-                LogD("Unit Width $unitWidth")
-            }
-            field = value
-        }
+//    var contentsSize: Int = 0
+//        set(value) {
+//            if (width > 0 && value != field) {
+//                unitWidth = (width.toFloat() / value.toFloat()).toInt()
+//            }
+//            field = value
+//        }
     private var unitWidth: Int = 0
     private var currentPos: Int = 0
     private var posScrollOffset: Float = -1F
@@ -106,7 +104,7 @@ class LineIndicator @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        if (canvas == null || contentsSize == 0) return
+        if (canvas == null || getRealItemCount() == 0) return
 
         if (indicatorRectF.top == 0F && height > 0) {
             indicatorRectF.top = 0F
@@ -115,7 +113,7 @@ class LineIndicator @JvmOverloads constructor(
 
         // Unit Width 설정
         if (unitWidth == 0) {
-            unitWidth = (width.toFloat() / contentsSize.toFloat()).toInt()
+            unitWidth = (width.toFloat() / getRealItemCount().toFloat()).toInt()
         }
 
         if (type == Type.FILL) {
@@ -191,9 +189,9 @@ class LineIndicator @JvmOverloads constructor(
             index = when (pos) {
                 0 -> {
                     // Fake LastIndex
-                    contentsSize
+                    getRealItemCount()
                 }
-                contentsSize + 1 -> {
+                getRealItemCount() + 1 -> {
                     // Fake FirstIndex
                     0
                 }
@@ -203,6 +201,17 @@ class LineIndicator @JvmOverloads constructor(
             }
         }
         return index
+    }
+
+    /**
+     * ViewPager2 Item Count
+     */
+    private fun getRealItemCount(): Int {
+        var itemCount = viewPager?.adapter?.itemCount ?: 0
+        if (isInfinite) {
+            itemCount = itemCount.minus(2)
+        }
+        return itemCount
     }
 
     private val pageListener = object : ViewPager2.OnPageChangeCallback() {
