@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.annotation.FloatRange
 import androidx.core.view.forEach
+import androidx.core.view.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -25,11 +26,11 @@ class FocusingRecyclerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : RecyclerView(ctx, attrs, defStyleAttr) {
 
-    @FloatRange(from = 0.0, to = 45.0)
-    var startHorizontalDegree: Double = 0.0
+    @FloatRange(from = 0.0, to = 90.0)
+    var leftHorizontalDegree: Double = 45.0
 
-    @FloatRange(from = 45.0, to = 90.0)
-    var endHorizontalDegree: Double = 60.0 // Horizontal Degree
+    @FloatRange(from = 90.0, to = 180.0)
+    var rightHorizontalDegree: Double = 135.0 // Horizontal Degree
 
     @FloatRange(from = 0.0, to = 25.0)
     var startVerticalDegree: Double = 0.0
@@ -41,105 +42,139 @@ class FocusingRecyclerView @JvmOverloads constructor(
 
     private var prevX = -1F
     private var prevY = -1F
-    private var isTouchRunning = false // 현재 터치중인지 true -> 터치중, false -> 터치 종료
 
     init {
         isFocusable = false
+        isMotionEventSplittingEnabled = false
     }
 
-    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
-        event?.let { evt ->
-            // 초기값 세팅
-            if (prevX == -1F) evt.x
-            if (prevY == -1F) evt.y
-
-            findChildViewUnder(evt.x, evt.y)?.let { underChildView ->
-                val diffX = abs(evt.x.toDouble() - prevX.toDouble())
-                val diffY = abs(evt.y.toDouble() - prevY.toDouble())
-                if (underChildView is ViewGroup) {
-                    if (findHorizontalView(underChildView)) {
-                        if (diffX.toInt() == 0 || diffY.toInt() == 0) {
-                            // 변화가 없는 경우 스킵.
-                            underChildView.forEach { view->
-                                if(view is RecyclerView) {
-                                    val range = view.computeHorizontalScrollRange() // Scroll All Range
-                                    val offset = view.computeHorizontalScrollOffset() // Scroll Offset
-                                    val extent = view.computeHorizontalScrollExtent() // Device Width
-                                    // 좌, 우 스크롤 불가능일때 부모한테 터치 권한 줌.
-                                    if(offset == 0 || range == (offset + extent)) {
-                                        super.requestDisallowInterceptTouchEvent(false)
-                                    }
-                                    return@forEach
-                                }
-                            }
-                        } else {
-                            if (isHorizontalSwipe(diffX, diffY)) {
-                                super.requestDisallowInterceptTouchEvent(true)
-                            } else {
-                                super.requestDisallowInterceptTouchEvent(false)
-                            }
+    override fun onInterceptTouchEvent(event: MotionEvent?): Boolean {
+        if (event != null) {
+            when (event.action) {
+                MotionEvent.ACTION_CANCEL,
+                MotionEvent.ACTION_UP -> {
+                    prevX = 0F
+                    prevY = 0F
+                }
+                MotionEvent.ACTION_DOWN -> {
+                    prevX = event.x
+                    prevY = event.y
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    findChildViewUnder(event.x, event.y)?.let { underChildView ->
+                        if (underChildView is ViewGroup) {
+                            computeHorizontalView(underChildView, prevX, event.x, prevY, event.y)
                         }
                     }
                 }
             }
-
-            prevX = evt.x
-            prevY = evt.y
         }
-        return super.dispatchTouchEvent(event)
+        return super.onInterceptTouchEvent(event)
     }
 
     /**
-     * 제스처가 수평인지 확인하는 함수.
-     * @param diffX 이전 X 좌표와 현재 X 좌표 차이값
-     * @param diffY 이전 Y 좌표와 현재 Y 좌표 차이값
-     * @return true -> 수평 제스처, false -> 수평 제스처 범위 아님.
+     * 제스처가 수평으로 하는 제스처인지 계산 처리
+     * @param prevX 이전 X 좌표
+     * @param currX 현재 터치한 X 좌표
+     * @param prevY 이전 Y 좌표
+     * @param currY 현재 터치한 Y 좌표
+     * @return true 수평 제스처 인경우, false 수직 제스처 인경우
      */
-    private fun isHorizontalSwipe(diffX: Double, diffY: Double): Boolean {
-        val diffRotate = Math.toDegrees(atan2(diffY, diffX))
-        if (startHorizontalDegree < diffRotate && diffRotate < endHorizontalDegree) {
-            return true
-        }
-        return false
+    private fun isHorizontalSwipe(prevX: Float, currX: Float, prevY: Float, currY: Float): Boolean {
+        val deltaX = prevX - currX
+        val deltaY = prevY - currY
+        // 두점의 각도를 구함
+        var result = Math.toDegrees(kotlin.math.atan2(deltaY, deltaX).toDouble())
+        result = kotlin.math.abs(result)
+        // 수평 제스처 기준 0~45, 135~180
+        return if (0.0 < result && result < leftHorizontalDegree) {
+            true
+        } else rightHorizontalDegree < result && result < 180.0
     }
 
-    private fun isVerticalSwipe(diffX: Double, diffY: Double): Boolean {
-        val diffRotate = Math.toDegrees(atan2(diffY, diffX))
-        if (startVerticalDegree < diffRotate && diffRotate < endVerticalDegree) {
-            return true
-        }
-        return false
-    }
-
-    /**
-     * 수평으로된 레이아웃 찾기
-     * @param parent ViewGroup
-     * @return true -> 해당 ViewGroup 안에 수평으로된 레이아웃이 있습니다.
-     * false -> 없습니다.
-     */
-    private fun findHorizontalView(parent: ViewGroup): Boolean {
-        parent.forEach {
-            when (it) {
+    private fun computeHorizontalView(
+        parent: ViewGroup,
+        prevX: Float,
+        currX: Float,
+        prevY: Float,
+        currY: Float
+    ) {
+        for (idx in 0 until parent.childCount) {
+            when (val view = parent[idx]) {
                 is ViewPager2 -> {
-                    if (it.orientation == ViewPager2.ORIENTATION_HORIZONTAL) {
-                        return true
+                    if (view.orientation == ViewPager2.ORIENTATION_HORIZONTAL) {
+                        // 수평 제스처
+                        if (isHorizontalSwipe(prevX, currX, prevY, currY)) {
+                            val diffX = currX - prevX
+                            // 좌 -> 우
+                            if (diffX > 0) {
+                                if (view.currentItem == 0) {
+                                    requestDisallowInterceptTouchEvent(false)
+                                } else {
+                                    requestDisallowInterceptTouchEvent(true)
+                                }
+                            } else {
+                                // 우 -> 좌
+                                val itemCount = view.adapter?.itemCount ?: 0
+                                if (view.currentItem == itemCount.minus(1)) {
+                                    requestDisallowInterceptTouchEvent(false)
+                                } else {
+                                    requestDisallowInterceptTouchEvent(true)
+                                }
+                            }
+                            return
+                        } else {
+                            requestDisallowInterceptTouchEvent(false)
+                            return
+                        }
                     }
                 }
                 is RecyclerView -> {
-                    if (it.layoutManager is LinearLayoutManager &&
-                        (it.layoutManager as LinearLayoutManager).orientation == HORIZONTAL
+                    if (view.layoutManager is LinearLayoutManager &&
+                        (view.layoutManager as LinearLayoutManager).orientation == HORIZONTAL
                     ) {
-                        return true
+                        // 수평으로 하는 제스처인경우
+                        if (isHorizontalSwipe(prevX, currX, prevY, currY)) {
+                            val layoutManager = (view.layoutManager as LinearLayoutManager)
+                            val firstPosition =
+                                layoutManager.findFirstCompletelyVisibleItemPosition()
+                            val lastPosition = layoutManager.findLastCompletelyVisibleItemPosition()
+                            val lastIndex = layoutManager.itemCount.minus(1)
+                            val diffX = currX - prevX
+                            // 좌 -> 우
+                            if (diffX > 0) {
+                                if (firstPosition == 0) {
+                                    requestDisallowInterceptTouchEvent(false)
+                                } else {
+                                    requestDisallowInterceptTouchEvent(true)
+                                }
+                            } else {
+                                // 우 -> 좌
+                                if (lastPosition == lastIndex) {
+                                    requestDisallowInterceptTouchEvent(false)
+                                } else {
+                                    requestDisallowInterceptTouchEvent(true)
+                                }
+                            }
+                            return
+                        } else {
+                            requestDisallowInterceptTouchEvent(false)
+                            return
+                        }
                     }
                 }
+                else -> {}
             }
         }
-        return false
     }
 
     override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
         // true -> Child View 포커싱 주기 false -> Parent 포커싱 주기
-//		JLogger.d("onRequestDisallowInterceptTouchEvent $disallowIntercept")
+//        if (disallowIntercept) {
+//            Timber.d("ChildView 에 포커싱을 줍니다.")
+//        } else {
+//            Timber.d("Parent 에 포커싱을 줍니다. ")
+//        }
         super.requestDisallowInterceptTouchEvent(disallowIntercept)
     }
 }
