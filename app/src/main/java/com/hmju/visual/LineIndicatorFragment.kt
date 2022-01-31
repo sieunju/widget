@@ -49,15 +49,6 @@ class LineIndicatorFragment : Fragment(R.layout.f_line_indicator) {
                 updateCurrentPos()
             }
             viewPager.offscreenPageLimit = list.size
-            unitIndicator.contentsSize = list.size
-            fillIndicator.contentsSize = list.size
-
-//            GlobalScope.launch {
-//                delay(4000)
-//                withContext(Dispatchers.Main) {
-//                    viewPager.currentItem(4,false)
-//                }
-//            }
         }
     }
 
