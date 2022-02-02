@@ -30,7 +30,6 @@ dependencies {
     	implementation 'com.github.sieunju:widget:$latestVersion'
 }
 ```
-
 # Index
 
 <details>
@@ -40,6 +39,7 @@ dependencies {
 - [CustomLayout](https://github.com/sieunju/widget/wiki/CustomLayout)
 - [CustomTextView](https://github.com/sieunju/widget/wiki/CustomTextView)
 - [FlexibleImageView](https://github.com/sieunju/widget/wiki/FlexibleImageView)
+- [LinePagerTabLayout](https://github.com/sieunju/widget/wiki/LinePagerTabLayout)
 
 </details>
 
@@ -56,5 +56,14 @@ dependencies {
 <summary><strong>RecyclerView</strong></summary>
 
 - [ParallaxView](https://github.com/sieunju/widget/wiki/ParallaxView)
+- [CustomLinearScroller](https://github.com/sieunju/widget/wiki/CustomLinearScroller)
+
+</details>
+
+<details>
+
+<summary><strong>ViewPager2</strong></summary>
+
+- [LineIndicator](https://github.com/sieunju/widget/wiki/LineIndicator)
 
 </details>
