@@ -26,7 +26,7 @@ class LineIndicator @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "LineIndicator"
-        private const val DEBUG = true
+        private const val DEBUG = false
         fun LogD(msg: String) {
             if (DEBUG) {
                 Log.d(TAG, msg)
@@ -53,14 +53,6 @@ class LineIndicator @JvmOverloads constructor(
             field = value
         }
 
-    // 인디게이터를 표시할 데이터 사이즈
-//    var contentsSize: Int = 0
-//        set(value) {
-//            if (width > 0 && value != field) {
-//                unitWidth = (width.toFloat() / value.toFloat()).toInt()
-//            }
-//            field = value
-//        }
     private var unitWidth: Int = 0
     private var currentPos: Int = 0
     private var posScrollOffset: Float = -1F
@@ -112,7 +104,7 @@ class LineIndicator @JvmOverloads constructor(
         }
 
         // Unit Width 설정
-        if (unitWidth == 0) {
+        if (unitWidth <= 0) {
             unitWidth = (width.toFloat() / getRealItemCount().toFloat()).toInt()
         }
 
