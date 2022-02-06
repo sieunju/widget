@@ -25,6 +25,6 @@ jobs:
         run: echo "::set-output name=date::$(date + '%Y-%m-%d')"
       
       - name: Build Release
-        run: bash ./gradlew build
+        run: bash ./gradlew clean assembleRelease
         
         
