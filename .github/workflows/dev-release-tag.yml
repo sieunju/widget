@@ -3,8 +3,6 @@ name: Dev Release Tag
 on:
   push:
     branches: [ develop ]
-  pull_request:
-    branches: [ develop ]
 
 jobs:
   build:
@@ -17,7 +15,9 @@ jobs:
         id: extract_version_name  
         
       - name: Release 생성
+        uses: actions/create-release@v1
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: echo ::set-output name=some_output="TOKEN ($GITHUB_TOKEN)"
+        with:
+          tag_name: "0.0.1"
         
