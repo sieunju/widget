@@ -59,7 +59,7 @@ class LineIndicator @JvmOverloads constructor(
 
     // [s] Attribute Set Variable
     private var type: Type = Type.FILL
-    private var isInfinite: Boolean = false
+    var isInfinite: Boolean = false
 
     @Dimension
     private val indicatorCorner: Float
