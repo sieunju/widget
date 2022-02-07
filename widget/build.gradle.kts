@@ -9,6 +9,11 @@ plugins {
 android {
     compileSdkVersion(Apps.compileSdkVersion)
 
+    // ktlint
+    lintOptions {
+        isAbortOnError = false
+    }
+
     defaultConfig {
         minSdkVersion(Apps.minSdkVersion)
         targetSdkVersion(Apps.targetSdkVersion)
