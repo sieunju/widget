@@ -30,7 +30,7 @@ jobs:
 #      - name: Build with Gradle
 #        run: ./gradlew build
 
-      -name: Clean Build
+      - name: Clean Build
         run: ./gradlew clean assemble
 
       - name: Generate Release Note
