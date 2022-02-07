@@ -1,0 +1,13 @@
+Build Date 2022년 02월 07일 월요일 22:35:37
+Version Name: 0.0.16
+Branch: main
+
+Message: commit ee32457d5614012bf524326ca6d71b71492049ab
+Merge branch 'main' of github.com:sieunju/widget
+
+* 'main' of github.com:sieunju/widget:
+  Create android-build.yml
+  Delete develop-test.yml
+
+
+Author: sieunju
