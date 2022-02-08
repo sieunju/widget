@@ -1,0 +1,9 @@
+Build Date 2022년 02월 08일 화요일 22:27:00
+Version Name: 0.0.16
+Branch: feature/study-ci
+
+Message: commit 1404de4a99dd0b90b9b92270b4ab5997afd093b3
+fix: 에러 체크를 위한 명령어 --stacktrace 추가
+
+
+Author: sieunju
