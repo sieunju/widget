@@ -94,7 +94,7 @@ fun getReleaseNote() {
         return
     }
 
-    File(project.rootDir.absolutePath, "release_note.txt").run {
+    File(project.rootDir.absolutePath.plus("/appRelease"), "release_note.txt").run {
         parentFile.mkdir()
         val buildDate = "Build Date ${
             SimpleDateFormat(

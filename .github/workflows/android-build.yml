@@ -6,9 +6,6 @@ on:
       - 'main'
       - 'dev'
       - 'feature/study-ci'
-  pull_request:
-    branches:
-      - 'feature/study-ci'
 
 jobs:
   build:
@@ -28,8 +25,8 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-#      - name: Build with Gradle
-#        run: ./gradlew build
+#      - name: Clean Build
+#        run: ./gradlew clean assemble
 
-      - name: Clean Build And Generate Release Note
-        run: './gradlew clean generateReleaseNote'
+      - name: Generate Release Note
+        run: ./gradlew generateReleaseNote --stacktrace
