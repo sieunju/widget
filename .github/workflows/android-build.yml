@@ -21,7 +21,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           check-latest: true
-          
+
       # Android SDK 설정
       - name: SetUp Android SDK
         uses: android-actions/setup-android@v2
@@ -35,5 +35,5 @@ jobs:
       # 릴리즈 노트 작성
       - name: Generate Release Note
         run: |
-          ./gradlew --version
+          ./gradlew -version
           ./gradlew generateReleaseNote --stacktrace
