@@ -1,9 +1,8 @@
-Build Date 2022년 02월 07일 월요일 23:15:31
+Build Date 2022년 02월 08일 화요일 21:47:21
 Version Name: 0.0.16
 Branch: feature/study-ci
 
-Message: commit 6f6f066f063c72ae503d19585cd40308fc6d71da
-chore: yml 명령어 수정
+Message: commit 63535ba98d6a910921d516128498bfaa8153872c
+build --stacktrace 명령어 추가
 
-
-Author: sieunju
+Author: Sieun Ju

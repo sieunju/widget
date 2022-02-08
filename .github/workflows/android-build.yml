@@ -31,11 +31,5 @@ jobs:
 #      - name: Build with Gradle
 #        run: ./gradlew build
 
-      - name: Clean Build
-        run: './gradlew clean assemble'
-
-      - name: Generate Release Note
-        run: './gradlew generateReleaseNote'
-        
-      - name: BuildError Message
-        run: './gradlew build --stacktrace'
+      - name: Clean Build And Generate Release Note
+        run: './gradlew clean generateReleaseNote'
