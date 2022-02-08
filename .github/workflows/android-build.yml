@@ -23,7 +23,10 @@ jobs:
       # gradlew 권한 획득
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-
+      # 빌드 하는 경로 찾아보기....
+      - name: Build Dir
+        run: ls
+      # 릴리즈 노트 작성
       - name: Generate Release Note
         run: |
           ./gradlew --version
