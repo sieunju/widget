@@ -32,7 +32,7 @@ tasks.register("generateReleaseNote") {
 }
 
 fun getCommand(command: String): String {
-    val os = java.io.ByteArrayOutputStream()
+    val os = ByteArrayOutputStream()
     exec {
         commandLine = command.split(" ")
         standardOutput = os
@@ -47,12 +47,13 @@ fun getReleaseNote() {
     println("여기여기!!")
     val lastTag = ByteArrayOutputStream().run {
         project.exec {
+            executable = "git"
             commandLine("git describe --tags --abbrev=0".split(" "))
             standardOutput = this@run
         }
         String(this.toByteArray()).trim()
     }
-
+    println("여기까지왔어!!! ")
     if (lastTag.isEmpty()) {
         println("Tag Message is Empty!")
         return
