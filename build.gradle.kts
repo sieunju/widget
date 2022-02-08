@@ -45,19 +45,12 @@ fun getCommand(command: String): String {
  */
 fun getReleaseNote() {
     println("여기여기 $project")
-//    val lastTag = ByteArrayOutputStream().run {
-//        println("11111111111111122222222")
-//        project.exec {
-//            commandLine("git describe --tags --abbrev=0".split(" "))
-//            standardOutput = this@run
-//        }
-//        String(this.toByteArray()).trim()
-//    }
-//    println("여기까지왔어!!! ")
-//    if (lastTag.isEmpty()) {
-//        println("Tag Message is Empty!")
-//        return
-//    }
+    val lastTag = getCommand("git describe --tags --abbrev=0").trim()
+    println("여기까지왔어!!! ")
+    if (lastTag.isEmpty()) {
+        println("Tag Message is Empty!")
+        return
+    }
     println("하하하하하하하하하하하하하하하하하하하하하하")
     File(project.rootDir.absolutePath.plus("/appRelease"), "release_note.txt").run {
         parentFile.mkdir()
