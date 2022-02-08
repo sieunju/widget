@@ -36,3 +36,6 @@ jobs:
 
       - name: Generate Release Note
         run: './gradlew generateReleaseNote'
+        
+      - name: BuildError Message
+        run: './gradlew build --stacktrace'
