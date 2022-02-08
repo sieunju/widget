@@ -44,10 +44,10 @@ fun getCommand(command: String): String {
  * 마지막 커밋한 메시지 가져와서 릴리즈노트에 입력 하기
  */
 fun getReleaseNote() {
-    println("여기여기!!")
+    println("여기여기 $project")
     val lastTag = ByteArrayOutputStream().run {
+        println("11111111111111122222222")
         project.exec {
-            executable = "git"
             commandLine("git describe --tags --abbrev=0".split(" "))
             standardOutput = this@run
         }
