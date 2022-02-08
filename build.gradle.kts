@@ -44,14 +44,8 @@ fun getCommand(command: String): String {
  * 마지막 커밋한 메시지 가져와서 릴리즈노트에 입력 하기
  */
 fun getReleaseNote() {
-    println("여기여기 $project")
     val lastTag = getCommand("git describe --tags --abbrev=0").trim()
-    println("여기까지왔어!!! ")
-    if (lastTag.isEmpty()) {
-        println("Tag Message is Empty!")
-        return
-    }
-    println("하하하하하하하하하하하하하하하하하하하하하하")
+    println("Last Tag $lastTag")
     File(project.rootDir.absolutePath.plus("/appRelease"), "release_note.txt").run {
         parentFile.mkdir()
         val buildDate = "Build Date ${
@@ -79,7 +73,5 @@ fun getReleaseNote() {
         println(branch)
         println(msg)
         println(author)
-
-        println("ReleaseNote Write Success")
     }
 }
