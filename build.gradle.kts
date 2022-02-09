@@ -44,7 +44,8 @@ fun getCommand(command: String): String {
  * 마지막 커밋한 메시지 가져와서 릴리즈노트에 입력 하기
  */
 fun getReleaseNote() {
-    val lastTag = getCommand("git describe --tags --abbrev=0").trim()
+    // Process 'command 'git'' finished with non-zero exit value 128
+    val lastTag = getCommand("git describe --tags --abbrev=0 ").trim()
     println("Last Tag $lastTag")
     File(project.rootDir.absolutePath.plus("/appRelease"), "release_note.txt").run {
         parentFile.mkdir()
