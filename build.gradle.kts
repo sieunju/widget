@@ -46,8 +46,8 @@ fun getCommand(command: String): String {
  */
 fun getReleaseNote() {
     // Process 'command 'git'' finished with non-zero exit value 128
-    val lastTag = getCommand("git describe --tags --abbrev=0 ")
-    println("Last Tag $lastTag")
+    // val lastTag = getCommand("git describe --tags --abbrev=0 ")
+    // println("Last Tag $lastTag")
     File(project.rootDir.absolutePath.plus("/appRelease"), "release_note.txt").run {
         parentFile.mkdir()
         val buildDate = "Build Date ${
