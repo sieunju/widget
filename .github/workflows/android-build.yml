@@ -30,12 +30,12 @@ jobs:
         run: |
           echo ::set-output name=code::$(grep versionCode buildSrc/src/main/java/Dependency.kt | awk '{print $5}')
           echo ::set-output name=name::$(grep versionName buildSrc/src/main/java/Dependency.kt | awk '{print $5}')
-          echo ::set-output name=title::$(grep Message widget/release_message.txt)
+          echo ::set-output name=title::$(grep Title widget/release_message.txt)
           echo ::set-output name=message::$(sed -n '/Message/,$p' widget/release_message.txt | less)
 
       - name: Get Tag Name
         id: get_tag
-        run: echo ::set-output name=name::v${{steps.release.outputs.name}}
+        run: echo ::set-output name=name::${{steps.release.outputs.name}}
 
       # 릴리즈 생성
       # release_name: 릴리즈 제목
