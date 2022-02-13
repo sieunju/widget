@@ -35,7 +35,6 @@ fun getCommand(command: String): String {
     val os = ByteArrayOutputStream()
     exec {
         commandLine = command.split(" ")
-        println("CommandLine $commandLine")
         standardOutput = os
     }
     return String(os.toByteArray())
