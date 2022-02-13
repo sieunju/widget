@@ -24,7 +24,7 @@ jobs:
           distribution: 'adopt'
           check-latest: true
 
-      # Dependency 에 버전 정보 가져오기
+      # Dependency 에 버전 및 릴리즈 메시지 가져오기
       - name: Release Version
         id: release
         run: |
@@ -34,8 +34,8 @@ jobs:
 
       - name: Print Release
         run: |
-          echo "Print Name ${{steps.release.outputs.name}}"
-          echo "Print Message ${{steps.release.outputs.message}}"
+            echo "Print Name ${steps.release.outputs.name}"
+            echo "Print Message ${steps.release.outputs.message}"
 
       # Android SDK 설정
       # - name: SetUp Android SDK
