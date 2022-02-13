@@ -30,7 +30,7 @@ jobs:
         run: |
           echo "::set-output name=code::$(grep versionCode buildSrc/src/main/java/Dependency.kt | awk '{print $5}')"
           echo "::set-output name=name::$(grep versionName buildSrc/src/main/java/Dependency.kt | awk '{print $5}')"
-          echo "::set-output name=message::$(cat widget/release_message.txt)"
+          echo "::set-output name=message::$(cat widget/release_message.txt | less)"
 
       - name: Print Release
         run: |
