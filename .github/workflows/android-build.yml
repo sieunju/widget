@@ -26,14 +26,14 @@ jobs:
 
       # Dependency 에 버전 정보 가져오기
       - name: Release Version
-        id: version
+        id: release
         run: |
-          echo ::set-output name=code::$(grep versionCode buildSrc/src/main/java/Dependency.kt | awk '{print $5}')
-          echo ::set-output name=name::$(grep versionName buildSrc/src/main/java/Dependency.kt | awk '{print $5}')
+          echo "::set-output name=code::$(grep versionCode buildSrc/src/main/java/Dependency.kt | awk '{print $5}')"
+          echo "::set-output name=name::$(grep versionName buildSrc/src/main/java/Dependency.kt | awk '{print $5}')"
+          echo "::set-output name=message::$(grep widget/release_note.txt)"
 
-      - name: Get Release Message
-        id: message
-        run: echo "::set-output name=message::$(grep widget/release_note.txt)"
+      - name: Print Release
+        run: echo "Print Release ${{steps.release.name}}_${{steps.release.message}}"
 
       # Android SDK 설정
       # - name: SetUp Android SDK
