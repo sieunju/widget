@@ -1,0 +1,10 @@
+Build Date 2022년 02월 09일 수요일 08:56:24
+Version Name: 0.0.16
+Branch: feature/study-ci
+
+Message: commit 5bd337068c9f90da3f54e6a30f07389cad79b796
+chore: 에러나는 위치 테스트
+- 드디어 뭐가 문제인지 알거 같다..
+
+
+Author: sieunju

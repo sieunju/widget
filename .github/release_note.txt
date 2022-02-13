@@ -1,7 +1,0 @@
-Build Time 2022년 02월 06일 일요일 22:51:00
-Version Name : 0.0.11
-## 추가 기능
-
-## 개선 기능
-
-Author: hmju
