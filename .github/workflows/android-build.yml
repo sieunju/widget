@@ -39,6 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release_name: ${{steps.release.outputs.name}}
+          tag_name: ${{steps.release.outputs.name}}
           body: |
             ${{steps.release.outputs.message}}
           draft: false
