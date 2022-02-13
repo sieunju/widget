@@ -32,10 +32,17 @@ jobs:
           echo "::set-output name=name::$(grep versionName buildSrc/src/main/java/Dependency.kt | awk '{print $5}')"
           echo "::set-output name=message::$(cat widget/release_message.txt | less)"
 
-      - name: Print Release
-        run: |
-            echo "Print Name ${steps.release.outputs.name}"
-            echo "Print Message ${steps.release.outputs.message}"
+      # 릴리즈 생성
+      - name: Generate Release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_name: ${{steps.release.outputs.name}}
+          body: |
+            ${{steps.release.outputs.message}}
+          draft: false
+          prerelease: false
 
       # Android SDK 설정
       # - name: SetUp Android SDK
