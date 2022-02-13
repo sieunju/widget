@@ -30,10 +30,12 @@ jobs:
         run: |
           echo "::set-output name=code::$(grep versionCode buildSrc/src/main/java/Dependency.kt | awk '{print $5}')"
           echo "::set-output name=name::$(grep versionName buildSrc/src/main/java/Dependency.kt | awk '{print $5}')"
-          echo "::set-output name=message::$(widget/release_message.txt)"
+          echo "::set-output name=message::$(cat widget/release_message.txt)"
 
       - name: Print Release
-        run: echo "Print Release ${{steps.release.outputs.name}}_${{steps.release.outputs.message}}"
+        run: |
+          echo "Print Name ${{steps.release.outputs.name}}"
+          echo "Print Message ${{steps.release.outputs.message}}"
 
       # Android SDK 설정
       # - name: SetUp Android SDK
