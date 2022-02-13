@@ -1,3 +1,4 @@
-### Test ReleaseNote
-
+Title: Test ReleaseNote
+Message:
 - CI를 테스트 해보고 있습니다.
+- 여기까지 문자열이 나오나요??
