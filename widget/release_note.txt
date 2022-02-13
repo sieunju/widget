@@ -1,0 +1,3 @@
+### Test ReleaseNote
+
+- CI를 테스트 해보고 있습니다.
