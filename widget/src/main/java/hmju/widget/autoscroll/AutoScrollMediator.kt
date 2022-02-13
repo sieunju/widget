@@ -3,7 +3,6 @@ package hmju.widget.autoscroll
 import android.animation.Animator
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.fragment.app.FragmentActivity
@@ -17,18 +16,23 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 /**
  * Description : ViewPager2 기반의 자동 스크롤
  *
  * Created by juhongmin on 2022/01/19
  */
-@SuppressLint("ClickableViewAccessibility")
 class AutoScrollMediator(
     private val viewPager: ViewPager2,
     private val delayTime: Long = 3500L
 ) : LifecycleObserver {
-    private var isStopByTouch = false
+
+    private val CLICK_RANGE = 10 // 클릭 이벤트 처리하기 위한 범위값
+
+    private var isStopByTouch = false // 터치 한 상태 Flag
+    private var prevX = -1F
+    private var prevY = -1F
     private var disposable: Disposable? = null
     private var activity: FragmentActivity? = null
         set(value) {
@@ -44,6 +48,11 @@ class AutoScrollMediator(
             when (event.action) {
                 MotionEvent.ACTION_MOVE,
                 MotionEvent.ACTION_DOWN -> {
+                    if (event.action == MotionEvent.ACTION_DOWN) {
+                        prevX = event.x
+                        prevY = event.y
+                    }
+
                     if (!isStopByTouch) {
                         isStopByTouch = true
                         stopAutoScroll()
@@ -51,6 +60,16 @@ class AutoScrollMediator(
                 }
                 MotionEvent.ACTION_UP,
                 MotionEvent.ACTION_CANCEL -> {
+                    if (event.action == MotionEvent.ACTION_UP) {
+                        if (abs(event.x - prevX) < CLICK_RANGE && abs(event.y - prevY) < CLICK_RANGE) {
+                            v.performClick()
+                        }
+                    }
+
+                    // 터치 좌표 초기화
+                    prevX = 0F
+                    prevY = 0F
+
                     // 한번만 실행 되도록
                     if (isStopByTouch) {
                         isStopByTouch = false
