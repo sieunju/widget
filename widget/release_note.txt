@@ -1,4 +1,6 @@
-Test ReleaseNote
-- GithubAction 을 이용한 라이브러리 배포 테스트 해보고 있습니다.
-- 여기까지 문자열이 나오나요??
+자동 스크롤, 라인 인디게이터, 스크롤러 추가
+- ViewPager2 기반의 자동 스크롤 컨트롤러 추가
+- LineIndicator 추가
+- RecyclerView 에서 원하는 포지션에 따라 포커싱 처리 하는 Scroller 추가
+(Horizontal 만 가능)
 - 많은 애용 바랍니다 🙇‍♂️
