@@ -45,6 +45,8 @@ jobs:
           RELEASE_BODY="${RELEASE_BODY//$'\n'/'%0A'}"
           RELEASE_BODY="${RELEASE_BODY//$'\r'/'%0D'}"
           echo ::set-env name=body::${RELEASE_BODY}
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
 
       # 릴리즈 생성
       # release_name: 릴리즈 제목
