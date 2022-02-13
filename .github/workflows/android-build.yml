@@ -44,9 +44,7 @@ jobs:
           RELEASE_BODY="${RELEASE_BODY//'%'/'%25'}"
           RELEASE_BODY="${RELEASE_BODY//$'\n'/'%0A'}"
           RELEASE_BODY="${RELEASE_BODY//$'\r'/'%0D'}"
-          echo ::set-env name=body::${RELEASE_BODY}
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+          echo ::set-output name=val::${RELEASE_BODY}
 
       # 릴리즈 생성
       # release_name: 릴리즈 제목
@@ -60,7 +58,7 @@ jobs:
           release_name: ${{steps.release.outputs.title}}
           tag_name: ${{steps.get_tag.outputs.name}}
           body: |
-            ${{steps.get_release.outputs.RELEASE_BODY}}
+            ${{steps.get_release.outputs.val}}
           draft: false
           prerelease: false
 
