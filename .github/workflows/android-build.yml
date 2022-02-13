@@ -35,7 +35,7 @@ jobs:
 
       - name: Get Tag Name
         id: get_tag
-        run: echo ::set-output name=name::v${{setps.release.outputs.name}}
+        run: echo ::set-output name=name::v${{steps.release.outputs.name}}
 
       # 릴리즈 생성
       # release_name: 릴리즈 제목
