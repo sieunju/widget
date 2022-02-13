@@ -37,6 +37,15 @@ jobs:
         id: get_tag
         run: echo ::set-output name=name::${{steps.release.outputs.name}}
 
+      - name: Get Release Message
+        id: get_release
+        run: |
+          RELEASE_BODY=$(sed -n '2,$p' widget/release_message.txt | less)
+          RELEASE_BODY="${RELEASE_BODY//'%'/'%25'}"
+          RELEASE_BODY="${RELEASE_BODY//$'\n'/'%0A'}"
+          RELEASE_BODY="${RELEASE_BODY//$'\r'/'%0D'}"
+          echo ::set-env name=body::${RELEASE_BODY}
+
       # 릴리즈 생성
       # release_name: 릴리즈 제목
       # tag_name: 버전 이름
@@ -49,7 +58,7 @@ jobs:
           release_name: ${{steps.release.outputs.title}}
           tag_name: ${{steps.get_tag.outputs.name}}
           body: |
-            ${{steps.release.outputs.message}}
+            ${{steps.get_release.outputs.RELEASE_BODY}}
           draft: false
           prerelease: false
 
@@ -58,8 +67,8 @@ jobs:
       #  uses: android-actions/setup-android@v2
 
       # gradlew 권한 획득
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      # - name: Grant execute permission for gradlew
+      #  run: chmod +x gradlew
 
       # 릴리즈 노트 작성
       # - name: Generate Release Note

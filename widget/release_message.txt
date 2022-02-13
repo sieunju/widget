@@ -1,6 +1,4 @@
 Test ReleaseNote
-<br>
 - GithubAction 을 이용한 라이브러리 배포 테스트 해보고 있습니다.
 - 여기까지 문자열이 나오나요??
 - 많은 애용 바랍니다 🙇‍♂️
-<br>
