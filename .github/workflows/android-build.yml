@@ -24,6 +24,17 @@ jobs:
           distribution: 'adopt'
           check-latest: true
 
+      # Dependency 에 버전 정보 가져오기
+      - name: Release Version
+        id: version
+        run: |
+          echo ::set-output name=code::$(grep versionCode buildSrc/src/main/java/Dependency.kt | awk '{print $5}')
+          echo ::set-output name=name::$(grep versionName buildSrc/src/main/java/Dependency.kt | awk '{print $5}')
+
+      - name: Get Release Message
+        id: message
+        run: echo "::set-output name=message::$(grep widget/release_note.txt)"
+
       # Android SDK 설정
       # - name: SetUp Android SDK
       #  uses: android-actions/setup-android@v2
@@ -31,17 +42,6 @@ jobs:
       # gradlew 권한 획득
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-
-      # Dependency 에 버전 정보 가져오기
-      - name: Get Release Version
-          id: version
-          run: |
-            echo "::set-output name=code::$(grep versionCode buildSrc/src/main/java/Dependency.kt | awk '{print $5}')"
-            echo "::set-output name=name::$(grep versionName buildSrc/src/main/java/Dependency.kt | awk '{print $5}')"
-
-      - name: Get Release Message
-        - id: message
-          run: echo "::set-output name=message::$(grep widget/release_note.txt)"
 
 
 
