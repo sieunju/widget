@@ -1,4 +1,4 @@
-name: Android CI
+name: Libraray Generate Release
 
 on:
   push:
@@ -11,8 +11,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: feature/study-ci
 
       # JDK 설정
       - name: set up JDK 11
