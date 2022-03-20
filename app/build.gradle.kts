@@ -5,13 +5,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion(Apps.compileSdkVersion)
-    buildToolsVersion(Apps.buildToolsVersion)
+    compileSdk = Apps.compileSdkVersion
+    buildToolsVersion = Apps.buildToolsVersion
 
     defaultConfig {
         applicationId = "com.hmju.visual"
-        minSdkVersion(Apps.minSdkVersion)
-        targetSdkVersion(Apps.targetSdkVersion)
+        minSdk = Apps.minSdkVersion
+        targetSdk = Apps.targetSdkVersion
         versionCode = Apps.versionCode
         versionName = Apps.versionName
         setProperty("archivesBaseName", "Widget-${versionName}")
@@ -20,21 +20,20 @@ android {
     }
 
     buildTypes {
-        getByName("debug") {
+        debug {
             isMinifyEnabled = false
         }
-
-        getByName("release") {
+        release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         dataBinding = true

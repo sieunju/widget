@@ -1,41 +1,39 @@
 plugins {
     id("com.android.library")
-    id("com.github.dcendents.android-maven")
+    // id("com.github.dcendents.android-maven")
     id("maven-publish")
     kotlin("android")
     kotlin("kapt")
 }
 
 android {
-    compileSdkVersion(Apps.compileSdkVersion)
+    compileSdk = Apps.compileSdkVersion
 
     // ktlint
-    lintOptions {
-        isAbortOnError = false
+    lint {
+        abortOnError = false
     }
 
     defaultConfig {
-        minSdkVersion(Apps.minSdkVersion)
-        targetSdkVersion(Apps.targetSdkVersion)
+        minSdk = Apps.minSdkVersion
+        targetSdk = Apps.targetSdkVersion
     }
 
     buildTypes {
-        getByName("debug") {
+        debug {
             isMinifyEnabled = false
         }
-
-        getByName("release") {
+        release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
-
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         dataBinding = true
