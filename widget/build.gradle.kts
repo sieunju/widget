@@ -6,6 +6,16 @@ plugins {
     kotlin("kapt")
 }
 
+publishing {
+    publications {
+        create("maven_public",MavenPublication::class) {
+            groupId = Apps.libraryName
+            artifactId = "library"
+            version = Apps.versionName
+        }
+    }
+}
+
 android {
     compileSdk = Apps.compileSdkVersion
 
