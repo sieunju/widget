@@ -25,7 +25,7 @@ class SpecialGridItemDecoration(
 
     companion object {
         private const val TAG = "GridItem"
-        private const val DEBUG = true
+        private const val DEBUG = false
         fun LogD(msg: String) {
             if (DEBUG) {
                 Log.d(TAG, msg)
