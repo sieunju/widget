@@ -72,6 +72,14 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                     commit()
                 }
             }
+
+            findViewById<Button>(R.id.specialGridDecoration).setOnClickListener {
+                parentFragmentManager.beginTransaction().apply {
+                    replace(R.id.fragment, SpecialGridFragment())
+                    addToBackStack(null)
+                    commit()
+                }
+            }
         }
     }
 }
