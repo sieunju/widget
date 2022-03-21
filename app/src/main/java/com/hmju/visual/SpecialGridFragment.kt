@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.hmju.visual.databinding.*
 import hmju.widget.extensions.dp
-import hmju.widget.layoutmanager.SpecialDecorationBindingAdapter.setSpanSpecialGridType
 import hmju.widget.layoutmanager.SpecialGridItemDecoration
 import kotlinx.coroutines.*
 import kotlin.random.Random
@@ -77,7 +76,6 @@ class SpecialGridFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.gridTypeList = gridTypeList
-        // binding.rvContents.setSpanSpecialGridType(gridTypeList)
         binding.rvContents.addItemDecoration(
             SpecialGridItemDecoration(
                 horizontalDivider = 20.dp,

@@ -110,10 +110,7 @@ class SpecialGridItemDecoration(
                 val beforeRowViewType = parent.adapter?.getItemViewType(beforePos) ?: 0
 
                 // GridType 이 아닌경우 첫번쨰 Row
-                if(gridTypeMap[beforeRowViewType] == null) {
-                    LogD("첫번째 Grid 입니다. $pos")
-                } else {
-                    LogD("Grid Type 속에 있습니다. $pos")
+                if (gridTypeMap[beforeRowViewType] == true) {
                     outRect.top = verticalDivider
                 }
             }
