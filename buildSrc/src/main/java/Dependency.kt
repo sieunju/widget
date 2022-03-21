@@ -1,4 +1,5 @@
 object Apps {
+    const val libraryName = "com.github.sieunju:widget"
     const val compileSdkVersion = 30
     const val buildToolsVersion = "30.0.3"
     const val minSdkVersion = 21
