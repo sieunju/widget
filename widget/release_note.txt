@@ -1,6 +1,5 @@
-자동 스크롤, 라인 인디게이터, 스크롤러 추가
-- ViewPager2 기반의 자동 스크롤 컨트롤러 추가
-- LineIndicator 추가
-- RecyclerView 에서 원하는 포지션에 따라 포커싱 처리 하는 Scroller 추가
-(Horizontal 만 가능)
+특정 뷰타입에서만 여백 처리하는 Decoration 추가
+- GridLayoutManager 에서 특정 타입만 Grid Span 1 처리 및 좌, 우, 수직 여백 처리 가능한
+SpecialGridItemDecoration 추가
+- 하지만 내 능력상 현재 SpanCnt=2 경우만 가능 SpanCnt=3 ❌
 - 많은 애용 바랍니다 🙇‍♂️
