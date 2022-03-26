@@ -1,11 +1,11 @@
 object Apps {
-    const val libraryName = "hmju.widget"
+    const val libraryName = "com.github.sieunju:widget"
     const val compileSdkVersion = 30
     const val buildToolsVersion = "30.0.3"
     const val minSdkVersion = 21
     const val targetSdkVersion = 30
-    const val versionCode = 18
-    const val versionName = "0.0.18"
+    const val versionCode = 19
+    const val versionName = "0.0.19"
 }
 
 object Versions {

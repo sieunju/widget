@@ -1,6 +1,8 @@
+import Apps.versionCode
+import Apps.versionName
+
 plugins {
     id("com.android.library")
-    // id("com.github.dcendents.android-maven")
     id("maven-publish")
     kotlin("android")
     kotlin("kapt")
@@ -11,7 +13,7 @@ publishing {
         create("maven_public",MavenPublication::class) {
             groupId = Apps.libraryName
             artifactId = "library"
-            version = Apps.versionName
+            version = versionName
         }
     }
 }
