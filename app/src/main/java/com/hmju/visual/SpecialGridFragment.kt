@@ -79,7 +79,7 @@ class SpecialGridFragment : Fragment() {
         binding.rvContents.addItemDecoration(
             SpecialGridItemDecoration(
                 horizontalDivider = 20.dp,
-                verticalDivider = 60.dp,
+                verticalDivider = 30.dp,
                 side = 15.dp,
                 gridTypeList = gridTypeList
             )
