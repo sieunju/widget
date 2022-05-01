@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'maven-publish'
 }
 
 android {
@@ -22,11 +23,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = JavaVersion.VERSION_11
     }
     buildFeatures {
         dataBinding true
@@ -49,6 +50,19 @@ dependencies {
 
     implementation(deps.lifecycle.base)
     implementation(deps.lifecycle.livedata)
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.sieunju'
+                artifactId = 'widget'
+                version = '1.0.1-beta02'
+            }
+        }
+    }
 }
 
 //afterEvaluate {
