@@ -1,26 +1,13 @@
 plugins {
     id("com.android.library")
-    id("maven-publish")
     kotlin("android")
     kotlin("kapt")
+    // id("maven-publish")
+    `maven-publish`
 }
 
-repositories {
-    jcenter()
-    google()
-    mavenCentral()
-    maven(url = uri("https://jitpack.io"))
-}
-
-publishing {
-    publications {
-        create("maven_public",MavenPublication::class) {
-            groupId = "com.github.sieunju"
-            artifactId = "widget"
-            version = Apps.versionName
-        }
-    }
-}
+group = "com.github.sieunju"
+version = Apps.versionName
 
 android {
     compileSdk = Apps.compileSdkVersion
@@ -71,3 +58,44 @@ dependencies {
     implementation(AndroidX.lifecycle)
     implementation(AndroidX.liveData)
 }
+
+//afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release"){
+                groupId = Apps.groupId
+                artifactId = Apps.artifactId
+                version = Apps.versionName
+            }
+//            // Creates a Maven publication called "release".
+//            release(MavenPublication) {
+//                // Applies the component for the release build variant.
+//                from components.release
+//
+//                        // You can then customize attributes of the publication as shown below.
+//                        groupId = 'com.example.MyLibrary'
+//                artifactId = 'final'
+//                version = '1.0'
+//            }
+//            // Creates a Maven publication called “debug”.
+//            debug(MavenPublication) {
+//                // Applies the component for the debug build variant.
+//                from components . debug
+//
+//                        groupId = 'com.example.MyLibrary'
+//                artifactId = 'final-debug'
+//                version = '1.0'
+//            }
+        }
+    }
+//}
+
+//publishing {
+//    publications {
+//        create("maven_public",MavenPublication::class) {
+//            groupId = "com.github.sieunju"
+//            artifactId = "widget"
+//            version = Apps.versionName
+//        }
+//    }
+//}
