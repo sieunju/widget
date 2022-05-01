@@ -34,7 +34,7 @@ jobs:
         id: versionName
         run: |
           NAME="${{steps.release.outputs.version}}"
-          NAME="${NAME//$'Version:'/''}"
+          NAME="${NAME:8}"
           echo ::set-output name=val::${NAME}
 
       # Release Title 가져오기
