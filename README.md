@@ -65,5 +65,6 @@ dependencies {
 <summary><strong>ViewPager2</strong></summary>
 
 - [LineIndicator](https://github.com/sieunju/widget/wiki/LineIndicator)
+- [AutoScrollMediator](https://github.com/sieunju/widget/wiki/AutoScrollMediator)
 
 </details>
