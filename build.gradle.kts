@@ -2,7 +2,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        gradlePluginPortal()
     }
     dependencies {
         classpath("com.android.tools.build:gradle:7.1.3")
@@ -13,11 +12,11 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenCentral()
         google()
         maven(url = uri("https://jitpack.io"))
+        mavenCentral()
     }
-    group = "com.github.sieunju"
+    // group = "com.github.sieunju"
 }
 
 tasks.register("clean", Delete::class) {
