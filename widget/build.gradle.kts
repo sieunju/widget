@@ -5,6 +5,13 @@ plugins {
     kotlin("kapt")
 }
 
+repositories {
+    jcenter()
+    google()
+    mavenCentral()
+    maven(url = uri("https://jitpack.io"))
+}
+
 publishing {
     publications {
         create("maven_public",MavenPublication::class) {
