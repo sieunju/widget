@@ -1,13 +1,12 @@
 object Apps {
     const val groupId = "com.github.sieunju"
     const val artifactId = "widget"
-    const val libraryName = "widget"
     const val compileSdkVersion = 30
     const val buildToolsVersion = "30.0.3"
     const val minSdkVersion = 21
     const val targetSdkVersion = 30
     const val versionCode = 23
-    const val versionName = "1.0.1-beta"
+    const val versionName = "1.0.1-beta01"
 }
 
 object Versions {
