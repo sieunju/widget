@@ -1,5 +1,12 @@
-특정 뷰타입에서만 여백 처리하는 Decoration 추가
-- GridLayoutManager 에서 특정 타입만 Grid Span 1 처리 및 좌, 우, 수직 여백 처리 가능한
-SpecialGridItemDecoration 추가
-- 하지만 내 능력상 현재 SpanCnt=2 경우만 가능 SpanCnt=3 ❌
-- 많은 애용 바랍니다 🙇‍♂️
+Release v1.0.0 배포
+- SurfaceView 기반의 ProgressView
+- ConstraintLayout 기반의 선택 / 미선택, 활 / 비활성화 에 따라 bg 처리하는 CustomLayout
+- TextView 기반의 선택 / 미선택, 활 / 비활성화 에 따라 bg 처리하는 CustomTextView
+- 이미지를 제스처에 따라 크기 및 조정 하는 FlexibleImageView
+- Material TabLayout 비슷하지만, 커스텀하게 사용할수 있는 LinePagerTabLayout
+- CoordinatorLayout 에서 자유롭게 이동을 처리할수 있게 도와주는 TranslationBehavior
+- RecyclerView 안에서 스크롤 할때 View 가 비율에 따라 조절이 되는 ParallaxView
+- RecyclerView 에서 원하는 위치로 스크롤 애니메이션 처리해주는 CustomLinearScroller
+- ViewPager2 기반의 LineIndicator
+- ViewPager2 기반의 AutoScrollMediator
+- GridLayoutManager 에서 특정 타입만 Grid Span 1 처리 및 좌, 우, 수직 여백 처리 가능한 SpecialGridItemDecoration
