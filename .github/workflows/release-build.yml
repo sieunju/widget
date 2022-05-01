@@ -25,14 +25,17 @@ jobs:
       - name: Get Release Info
         id: release
         run: |
-          echo ::set-output name=version::$(sed -n -e '1p/Version/d' widget/release_note.txt)
+          echo ::set-output name=version::$(sed -n -e '1p' widget/release_note.txt)
           echo ::set-output name=title::$(sed -n -e '2,1p' widget/release_note.txt)
           echo ::set-output name=message::$(sed -n '3,$p' widget/release_note.txt | less)
 
       # Release Version 명 가져오기
       - name: Get Version Name
         id: versionName
-        run: echo ::set-output name=val::${{steps.release.outputs.version}}
+        run: |
+          NAME="${{steps.release.outputs.version}}"
+          NAME="${NAME//$'Version:'/''}"
+          echo ::set-output name=val::${NAME}
 
       # Release Title 가져오기
       - name: Get Release Title Name
