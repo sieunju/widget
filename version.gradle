@@ -1,0 +1,99 @@
+ext.deps = [:]
+
+/* version */
+def versions = [:]
+
+def buildVersions = [:]
+buildVersions.minSdk = 21
+buildVersions.compileSdk = 30
+buildVersions.targetSdk = 30
+buildVersions.buildTools = "30.0.3"
+ext.buildVersions = buildVersions
+
+def deps = [:]
+
+versions.kotlin = "1.5.0"
+versions.androidPlugin = "4.1.2"
+
+/* Plugins  */
+deps.androidPlugin = "com.android.tools.build:gradle:$versions.androidPlugin"
+deps.kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+
+/* Kotlin */
+def kotlin = [:]
+kotlin.stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin"
+kotlin.core = "androidx.core:core-ktx:$versions.kotlin"
+deps.kotlin = kotlin
+
+/* lifecycle */
+def lifecycle = [:]
+versions.lifecycle = "2.3.1"
+
+lifecycle.base = "androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifecycle"
+lifecycle.viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
+lifecycle.livedata = "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycle"
+deps.lifecycle = lifecycle
+
+/* AndroidX */
+def androidx = [:]
+versions.appcompat = "1.3.0"
+versions.constraint = "2.0.4"
+versions.activity = "1.1.0"
+versions.material = "1.3.0"
+versions.multidex = "2.0.1"
+versions.legacy = "1.0.0"
+versions.viewpager = "1.0.0"
+versions.cardview = "1.0.0"
+versions.fragment = "1.3.3"
+versions.palette = "1.0.0"
+versions.recyclerview = "1.2.0"
+
+androidx.appCompat = "androidx.appcompat:appcompat:$versions.appcompat"
+androidx.constraintLayout = "androidx.constraintlayout:constraintlayout:$versions.constraint"
+androidx.activity = "androidx.activity:activity-ktx:$versions.activity"
+androidx.material = "com.google.android.material:material:$versions.material"
+androidx.multidex = "androidx.multidex:multidex:$versions.multidex"
+androidx.legacy = "androidx.legacy:legacy-support-v4:$versions.legacy"
+androidx.viewpager = "androidx.viewpager2:viewpager2:$versions.viewpager"
+androidx.cardview = "androidx.cardview:cardview:$versions.cardview"
+androidx.fragment = "androidx.fragment:fragment-ktx:$versions.fragment"
+androidx.palette = "androidx.palette:palette-ktx:$versions.palette"
+androidx.recyclerview = "androidx.recyclerview:recyclerview:$versions.recyclerview"
+
+deps.androidx = androidx
+
+/* Coroutines */
+def coroutines = [:]
+versions.coroutinesCore = "1.4.2"
+versions.coroutines = "1.4.1"
+
+coroutines.base = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutinesCore"
+coroutines.android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
+deps.coroutines = coroutines
+
+/* Glide */
+def glide = [:]
+versions.glide = "4.11.0"
+glide.base = "com.github.bumptech.glide:glide:$versions.glide"
+glide.okhttp = "com.github.bumptech.glide:okhttp3-integration:$versions.glide"
+glide.compiler = "com.github.bumptech.glide:compiler:$versions.glide"
+deps.glide = glide
+
+/* RxJava */
+def rxjava = [:]
+versions.rxjava = "3.0.0"
+
+rxjava.base = "io.reactivex.rxjava3:rxjava:$versions.rxjava"
+rxjava.android = "io.reactivex.rxjava3:rxandroid:$versions.rxjava"
+rxjava.kotlin = "io.reactivex.rxjava3:rxkotlin:$versions.rxjava"
+deps.rx = rxjava
+
+ext.deps = deps
+
+static def addRepos(RepositoryHandler handler) {
+    handler.google()
+    handler.mavenCentral()
+    handler.maven { url 'https://jitpack.io' }
+    handler.maven { url "https://maven.google.com" }
+}
+ext.addRepos = this.&addRepos
