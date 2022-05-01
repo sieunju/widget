@@ -25,7 +25,7 @@ jobs:
       - name: Release Version
         id: release
         run: |
-          echo ::set-output name=name::$(cat widget/release_note.txt | awk '{print $0 " | " $2}')
+          echo ::set-output name=name::$(widget/release_note.txt | awk '{print $0 " | " $2}')
           echo ::set-output name=title::$(sed -n -e '2,1p' widget/release_note.txt)
 
       # Tag 명 "" 제거해서 가져오기
