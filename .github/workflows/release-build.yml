@@ -43,7 +43,7 @@ jobs:
       - name: Get Release Message
         id: releaseMessage
         run: |
-          RELEASE_BODY=${{steps.release.outputs.message}}
+          RELEASE_BODY="${{steps.release.outputs.message}}"
           RELEASE_BODY="${RELEASE_BODY//'%'/'%25'}"
           RELEASE_BODY="${RELEASE_BODY//$'\n'/'%0A'}"
           RELEASE_BODY="${RELEASE_BODY//$'\r'/'%0D'}"
