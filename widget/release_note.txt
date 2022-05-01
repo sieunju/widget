@@ -1,4 +1,4 @@
-Release v1.0.0 배포
+Release v1.0.1 배포
 - SurfaceView 기반의 ProgressView
 - ConstraintLayout 기반의 선택 / 미선택, 활 / 비활성화 에 따라 bg 처리하는 CustomLayout
 - TextView 기반의 선택 / 미선택, 활 / 비활성화 에 따라 bg 처리하는 CustomTextView
