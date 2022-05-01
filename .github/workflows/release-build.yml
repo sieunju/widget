@@ -25,7 +25,7 @@ jobs:
       - name: Get Release Info
         id: release
         run: |
-          echo ::set-output name=version::$(sed -n -e '1p' -e '/Version: /'d widget/release_note.txt)
+          echo ::set-output name=version::$(sed -n -e '1p' -e '/Version/d' widget/release_note.txt)
           echo ::set-output name=title::$(sed -n -e '2,1p' widget/release_note.txt)
           echo ::set-output name=message::$(sed -n '3,$p' widget/release_note.txt | less)
 
