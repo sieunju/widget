@@ -1,6 +1,3 @@
-import Apps.versionCode
-import Apps.versionName
-
 plugins {
     id("com.android.library")
     id("maven-publish")
@@ -11,9 +8,9 @@ plugins {
 publishing {
     publications {
         create("maven_public",MavenPublication::class) {
-            groupId = Apps.libraryName
-            artifactId = "library"
-            version = versionName
+            groupId = "com.github.sieunju"
+            artifactId = "widget"
+            version = Apps.versionName
         }
     }
 }
@@ -32,9 +29,6 @@ android {
     }
 
     buildTypes {
-        debug {
-            isMinifyEnabled = false
-        }
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
