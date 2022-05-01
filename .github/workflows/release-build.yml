@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'main'
-      - 'hotfix_buildgradle_rollback'
+      #- 'hotfix_buildgradle_rollback'
 
 jobs:
   build:
@@ -57,17 +57,17 @@ jobs:
       # release_name: 릴리즈 제목
       # tag_name: 버전 이름
       # body: 릴리즈 메시지 내용
-#      - name: Generate Release
-#        uses: actions/create-release@latest
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          release_name: ${{steps.versionName.outputs.val}}
-#          tag_name: ${{steps.releaseTitle.outputs.val}}
-#          body: |
-#            ${{steps.releaseMessage.outputs.val}}
-#          draft: false
-#          prerelease: false
+      - name: Generate Release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_name: ${{steps.versionName.outputs.val}}
+          tag_name: ${{steps.releaseTitle.outputs.val}}
+          body: |
+            ${{steps.releaseMessage.outputs.val}}
+          draft: false
+          prerelease: false
 
       # Android SDK 설정
       # - name: SetUp Android SDK
