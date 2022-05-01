@@ -1,5 +1,5 @@
-Version: 1.0.1-beta04
-Title: 1.0.1-beta04 테스트 배포입니다.
+Version: 1.0.1-beta05
+Title: 1.0.1-beta05 테스트 배포입니다~~
 Message:
 - SurfaceView 기반의 ProgressView
 - ConstraintLayout 기반의 선택 / 미선택, 활 / 비활성화 에 따라 bg 처리하는 CustomLayout
