@@ -45,8 +45,8 @@ class FlexibleImageViewFragment : Fragment(R.layout.fragment_flexibleimageview) 
         imageView = view.findViewById(R.id.imgThumb)
         flexibleCaptureView = view.findViewById(R.id.clFlexible)
         var imageUrl = "content://media/external/images/media/439"
-        // imageUrl = "https://image.zdnet.co.kr/2021/08/27/48a2291e7cbed1be50aa28880b58477e.jpg"
-        imageUrl = "content://media/external/images/media/6113"
+        imageUrl = "https://image.zdnet.co.kr/2021/08/27/48a2291e7cbed1be50aa28880b58477e.jpg"
+        // imageUrl = "content://media/external/images/media/6113"
         Glide.with(requireContext())
             .asBitmap()
             .load(imageUrl)

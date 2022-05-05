@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'main'
-      #- 'hotfix_buildgradle_rollback'
 
 jobs:
   build:
@@ -47,10 +46,6 @@ jobs:
           RELEASE_BODY="${RELEASE_BODY//$'\n'/'%0A'}"
           RELEASE_BODY="${RELEASE_BODY//$'\r'/'%0D'}"
           echo ::set-output name=val::${RELEASE_BODY}
-
-      # 릴리즈 생성하기전 빌드 실행
-#      - name: Android Build
-#        run: ./gradlew clean assembleRelease
 
       # 릴리즈 생성
       # release_name: 릴리즈 제목
