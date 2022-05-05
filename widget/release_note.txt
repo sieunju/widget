@@ -1,23 +1,10 @@
-Version: 1.0.2
-Title: 1.0.2 정식 배포입니다.
+Version: 1.0.3-beta01
+Title: 1.0.3 베타 버전 배포입니다.
 Message:
 ## 소개
 > Custom Component 관련 라이브러리 입니다. 🥰
 > 많은 애용 바랍니다. 그리고 추가 하고 싶은 기능이 있으면 이슈로 남겨주시기 바랍니다.
 
-## 기능을 추가 했어요.
-- SurfaceView 기반의 ProgressView
-- ConstraintLayout 기반의 선택 / 미선택, 활 / 비활성화 에 따라 bg 처리하는 CustomLayout
-- TextView 기반의 선택 / 미선택, 활 / 비활성화 에 따라 bg 처리하는 CustomTextView
-- 이미지를 제스처에 따라 크기 및 조정 하는 FlexibleImageView
-- Material TabLayout 비슷하지만, 커스텀하게 사용할수 있는 LinePagerTabLayout
-- CoordinatorLayout 에서 자유롭게 이동을 처리할수 있게 도와주는 TranslationBehavior
-- RecyclerView 안에서 스크롤 할때 View 가 비율에 따라 조절이 되는 ParallaxView
-- RecyclerView 에서 원하는 위치로 스크롤 애니메이션 처리해주는 CustomLinearScroller
-- ViewPager2 기반의 LineIndicator
-- ViewPager2 기반의 AutoScrollMediator
-- GridLayoutManager 에서 특정 타입만 Grid Span 1 처리 및 좌, 우, 수직 여백 처리 가능한 SpecialGridItemDecoration
-
 ## 이슈를 수정했어요.
-- jitpack.io publish 했음에도 불구하고 실제로 implementation 이 안되는 이슈
-    -  build.gradle.kts -> build.gradle 롤백
+- build.gradle Plugin 버전 업데이트를 했어요. 4.1.3 -> 7.1.2
+- 기타 sdk 버전을 수정 했어요.
