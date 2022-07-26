@@ -1,6 +1,8 @@
 name: Custom Build
 
 on:
+  issues:
+    types: [labeled]
   label: {custom_release}
 jobs:
   build:
