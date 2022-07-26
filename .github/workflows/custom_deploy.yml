@@ -3,15 +3,15 @@ name: Custom Build
 on:
   issues:
     types: [labeled]
-  label: {custom_release}
+  
 jobs:
-  build:
+  run_if_label_matches:
+    ## 'custom_release' 라벨에서만 동작 하도록
+    if: github.event.label.name == 'custom_release'
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
-
-
       - name: Test Issue Label
         id: test
         run: |
