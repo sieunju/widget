@@ -15,4 +15,4 @@ jobs:
       - name: Test Issue Label
         id: test
         run: |
-          echo ::set-output heelllooo
+          echo ::set-output EventInfo ${{github.event}}
