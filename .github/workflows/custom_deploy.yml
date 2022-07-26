@@ -15,4 +15,6 @@ jobs:
       - name: Event Info Print
         id: test
         run: |
-          echo ::set-output EventInfo ${{ github.event.body }}
+          echo ::set-output Event11Info ${{ github.event.issue.body }}
+          echo ::set-output Event22 ${{ github.event.issue.name }}
+          echo ::set-output Event33 ${{ github.event.issue }}
