@@ -1,0 +1,20 @@
+name: Custom Build and Release
+
+on:
+  issues:
+    types:
+      - opened
+
+  label: {custom_release}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Test Issue Label
+        id: test
+        run: |
+          echo ::set-output hellow deploy
