@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Test Issue Label
+      - name: Event Info Print
         id: test
         run: |
-          echo ::set-output EventInfo ${{github.event}}
+          echo ::set-output EventInfo ${{ github.event.body }}
