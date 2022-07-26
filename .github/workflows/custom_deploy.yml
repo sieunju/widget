@@ -1,10 +1,6 @@
 name: Custom Build
 
 on:
-  issues:
-    types:
-      - opened
-
   label: {custom_release}
 jobs:
   build:
