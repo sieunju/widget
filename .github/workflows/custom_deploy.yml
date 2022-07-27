@@ -20,8 +20,8 @@ jobs:
       - name: Generate Branch Name And Build Type
         id: generate
         run: |
-          echo ::set-output name=buildBranch::$(grep branchName: buildInfo.txt | awk '{print $1}' )
-          echo ::set-output name=buildType::$(grep buildType: buildInfo.txt | awk '{print $1}' )
+          echo ::set-output name=buildBranch::$(grep branchName: buildInfo.txt | awk '{print $2}' )
+          echo ::set-output name=buildType::$(grep buildType: buildInfo.txt | awk '{print $2}' )
       - name: Build Print
         run: |
           echo ::set-output BranchName ${{ steps.generate.outputs.branchName }}
