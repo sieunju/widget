@@ -32,6 +32,7 @@ jobs:
           env: |
             BRANCH_NAME: ${{ steps.build.outputs.branchName }}
             BUILD_TYPE: ${{ steps.build.outputs.type }}
+          run: echo "$BRANCH_NAME" , "$BUILD_TYPE"
         
   buildJobs:
     runs-on: ubuntu-latest
