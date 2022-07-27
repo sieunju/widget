@@ -19,7 +19,7 @@ jobs:
         - name: Issue Body
           id: body
           run: |
-            echo ::set-output name=val::${{ "${{ github.event.issue.body }}" }}
+            echo ::set-output name=val::${{ "$(github.event.issue.body)" }}
             echo "${{ github.event.issue.body }}" >> buildInfo.txt
 
         - name: Generate Branch Name And Build Type
