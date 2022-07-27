@@ -19,7 +19,7 @@ jobs:
         - name: Issue Body
           id: body
           run: |
-            echo ::set-output name=val::${{ toJSON(github.event.issue.body) }}
+            echo ::set-output name=val::${{ toJSON(github.event.issue) }}
             echo "${{ github.event.issue.body }}" >> buildInfo.txt
 
         - name: Generate Branch Name And Build Type
@@ -32,7 +32,8 @@ jobs:
           run: |
             echo ::set-output BranchName ${{ steps.build.outputs.branchName }}
             echo ::set-output BuildType ${{ steps.build.outputs.type }}
-            echo ::set-output IssueTitle ${{ steps.issueTitle.outputs.val }}
+            echo ::set-output IssueTitle ${{ github.event.issue.title }}
+            echo ::set-output IssueMessage ${{ steps.body.outputs.val }}
         
   buildJobs:
     runs-on: ubuntu-latest
