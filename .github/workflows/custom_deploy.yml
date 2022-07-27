@@ -12,19 +12,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Event Info Print
+      - name: Issue Body
         id: body
         run: |
-          BODY=$(sed -n '2,$p' github.event.issue.body | less)
-          BDOY="${BDOY//'%'/'%25'}"
-          BODY="${BDOY//$'\n'/'%0A'}"
-          BODY="${BDOY//$'\r'/'%0D'}"
-          echo ::set-output name=val::${BODY}
+         echo ::set-output name=val::${{ github.event.issue.body }}
       - name: Generate Branch Name And Build Type
         id: generate
         run: |
-          echo ::set-output $( steps.body.val awk '{print $1}' )
-          
+          echo ::set-output $(grep branch: steps.body.val awk '{print $2}' )
+          echo ::set-output $(grep buildType: steps.body.val awk '{print $2}' )
       - name: Build Print
         run: |
           echo ::set-output BranchName ${{ steps.generate.outputs.branch }}
