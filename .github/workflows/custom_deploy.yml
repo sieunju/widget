@@ -3,10 +3,6 @@ name: Custom Build
 on:
   issues:
     types: [labeled,reopened]
-
-env:
-  BRANCH_NAME: develop
-  BUILD_TYPE: debug
   
 
 jobs:
@@ -48,5 +44,5 @@ jobs:
     steps:
       - name: BuildName
         run: |
-          echo Test ${{ env.BRANCH_NAME }}  , ${{ env.BUILD_TYPE }}
+          echo Test ${{ jobs.run_if_label_matches.env.BRANCH_NAME }}  , ${{ jobs.run_if_label_matches.env.BUILD_TYPE }}
     
