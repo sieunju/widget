@@ -15,7 +15,7 @@ jobs:
       - name: Event Info Print
         id: body
         run: |
-          BODY=${{ github.event.issue.body }}
+          BODY=$(github.event.issue.body)
           BDOY="${BDOY//'%'/'%25'}"
           BODY="${BDOY//$'\n'/'%0A'}"
           BODY="${BDOY//$'\r'/'%0D'}"
