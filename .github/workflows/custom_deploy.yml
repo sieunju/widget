@@ -13,16 +13,13 @@ jobs:
       outputs:
         branchName: ${{ steps.build.outputs.branchName }}
         buildType: ${{ steps.build.outputs.type }}
-        issueTitle: ${{ steps.issueTitle.outputs.val }}
-        issueMessage: "${{ github.event.issue.body }}"
+        issueTitle: ${{ github.event.issue.title }}
+        issueMessage: ${{ steps.body.val }}
       steps:
-        - name: Issue Title
-          id: issueTitle
-          run: |
-            echo ::set-output name=val::${{ github.event.issue.title }}
         - name: Issue Body
           id: body
           run: |
+            echo ::set-output name=val::$(github.event.issue.body)
             echo "${{ github.event.issue.body }}" >> buildInfo.txt
 
         - name: Generate Branch Name And Build Type
