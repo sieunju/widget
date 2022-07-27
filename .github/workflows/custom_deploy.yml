@@ -16,6 +16,10 @@ jobs:
         id: body
         run: |
          echo ::set-output name=val::"${{ github.event.issue.body }}"
+      - name: BranchName 
+        id: brandName
+        run: |
+          echo BrandName ${body.val#branch}
       - name: Generate Branch Name And Build Type
         id: generate
         run: |
