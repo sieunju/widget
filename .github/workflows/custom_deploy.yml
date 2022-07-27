@@ -22,11 +22,17 @@ jobs:
           run: |
             echo ::set-output name=branchName::$(grep branchName: buildInfo.txt | awk '{print $2}' )
             echo ::set-output name=type::$(grep buildType: buildInfo.txt | awk '{print $2}' )
+        
         - name: Build Print
           run: |
             echo ::set-output BranchName ${{ steps.build.outputs.branchName }}
             echo ::set-output BuildType ${{ steps.build.outputs.type }}
-            
+        
+        - name: Set Environments
+          env: |
+            BRANCH_NAME: ${{ steps.build.outputs.branchName }}
+            BUILD_TYPE: ${{ steps.build.outputs.type }}
+        
   buildJobs:
     runs-on: ubuntu-latest
     
@@ -36,5 +42,5 @@ jobs:
     steps:
       - name: BuildName
         run: |
-          echo Test ${{ job.run_if_label_matches.steps.build.outputs.branchName }}
+          echo Test $BRANCH_NAME , $BUILD_TYPE
     
