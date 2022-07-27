@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Event Info Print
-        id: IssueBody
-        run: |
-          echo ::set-output Event11Info ${{ github.event.issue.body }}
+#       - name: Event Info Print
+#         id: IssueBody
+#         run: |
+#           echo ::set-output Event11Info ${{ github.event.issue.body }}
       - name: Generate Branch Name And Build Type
         id: generate
         run: |
