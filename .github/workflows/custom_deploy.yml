@@ -20,7 +20,7 @@ jobs:
           id: body
           run: |
             echo "${{ github.event.issue.body }}" >> buildInfo.txt
-            VALUE=$(buildInfo.txt)
+            VALUE=$(<buildInfo.txt)
             echo ::set-output name=val::"$VALUE"
 
         - name: Generate Branch Name And Build Type
