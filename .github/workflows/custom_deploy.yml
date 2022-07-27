@@ -15,7 +15,11 @@ jobs:
       - name: Event Info Print
         id: body
         run: |
-          echo ::set-output name=val::${{ github.event.issue.body }}
+          BODY=${{ github.event.issue.body }}
+          BDOY="${BDOY//'%'/'%25'}"
+          BODY="${BDOY//$'\n'/'%0A'}"
+          BODY="${BDOY//$'\r'/'%0D'}"
+          echo ::set-output name=val::${BODY}
       - name: Generate Branch Name And Build Type
         id: generate
         run: |
