@@ -48,5 +48,5 @@ jobs:
           echo Plz BranchName ${{ needs.run_if_label_matches.outputs.branchName }}
           echo Plz BuildType ${{ needs.run_if_label_matches.outputs.buildType }}
           echo Plz IssueTitle ${{ needs.run_if_label_matches.outputs.issueTitle }}
-          echo Plz IssueMessage ${{ needs.run_if_label_matches.outputs.issueMessage }}
+          echo Plz IssueMessage "${{ github.event.issue.body }}"
     
