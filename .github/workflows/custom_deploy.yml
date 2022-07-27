@@ -10,7 +10,9 @@ jobs:
       ## 'custom_release' 라벨에서만 동작 하도록
       if: github.event.label.name == 'custom_release'
       runs-on: ubuntu-latest
-
+      outputs:
+        branchName: ${{ steps.build.outputs.branchNam }}
+        type: ${{ steps.build.outputs.type }}
       steps:
         - uses: actions/checkout@v2
         - name: Issue Body
@@ -29,12 +31,6 @@ jobs:
             echo ::set-output BranchName ${{ steps.build.outputs.branchName }}
             echo ::set-output BuildType ${{ steps.build.outputs.type }}
         
-        - name: Set Environments
-          env:
-            BRANCH_NAME: ${{ steps.build.outputs.branchName }}
-            BUILD_TYPE: ${{ steps.build.outputs.type }}
-          run: echo ${{ env.BRANCH_NAME }} ${{ env.BUILD_TYPE }}
-        
   buildJobs:
     runs-on: ubuntu-latest
     
@@ -44,6 +40,6 @@ jobs:
     steps:
       - name: BuildName
         run: |
-          echo Plz BranchName ${{ needs.run_if_label_matches.steps.build.outputs.branchName }}
-          echo Plz BuildType ${{ needs.run_if_label_matches.steps.build.outputs.type }}
+          echo Plz BranchName ${{ needs.run_if_label_matches.outputs.branchName }}
+          echo Plz BuildType ${{ needs.run_if_label_matches.outputs.type }}
     
