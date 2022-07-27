@@ -43,5 +43,5 @@ jobs:
     steps:
       - name: BuildName
         run: |
-          echo Test $BRANCH_NAME , $BUILD_TYPE
+          echo Test ${{ env.BRANCH_NAME }}  , ${{ env.BUILD_TYPE }}
     
