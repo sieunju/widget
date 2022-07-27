@@ -12,12 +12,18 @@ jobs:
       runs-on: ubuntu-latest
       outputs:
         branchName: ${{ steps.build.outputs.branchName }}
-        type: ${{ steps.build.outputs.type }}
+        buildType: ${{ steps.build.outputs.type }}
+        issueTitle: ${{ steps.issueTitle.outputs.val }}
+        issueMessage: ${{ steps.body.outputs.val }}
       steps:
-        - uses: actions/checkout@v2
+        - name: Issue Title
+          id: issueTitle
+          run: |
+            echo ::set-output name=val::${{ github.event.issue.title }}
         - name: Issue Body
           id: body
           run: |
+            echo ::set-output name=val::${{ github.event.issue.body }}
             echo "${{ github.event.issue.body }}" >> buildInfo.txt
 
         - name: Generate Branch Name And Build Type
@@ -28,8 +34,10 @@ jobs:
         
         - name: Build Print
           run: |
-            echo ::set-output BranchName ${{ steps.build.outputs.branchName }}
-            echo ::set-output BuildType ${{ steps.build.outputs.type }}
+            echo ::set-output BranchName ${{ outputs.branchName }}
+            echo ::set-output BuildType ${{ outputs.buildType }}
+            echo ::set-output IssueTitle ${{ outputs.issueTitle }}
+            echo ::set-output IssueMessage ${{ outputs.issueMessage }}
         
   buildJobs:
     runs-on: ubuntu-latest
@@ -41,5 +49,5 @@ jobs:
       - name: BuildName
         run: |
           echo Plz BranchName ${{ needs.run_if_label_matches.outputs.branchName }}
-          echo Plz BuildType ${{ needs.run_if_label_matches.outputs.type }}
+          echo Plz BuildType ${{ needs.run_if_label_matches.outputs.buildType }}
     
