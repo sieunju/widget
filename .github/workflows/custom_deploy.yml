@@ -6,23 +6,35 @@ on:
   
 jobs:
   run_if_label_matches:
-    ## 'custom_release' 라벨에서만 동작 하도록
-    if: github.event.label.name == 'custom_release'
+      ## 'custom_release' 라벨에서만 동작 하도록
+      if: github.event.label.name == 'custom_release'
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/checkout@v2
+        - name: Issue Body
+          id: body
+          run: |
+            echo "${{ github.event.issue.body }}" >> buildInfo.txt
+
+        - name: Generate Branch Name And Build Type
+          id: build
+          run: |
+            echo ::set-output name=branchName::$(grep branchName: buildInfo.txt | awk '{print $2}' )
+            echo ::set-output name=type::$(grep buildType: buildInfo.txt | awk '{print $2}' )
+        - name: Build Print
+          run: |
+            echo ::set-output BranchName ${{ steps.build.outputs.branchName }}
+            echo ::set-output BuildType ${{ steps.build.outputs.type }}
+            
+  buildJobs:
     runs-on: ubuntu-latest
-
+    
+    # 위에서 데이터 가져옴
+    needs: run_if_label_matches
+    
     steps:
-      - uses: actions/checkout@v2
-      - name: Issue Body
-        id: body
+      - name: BuildName
         run: |
-          echo "${{ github.event.issue.body }}" >> buildInfo.txt
-
-      - name: Generate Branch Name And Build Type
-        id: generate
-        run: |
-          echo ::set-output name=buildBranch::$(grep branchName: buildInfo.txt | awk '{print $2}' )
-          echo ::set-output name=buildType::$(grep buildType: buildInfo.txt | awk '{print $2}' )
-      - name: Build Print
-        run: |
-          echo ::set-output BranchName ${{ steps.generate.outputs.buildBranch }}
-          echo ::set-output BuildType ${{ steps.generate.outputs.buildType }}
+          echo Test ${{ run_if_label_matches.steps.build.outputs.branchName }} 
+    
