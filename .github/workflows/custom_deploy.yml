@@ -19,7 +19,7 @@ jobs:
         - name: Issue Body
           id: body
           run: |
-            echo ::set-output name=val::$( '${{ github.event.issue.body }}' )
+            echo ::set-output name=val::$( M "${{ github.event.issue.body }}" )
             echo "${{ github.event.issue.body }}" >> buildInfo.txt
 
         - name: Generate Branch Name And Build Type
@@ -41,7 +41,7 @@ jobs:
     needs: run_if_label_matches
     
     steps:
-      - name: BuildName
+      - name: Output Print
         run: |
           echo Plz BranchName ${{ needs.run_if_label_matches.outputs.branchName }}
           echo Plz BuildType ${{ needs.run_if_label_matches.outputs.buildType }}
