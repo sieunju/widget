@@ -34,10 +34,10 @@ jobs:
         
         - name: Build Print
           run: |
-            echo ::set-output BranchName ${{ outputs.branchName }}
-            echo ::set-output BuildType ${{ outputs.buildType }}
-            echo ::set-output IssueTitle ${{ outputs.issueTitle }}
-            echo ::set-output IssueMessage ${{ outputs.issueMessage }}
+            echo ::set-output BranchName ${{ steps.build.outputs.branchName }}
+            echo ::set-output BuildType ${{ steps.build.outputs.type }}
+            echo ::set-output IssueTitle ${{ steps.issueTitle.outputs.val }}
+            echo ::set-output IssueMessage ${{ steps.body.outputs.val }}
         
   buildJobs:
     runs-on: ubuntu-latest
