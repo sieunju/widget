@@ -20,7 +20,7 @@ jobs:
       - name: Generate Branch Name And Build Type
         id: generate
         run: |
-          echo ::set-output $( awk '{print $1}' steps.body.val )
+          echo ::set-output $( steps.body.val awk '{print $1}' )
           
       - name: Build Print
         run: |
