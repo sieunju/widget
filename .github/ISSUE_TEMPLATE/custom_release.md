@@ -8,5 +8,5 @@ assignees: ''
 ---
 
 ### 양식에 맞게 작성해주세요.
-branch:
+branchName:
 buildType:
