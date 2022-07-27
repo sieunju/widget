@@ -14,7 +14,7 @@ jobs:
         branchName: ${{ steps.build.outputs.branchName }}
         buildType: ${{ steps.build.outputs.type }}
         issueTitle: ${{ github.event.issue.title }}
-        issueMessage: ${{ steps.body.val }}
+        issueMessage: ${{ steps.outputs.body.val }}
       steps:
         - name: Issue Body
           id: body
