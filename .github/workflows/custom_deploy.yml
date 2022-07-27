@@ -36,7 +36,6 @@ jobs:
             echo ::set-output BranchName ${{ steps.build.outputs.branchName }}
             echo ::set-output BuildType ${{ steps.build.outputs.type }}
             echo ::set-output IssueTitle ${{ steps.issueTitle.outputs.val }}
-            echo ::set-output IssueMessage ${{ steps.body.outputs.val }}
         
   buildJobs:
     runs-on: ubuntu-latest
@@ -49,4 +48,6 @@ jobs:
         run: |
           echo Plz BranchName ${{ needs.run_if_label_matches.outputs.branchName }}
           echo Plz BuildType ${{ needs.run_if_label_matches.outputs.buildType }}
+          echo Plz IssueTitle ${{ needs.run_if_label_matches.outputs.issueTitle }}
+          echo Plz IssueMessage ${{ needs.run_if_label_matches.outputs.issueMessage }}
     
