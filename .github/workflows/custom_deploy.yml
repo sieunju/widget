@@ -36,5 +36,5 @@ jobs:
     steps:
       - name: BuildName
         run: |
-          echo Test ${{ job.run_if_label_matches.steps.build.outputs.branchName }}
+          echo Test ${{ job.services.run_if_label_matches.steps.build.outputs.branchName }}
     
