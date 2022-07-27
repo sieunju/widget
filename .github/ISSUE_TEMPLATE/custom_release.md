@@ -7,6 +7,6 @@ assignees: ''
 
 ---
 
-### 양식에 맞게 작성해주세요.
+### 각 양식에 앞에는 띄어쓰기가 있어야 합니다.
 branchName:
 buildType:
