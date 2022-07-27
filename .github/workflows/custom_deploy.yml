@@ -12,17 +12,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-#       - name: Event Info Print
-#         id: IssueBody
-#         run: |
-#           echo ::set-output Event11Info ${{ github.event.issue.body }}
+      - name: Event Info Print
+        id: body
+        run: |
+          echo ::set-output name=val::${{ github.event.issue.body }}
       - name: Event 
       - name: Generate Branch Name And Build Type
         id: generate
         run: |
-          BODY=${{ github.event.issue.body }}
-          echo ::set-output name=branch::$(grep branch: ${{ github.event.issue.body }} | awk '{print $2}')
-          echo ::set-output name=buildType::$(grep buildType: ${{ github.event.issue.body }} | awk '{print $2}')
+          echo ::set-output $( awk '{print $1}' steps.body.val )
+          
       - name: Build Print
         run: |
           echo ::set-output BranchName ${{ steps.generate.outputs.branch }}
