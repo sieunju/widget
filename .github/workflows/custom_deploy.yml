@@ -44,5 +44,5 @@ jobs:
     steps:
       - name: BuildName
         run: |
-          echo Test ${{ jobs.run_if_label_matches.env.BRANCH_NAME }}  , ${{ jobs.run_if_label_matches.env.BUILD_TYPE }}
+          echo Test ${{ needs.run_if_label_matches.env.BRANCH_NAME }}  , ${{ needs.run_if_label_matches.env.BUILD_TYPE }}
     
