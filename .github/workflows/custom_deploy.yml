@@ -11,7 +11,7 @@ jobs:
       if: github.event.label.name == 'custom_release'
       runs-on: ubuntu-latest
       outputs:
-        branchName: ${{ steps.build.outputs.branchNam }}
+        branchName: ${{ steps.build.outputs.branchName }}
         type: ${{ steps.build.outputs.type }}
       steps:
         - uses: actions/checkout@v2
