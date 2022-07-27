@@ -3,7 +3,12 @@ name: Custom Build
 on:
   issues:
     types: [labeled,reopened]
+
+env:
+  BRANCH_NAME: develop
+  BUILD_TYPE: debug
   
+
 jobs:
   run_if_label_matches:
       ## 'custom_release' 라벨에서만 동작 하도록
