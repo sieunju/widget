@@ -56,8 +56,10 @@
             android:gravity="center_vertical"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:text="이것은 샘플입니다."
+            android:text="this is Sample TextView"
             app:textViewBgColor="#601F1F"
+            app:textViewBorder="3dp"
+            app:textViewBorderColor="#FFFFFF"
             app:textViewCorner="12dp"
             app:textViewDefState="true"
             app:textViewDisableBgColor="#FFC107"
@@ -65,9 +67,7 @@
             app:textViewDisableBorderColor="#00BCD4"
             app:textViewDisableCorner="25dp"
             app:textViewDisableTextStyle="@style/SampleText.Medium"
-            app:textViewDisableTxtColor="#FFEB3B"
-            app:textViewTextStyle="@style/SampleText.Bold"
-            app:textViewTxtColor="@color/white" />
+            app:textViewTextStyle="@style/SampleText.Bold" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>
