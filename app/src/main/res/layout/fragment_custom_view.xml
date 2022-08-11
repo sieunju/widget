@@ -19,11 +19,8 @@
             android:layout_margin="20dp"
             android:padding="15dp"
             android:text="안녕하세요 오토 싸이징 테스트 입니다..."
-            app:textViewAutoMaxSize="40dp"
-            app:textViewAutoMinSize="1dp"
             app:textViewBgColor="#673AB7"
-            app:textViewCorner="5dp"
-            app:textViewTxtColor="#FFFFFF" />
+            app:textViewTxtColor="#FFFFF0" />
 
         <hmju.widget.view.CustomLayout
             android:layout_width="match_parent"
@@ -51,5 +48,26 @@
             app:layoutCorner="50dp">
 
         </hmju.widget.view.CustomLayout>
+
+        <hmju.widget.view.CustomTextView
+            android:id="@+id/tvSample"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="이것은 샘플입니다."
+            app:textViewBgColor="#601F1F"
+            app:textViewCorner="12dp"
+            app:textViewDefState="true"
+            app:textViewDisableBgColor="#FFC107"
+            app:textViewDisableBorder="2dp"
+            app:textViewDisableBorderColor="#00BCD4"
+            app:textViewDisableCorner="25dp"
+            app:textViewDisableTextStyle="@style/SampleText.Medium"
+            app:textViewDisableTxtColor="#FFEB3B"
+            app:textViewTextStyle="@style/SampleText.Bold"
+            app:textViewTxtColor="@color/white" />
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>
