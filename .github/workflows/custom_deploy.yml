@@ -1,0 +1,52 @@
+name: Custom Build
+
+on:
+  issues:
+    types: [labeled,reopened]
+  
+
+jobs:
+  run_if_label_matches:
+      ## 'custom_release' 라벨에서만 동작 하도록
+      if: github.event.label.name == 'custom_release'
+      runs-on: ubuntu-latest
+      outputs:
+        branchName: ${{ steps.build.outputs.branchName }}
+        buildType: ${{ steps.build.outputs.type }}
+        issueTitle: ${{ github.event.issue.title }}
+        issueMessage: ${{ steps.body.outputs.val }}
+      steps:
+        - name: Issue Body
+          id: body
+          run: |
+            echo "${{ github.event.issue.body }}" >> buildInfo.txt
+            VALUE=$(<buildInfo.txt)
+            echo ::set-output name=val::$VALUE
+
+        - name: Generate Branch Name And Build Type
+          id: build
+          run: |
+            echo ::set-output name=branchName::$(grep branchName: buildInfo.txt | awk '{print $2}' )
+            echo ::set-output name=type::$(grep buildType: buildInfo.txt | awk '{print $2}' )
+        
+        - name: Build Print
+          run: |
+            echo ::set-output BranchName ${{ steps.build.outputs.branchName }}
+            echo ::set-output BuildType ${{ steps.build.outputs.type }}
+            echo ::set-output IssueTitle ${{ github.event.issue.title }}
+            echo ::set-output IssueMessage ${{ steps.body.outputs.val }}
+        
+  buildJobs:
+    runs-on: ubuntu-latest
+    
+    # 위에서 데이터 가져옴
+    needs: run_if_label_matches
+    
+    steps:
+      - name: Output Print
+        run: |
+          echo Plz BranchName ${{ needs.run_if_label_matches.outputs.branchName }}
+          echo Plz BuildType ${{ needs.run_if_label_matches.outputs.buildType }}
+          echo Plz IssueTitle ${{ needs.run_if_label_matches.outputs.issueTitle }}
+          echo Plz IssueMessage "${{ github.event.issue.body }}"
+    

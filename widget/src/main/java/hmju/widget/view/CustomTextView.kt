@@ -10,7 +10,9 @@ import android.util.AttributeSet
 import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
+import androidx.annotation.StyleRes
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.widget.TextViewCompat
 import hmju.widget.R
 import hmju.widget.extensions.toSize
 
@@ -37,8 +39,9 @@ class CustomTextView @JvmOverloads constructor(
     }
 
     data class Item(
-        @ColorInt var txtColor: Int = Color.BLACK,
-        var drawable: GradientDrawable? = null
+        @ColorInt var txtColor: Int? = null,
+        var drawable: GradientDrawable? = null,
+        @StyleRes var textStyle: Int = NO_ID
     ) {
         var corner: Float = -1F
             set(value) {
@@ -57,7 +60,7 @@ class CustomTextView @JvmOverloads constructor(
 
     private val enableItem = Item()
     private val disableItem = Item()
-    private var isClicked: Boolean = true
+    private var isClicked: Boolean = true // 활성화, 비활성화
 
     // [s] 자동 크기 조절
     private var isAutoSizing: Boolean = false
@@ -70,16 +73,25 @@ class CustomTextView @JvmOverloads constructor(
     init {
         context.obtainStyledAttributes(attrs, R.styleable.CustomTextView).run {
             try {
-                val corner = getDimension(R.styleable.CustomTextView_textViewCorner, -1F)
-                val defState = getBoolean(R.styleable.CustomTextView_textViewDefState, true)
-                var txtColor =
+                var corner = getDimension(R.styleable.CustomTextView_textViewCorner, -1F)
+                isClicked = getBoolean(R.styleable.CustomTextView_textViewDefState, true)
+                var txtColor: Int? = null
+                txtColor = if (hasValue(R.styleable.CustomTextView_textViewTxtColor)) {
                     getColor(R.styleable.CustomTextView_textViewTxtColor, Color.BLACK)
-                var bgColor =
-                    getColor(R.styleable.CustomTextView_textViewBgColor, Color.WHITE)
+                } else {
+                    null
+                }
+                var bgColor = getColor(R.styleable.CustomTextView_textViewBgColor, Color.WHITE)
                 var strokeWidth =
                     getDimensionPixelSize(R.styleable.CustomTextView_textViewBorder, -1)
                 var strokeColor =
                     getColor(R.styleable.CustomTextView_textViewBorderColor, NO_ID)
+                var textStyle = getResourceId(R.styleable.CustomTextView_textViewTextStyle, NO_ID)
+
+                // TextStyle 를 우선순위로
+                if (textStyle != NO_ID) {
+                    txtColor = null
+                }
 
                 enableItem.apply {
                     this.txtColor = txtColor
@@ -89,16 +101,29 @@ class CustomTextView @JvmOverloads constructor(
                     )
                     this.corner = corner
                     this.setStroke(strokeWidth, strokeColor)
+                    this.textStyle = textStyle
                 }
 
-                txtColor =
+                txtColor = if (hasValue(R.styleable.CustomTextView_textViewDisableTxtColor)) {
                     getColor(R.styleable.CustomTextView_textViewDisableTxtColor, Color.BLACK)
+                } else {
+                    null
+                }
+
                 bgColor =
                     getColor(R.styleable.CustomTextView_textViewDisableBgColor, Color.WHITE)
                 strokeWidth =
                     getDimensionPixelSize(R.styleable.CustomTextView_textViewDisableBorder, -1)
                 strokeColor =
                     getColor(R.styleable.CustomTextView_textViewDisableBorderColor, NO_ID)
+                textStyle =
+                    getResourceId(R.styleable.CustomTextView_textViewDisableTextStyle, NO_ID)
+                corner = getDimension(R.styleable.CustomTextView_textViewDisableCorner, -1F)
+
+                // TextStyle 를 우선순위로
+                if (textStyle != NO_ID) {
+                    txtColor = null
+                }
 
                 disableItem.apply {
                     this.txtColor = txtColor
@@ -108,15 +133,7 @@ class CustomTextView @JvmOverloads constructor(
                     )
                     this.corner = corner
                     this.setStroke(strokeWidth, strokeColor)
-                }
-
-                //Default State
-                background = if (defState) {
-                    setTextColor(enableItem.txtColor)
-                    enableItem.drawable
-                } else {
-                    setTextColor(disableItem.txtColor)
-                    disableItem.drawable
+                    this.textStyle = textStyle
                 }
 
                 // Auto Size
@@ -137,29 +154,60 @@ class CustomTextView @JvmOverloads constructor(
             }
             recycle()
         }
+
+        // Default State
+        performInvalidate()
+    }
+
+    private fun setCustomBackground(isEnable: Boolean) {
+        if (isEnable) {
+            if (enableItem.drawable != null) {
+                background = enableItem.drawable
+            }
+        } else {
+            if (disableItem.drawable != null) {
+                background = disableItem.drawable
+            }
+        }
+    }
+
+    /**
+     * set TextStyle
+     * @param isEnable 활 / 비활성화
+     */
+    private fun setCustomTextStyle(isEnable: Boolean) {
+        if (isEnable) {
+            // 텍스트 스타일이 정해져 있는 경우 -> TextColor 무시
+            if (enableItem.textStyle != NO_ID) {
+                TextViewCompat.setTextAppearance(this, enableItem.textStyle)
+            } else if (enableItem.txtColor != null) {
+                setTextColor(enableItem.txtColor!!)
+            } else {
+                // 기본값 블랙
+                setTextColor(Color.BLACK)
+            }
+        } else {
+            // 텍스트 스타일이 정해져 있는 경우 -> TextColor 무시
+            if (disableItem.textStyle != NO_ID) {
+                TextViewCompat.setTextAppearance(this, disableItem.textStyle)
+            } else if (disableItem.txtColor != null) {
+                setTextColor(disableItem.txtColor!!)
+            } else {
+                // 기본값 블랙
+                setTextColor(Color.BLACK)
+            }
+        }
     }
 
     override fun setSelected(selected: Boolean) {
         isClicked = selected
-        if (selected) {
-            background = enableItem.drawable
-            setTextColor(enableItem.txtColor)
-        } else {
-            background = disableItem.drawable
-            setTextColor(disableItem.txtColor)
-        }
+        performInvalidate()
         super.setSelected(selected)
     }
 
     override fun setEnabled(enabled: Boolean) {
         isClicked = enabled
-        if (enabled) {
-            background = enableItem.drawable
-            setTextColor(enableItem.txtColor)
-        } else {
-            background = disableItem.drawable
-            setTextColor(disableItem.txtColor)
-        }
+        performInvalidate()
         super.setEnabled(enabled)
     }
 
@@ -187,7 +235,7 @@ class CustomTextView @JvmOverloads constructor(
                     setStroke(strokeWidth, strokeColor)
                 }
             }
-        performUpdate()
+        performInvalidate()
     }
 
     /**
@@ -196,7 +244,7 @@ class CustomTextView @JvmOverloads constructor(
      */
     fun setEnableTxtColor(@ColorInt color: Int) {
         enableItem.txtColor = color
-        performUpdate()
+        performInvalidate()
     }
 
     /**
@@ -223,7 +271,7 @@ class CustomTextView @JvmOverloads constructor(
                     setStroke(strokeWidth, strokeColor)
                 }
             }
-        performUpdate()
+        performInvalidate()
     }
 
     /**
@@ -232,19 +280,15 @@ class CustomTextView @JvmOverloads constructor(
      */
     fun setDisableTxtColor(@ColorInt color: Int) {
         disableItem.txtColor = color
-        performUpdate()
+        performInvalidate()
     }
 
-    private fun performUpdate() {
-        if (disableItem.drawable != null && enableItem.drawable != null) {
-            background = if (isClicked) {
-                enableItem.drawable
-            } else {
-                disableItem.drawable
-            }
-        }
-
-        setTextColor(if (isClicked) enableItem.txtColor else disableItem.txtColor)
+    /**
+     * 텍스트 Background And TextStyle UI Update
+     */
+    private fun performInvalidate() {
+        setCustomBackground(isClicked)
+        setCustomTextStyle(isClicked)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -299,5 +343,4 @@ class CustomTextView @JvmOverloads constructor(
             )
         }
     }
-
 }
