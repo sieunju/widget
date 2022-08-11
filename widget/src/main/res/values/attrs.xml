@@ -62,8 +62,11 @@
         <attr name="textViewDisableBgColor" format="color" /> <!-- Disable or Not Selected Bg Color -->
         <attr name="textViewDisableBorder" format="dimension" /> <!-- Disable or Not Selected Border Width -->
         <attr name="textViewDisableBorderColor" format="color" /> <!-- Disable Or Not Selected Border Color -->
+        <attr name="textViewDisableCorner" format="dimension"/> <!-- Disable Or Not Selected Corner Radius -->
         <attr name="textViewAutoMaxSize" format="dimension" /> <!-- Auto Sizing Max Size -->
         <attr name="textViewAutoMinSize" format="dimension" /> <!-- Auto Sizing Min Size -->
+        <attr name="textViewTextStyle" format="reference"/>
+        <attr name="textViewDisableTextStyle" format="reference"/>
     </declare-styleable>
     <!-- [e] CustomTextView Attr -->
 
