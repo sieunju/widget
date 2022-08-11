@@ -8,6 +8,7 @@
     </style>
 
     <style name="SampleText.Bold">
+        <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
     </style>
 
