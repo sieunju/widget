@@ -9,6 +9,7 @@ import androidx.annotation.NonNull
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import hmju.widget.R
 import hmju.widget.extensions.statusBarHeight
+import kotlin.math.roundToInt
 
 /**
  * kotlinStudy
@@ -61,6 +62,8 @@ class TranslationBehavior @JvmOverloads constructor(
     init {
         context.obtainStyledAttributes(attrs, R.styleable.TranslationBehavior).run {
             try {
+                val isFitsSystemWindow =
+                    getBoolean(R.styleable.TranslationBehavior_behaviorIsFitsSystemWindow, false)
                 getString(R.styleable.TranslationBehavior_behaviorEndX)?.let {
                     val split = it.split(",")
                     // $(s or e -> Optional},${Location X -> Required}
@@ -80,13 +83,15 @@ class TranslationBehavior @JvmOverloads constructor(
                     val split = it.split(",")
                     // $(s or e -> Optional},${Location Y -> Required}
                     when (split.size) {
-                        1 -> endY = split[0].strToDp(context).plus(context.statusBarHeight())
+                        1 -> endY = split[0].strToDp(context)
+                            .plus(if (isFitsSystemWindow) context.statusBarHeight() else 0)
                         2 -> {
                             // 끝 기준인경우 Type 값 변경.
                             if (Type.END.value == split[0]) {
                                 endYType = Type.END
                             }
-                            endY = split[1].strToDp(context).plus(context.statusBarHeight())
+                            endY = split[1].strToDp(context)
+                                .plus(if (isFitsSystemWindow) context.statusBarHeight() else 0)
                         }
                         else -> throw IllegalArgumentException("behaviorEndY does not match the format type. ex.) s,73 or 73")
                     }
@@ -197,8 +202,8 @@ class TranslationBehavior @JvmOverloads constructor(
             child.scaleY = newHeight / startHeight
         }
 
-        child.translationX = newX
-        child.translationY = newY
+        child.translationX = (newX.roundToInt()).toFloat()
+        child.translationY = (newY.roundToInt()).toFloat()
 
         LogD("Child Location\t${child.x}\t${child.y}")
 
