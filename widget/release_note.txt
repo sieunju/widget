@@ -1,19 +1,15 @@
-Version: 1.0.3
-Title: v1.0.3 릴리즈 배포
+Version: 1.0.4
+Title: v1.0.4 릴리즈 배포
 Message:
-## Release v1.0.3 History
+## Release v1.0.4 History
 KO-KR
 ## 소개
 > Custom Component 관련 라이브러리 입니다. 🥰
 > 많은 애용 바랍니다. 그리고 추가 하고 싶은 기능이 있으면 이슈로 남겨주시기 바랍니다.
 
-## 기능을 추가했어요.
-- CustomTextView 에 TextStyle 기능을 넣었어요.
-자세한 사항은 (https://github.com/sieunju/widget/wiki/CustomTextView 참고)
-
 ## 이슈를 수정했어요.
-- build.gradle Plugin 버전 업데이트를 했어요. 4.1.3 -> 7.1.2
-- 기타 sdk 버전을 수정 했어요.
+- TranslationBehavior -> FitsSystemWindows 에 따라서 TransY 가 제대로 안되는 이슈 수정했어요.
+자세한 사항은 (https://github.com/sieunju/widget/wiki/TranslationBehavior 참고)
 
 EN-US
 ## Introduction
@@ -22,8 +18,8 @@ EN-US
 
 ## Features
 - CustomTextView Add 'TextStyle' Feature
-Wiki(https://github.com/sieunju/widget/wiki/CustomTextView)
+
 
 ## Issue
-- build.gradle Plugin Migrate 4.1.3 -> 7.1.2
-- etc sdk version downgrade
+- FIX TranslationBehavior -> when FitsSystemWindows = false, Error TransY issue
+Wiki(https://github.com/sieunju/widget/wiki/TranslationBehavior)
