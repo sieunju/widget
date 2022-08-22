@@ -30,6 +30,7 @@
 
         <attr name="behaviorEndWidth" format="dimension" />   <!-- Child View End Width -->
         <attr name="behaviorEndHeight" format="dimension" /> <!-- Child View End Height -->
+        <attr name="behaviorIsFitsSystemWindow" format="boolean"/> <!-- Parent FitsSystemWindow -->
         <!-- [e] TranslationBehavior Attr -->
     </declare-styleable>
 
