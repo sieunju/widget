@@ -101,10 +101,8 @@
             <enum name="fixed" value="0" />
             <enum name="scrollable" value="1" />
         </attr>
-        <attr name="tabTextSize" format="dimension" />
-        <attr name="tabIsChangeTextStyle" format="boolean" />
-        <attr name="tabTextColor" format="color" />
-        <attr name="tabDisableTextColor" format="color" />
+        <attr name="tabEnableTextStyle" format="reference"/> <!-- Enable TextStyle -->
+        <attr name="tabDisableTextStyle" format="reference"/> <!-- Disable TextStyle -->
         <attr name="tabBottomLineColor" format="color" />
         <attr name="tabBottomLineHeight" format="dimension" />
     </declare-styleable>
@@ -117,8 +115,10 @@
         <attr name="tabIndicatorCorner" format="dimension" />
         <attr name="tabScrollOffset" format="dimension" />
         <attr name="tabIndicatorPadding" format="dimension" />
-        <attr name="tabLineSideSpace" format="dimension" />
-        <attr name="tabLineDivider" format="dimension" />
+        <attr name="tabItemSide" format="dimension"/>
+        <attr name="tabItemDivider" format="dimension"/>
+        <attr name="tabPreviewItems" format="string"/> <!-- 미리보기 화면 지원 -->
+        <attr name="tabPreviewPos" format="integer"/> <!-- 미리보기 위치값 -->
     </declare-styleable>
     <!-- [e] LinePagerTabLayout Attr -->
 

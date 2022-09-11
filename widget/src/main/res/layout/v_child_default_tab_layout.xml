@@ -22,15 +22,15 @@
         android:onClick="@{(v)->listener.onTabClick(item.pos,v)}">
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{item.title}"
-            android:textColor="@{item.isSelected() == true ? item.txtColor : item.disableTxtColor}"
-            android:textStyle='@{item.isSelected() == true ? "bold" : "normal"}'
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:tabTextStyle="@{item.isSelected() == true ? item.enableTextStyle : item.disableTextStyle}"
             tools:text="제목텝" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
