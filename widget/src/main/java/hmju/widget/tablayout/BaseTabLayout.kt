@@ -1,18 +1,20 @@
 package hmju.widget.tablayout
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 import android.widget.HorizontalScrollView
-import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
+import androidx.annotation.StyleRes
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.viewpager2.widget.ViewPager2
 import hmju.widget.R
-import hmju.widget.extensions.dp
 
 /**
  * Description : BaseTabLayout
@@ -23,7 +25,7 @@ abstract class BaseTabLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : HorizontalScrollView(context, attrs, defStyleAttr), LifecycleOwner, LifecycleObserver {
+) : HorizontalScrollView(context, attrs, defStyleAttr), LifecycleOwner, LifecycleEventObserver {
 
     interface Listener {
         fun onTabClick(pos: Int, view: View)
@@ -79,18 +81,16 @@ abstract class BaseTabLayout @JvmOverloads constructor(
 
     // [s] Attribute Set Variable
     protected var type: Type = Type.FIXED
-    protected var textSize = 16.dp
 
-    @ColorInt
-    protected var enableTxtColor = Color.BLACK
+    @StyleRes
+    protected var enableStyle: Int = NO_ID
 
-    @ColorInt
-    protected var disableTxtColor = Color.BLACK
+    @StyleRes
+    protected var disableStyle: Int = NO_ID
 
     @Dimension
     protected val bottomLineHeight: Float
 
-    protected var isChangeTextStyle: Boolean = true // 선택된 Tab Text Style Bold 로 할건지 Flag 값
     protected val bottomLinePaint: Paint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
@@ -104,16 +104,20 @@ abstract class BaseTabLayout @JvmOverloads constructor(
 
         context.obtainStyledAttributes(attrs, R.styleable.BaseTabLayout).run {
             type = Type.values()[getInt(R.styleable.BaseTabLayout_tabType, 0)]
-            // 룩핀 탭 기본 스타일로 셋팅
-            textSize = getDimensionPixelSize(R.styleable.BaseTabLayout_tabTextSize, 16.dp)
-            isChangeTextStyle = getBoolean(R.styleable.BaseTabLayout_tabIsChangeTextStyle, true)
-            enableTxtColor = getColor(R.styleable.BaseTabLayout_tabTextColor, Color.BLACK)
-            disableTxtColor =
-                getColor(R.styleable.BaseTabLayout_tabDisableTextColor, Color.GRAY)
+
+            if (hasValue(R.styleable.BaseTabLayout_tabEnableTextStyle) &&
+                hasValue(R.styleable.BaseTabLayout_tabDisableTextStyle)
+            ) {
+                enableStyle = getResourceId(R.styleable.BaseTabLayout_tabEnableTextStyle, NO_ID)
+                disableStyle = getResourceId(R.styleable.BaseTabLayout_tabDisableTextStyle, NO_ID)
+            } else {
+                // throw
+                throw IllegalArgumentException("Require styleable is tabEnableTextStyle And tabDisableTextStyle")
+            }
+
             bottomLineHeight =
                 getDimension(R.styleable.BaseTabLayout_tabBottomLineHeight, 0F)
-            bottomLinePaint.color = getColor(R.styleable.BaseTabLayout_tabBottomLineColor, Color.LTGRAY)
-
+            bottomLinePaint.color = getColor(R.styleable.BaseTabLayout_tabBottomLineColor, NO_ID)
             recycle()
         }
     }
@@ -123,8 +127,7 @@ abstract class BaseTabLayout @JvmOverloads constructor(
     open fun onStop() {}
     open fun onDestroy() {}
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
-    fun onStateEvent(owner: LifecycleOwner, event: Lifecycle.Event) {
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         lifecycleRegistry.handleLifecycleEvent(event)
         when (event) {
             Lifecycle.Event.ON_CREATE -> onCreate()
@@ -136,6 +139,16 @@ abstract class BaseTabLayout @JvmOverloads constructor(
     }
 
     override fun getLifecycle() = lifecycleRegistry
+
+    /**
+     * AddObserver
+     * @param fragment 자동으로 추가해주는 Observer 에서 Activity 찾지 못하는 경우
+     * 수동으로 처리하는 함수 like.. Hilt 를 사용하는 경우 기본 getFragmentActivity 확장함수에서는
+     * 찾지 못함.
+     */
+    fun addObserver(fragment: Fragment) {
+        fragment.lifecycle.addObserver(this)
+    }
 
     /**
      * AddObserver
