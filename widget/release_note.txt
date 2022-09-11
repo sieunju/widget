@@ -1,15 +1,16 @@
-Version: 1.0.4
-Title: v1.0.4 릴리즈 배포
+Version: 1.0.5-beta01
+Title: v1.0.5-beta01 릴리즈 배포
 Message:
-## Release v1.0.4 History
+## Release v1.0.5-beta History
 KO-KR
 ## 소개
 > Custom Component 관련 라이브러리 입니다. 🥰
 > 많은 애용 바랍니다. 그리고 추가 하고 싶은 기능이 있으면 이슈로 남겨주시기 바랍니다.
 
-## 이슈를 수정했어요.
-- TranslationBehavior -> FitsSystemWindows 에 따라서 TransY 가 제대로 안되는 이슈 수정했어요.
-자세한 사항은 (https://github.com/sieunju/widget/wiki/TranslationBehavior 참고)
+## 기능 추가
+- LinePagerTabLayout
+    - 기존에 활/비활성화 텍스트 색상, 폰트 사이즈를 Style 로 한번에 처리 할 수 있게 기능 변경을 했어요.
+    - 간단한 프리뷰 모드를 지원 했어요.
 
 EN-US
 ## Introduction
@@ -17,9 +18,7 @@ EN-US
 > Please use it a lot. And if there is a function you want to add, please leave it as an issue.
 
 ## Features
-- CustomTextView Add 'TextStyle' Feature
-
-
-## Issue
-- FIX TranslationBehavior -> when FitsSystemWindows = false, Error TransY issue
-Wiki(https://github.com/sieunju/widget/wiki/TranslationBehavior)
+- LinePagerTabLayout
+    - Enable/ Disable Text Change
+    TextColor, FontSize -> Style
+    - Simple Preview Mode
