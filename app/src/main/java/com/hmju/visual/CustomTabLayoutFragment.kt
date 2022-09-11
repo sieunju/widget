@@ -13,6 +13,7 @@ import hmju.widget.tablayout.LinePagerTabLayout
 import hmju.widget.tablayout.PagerTabItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -35,22 +36,27 @@ class CustomTabLayoutFragment : Fragment(R.layout.fragment_custom_tab_layout) {
             val viewPager = findViewById<ViewPager2>(R.id.vp)
 
             tabLayout.viewPager = viewPager
+            tabLayout.addObserver(this@CustomTabLayoutFragment)
 
             GlobalScope.launch(Dispatchers.Main) {
                 val tabList = mutableListOf<PagerTabItem>()
                 val colorList = mutableListOf<Int>()
-                tabList.add(PagerTabItem("TAB1"))
-                tabList.add(PagerTabItem("TAB2"))
-                tabList.add(PagerTabItem("TAB3"))
-                tabList.add(PagerTabItem("TAB4"))
+                tabList.add(PagerTabItem("oneTab"))
+                tabList.add(PagerTabItem("TwoTwoTab"))
+                tabList.add(PagerTabItem("ThreeTab"))
+                tabList.add(PagerTabItem("FourTab"))
 
                 colorList.add(Color.WHITE)
-                colorList.add(Color.WHITE)
-                colorList.add(Color.WHITE)
-                colorList.add(Color.WHITE)
+                colorList.add(Color.BLACK)
+                colorList.add(Color.RED)
+                colorList.add(Color.CYAN)
 
                 viewPager.adapter = Adapter(colorList)
                 tabLayout.setDataList(tabList)
+            }
+            GlobalScope.launch(Dispatchers.Main) {
+                delay(5000)
+                viewPager.setCurrentItem(2,true)
             }
         }
     }
