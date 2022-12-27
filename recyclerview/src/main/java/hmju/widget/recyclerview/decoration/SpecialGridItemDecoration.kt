@@ -1,4 +1,4 @@
-package hmju.widget.layoutmanager
+package hmju.widget.recyclerview.decoration
 
 import android.graphics.Rect
 import android.util.Log

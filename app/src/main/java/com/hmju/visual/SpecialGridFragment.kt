@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.hmju.visual.databinding.*
 import hmju.widget.extensions.dp
-import hmju.widget.layoutmanager.SpecialGridItemDecoration
+import hmju.widget.recyclerview.decoration.SpecialGridItemDecoration
 import kotlinx.coroutines.*
 import kotlin.random.Random
 

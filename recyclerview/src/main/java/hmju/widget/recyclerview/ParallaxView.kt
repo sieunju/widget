@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.annotation.FloatRange
 import androidx.constraintlayout.widget.ConstraintLayout
-import hmju.widget.recyclerview.Extensions.dp
-import hmju.widget.recyclerview.Extensions.getRealContentsHeight
+import hmju.widget.extensions.Extensions.dp
+import hmju.widget.extensions.Extensions.getRealContentsHeight
 import kotlin.math.ceil
 
 /**

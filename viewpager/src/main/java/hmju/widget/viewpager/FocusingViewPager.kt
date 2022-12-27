@@ -94,7 +94,7 @@ class FocusingViewPager @JvmOverloads constructor(
                         }
                     }
                 }
-            } else if (orientation == ViewPager2.ORIENTATION_VERTICAL) {
+            } else {
                 // 수직 ViewPager2 은 나중에 처리할 예정
                 // ignore
             }

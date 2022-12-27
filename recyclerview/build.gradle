@@ -31,6 +31,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":extensions"))
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
 }

@@ -10,10 +10,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.widget.ViewPager2
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.Disposable
-import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
 /**
@@ -32,6 +28,7 @@ class AutoScrollMediator(
     private var isStopByTouch = false // 터치 한 상태 Flag
     private var prevX = -1F
     private var prevY = -1F
+
     // private var disposable: Disposable? = null
     private var activity: FragmentActivity? = null
         set(value) {
