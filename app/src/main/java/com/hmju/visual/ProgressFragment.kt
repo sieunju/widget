@@ -16,7 +16,7 @@ class ProgressFragment : Fragment(R.layout.fragment_progress) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(view) {
-            val progressView: ProgressView = findViewById(R.id.progressView)
+            val progressView: hmju.widget.progress.ProgressView = findViewById(R.id.progressView)
             findViewById<AppCompatTextView>(R.id.tvStart).setOnClickListener {
                 GlobalScope.launch(Dispatchers.Default) {
                     repeat(100) {

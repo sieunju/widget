@@ -47,6 +47,7 @@ dependencies {
     implementation(project(":gesture"))
     implementation(project(":recyclerview"))
     implementation(project(":viewpager"))
+    implementation(project(":progress"))
 
     implementation project(path: ':widget')
 

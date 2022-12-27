@@ -34,23 +34,6 @@
         <!-- [e] TranslationBehavior Attr -->
     </declare-styleable>
 
-    <!-- [s] ProgressView Attr -->
-    <declare-styleable name="ProgressView">
-        <attr name="progressType" format="enum"> <!-- 수평 or 수직 상태 -->
-            <enum name="horizontal" value="0" />
-            <enum name="vertical" value="1" />
-        </attr>
-        <attr name="progressRadius" format="dimension" /> <!-- Radius 값 -->
-        <attr name="progressStartColor" format="color" /> <!-- 프로그래스 뷰 시작 색상 -->
-        <attr name="progressCenterColor" format="color" /> <!-- 프로그래스 뷰 중간 색상 -->
-        <attr name="progressEndColor" format="color" /> <!-- 프로그래스 뷰 마지막 색상 -->
-        <attr name="progressCenterXY" format="float" /> <!-- 색상 시작과 끝 중간 지점 비율에 대한 좌표(%) -->
-        <attr name="progressBgColor" format="color" />   <!-- Background Color -->
-        <attr name="progressMax" format="integer" /> <!-- 최대 진행값 -->
-        <attr name="progressMin" format="integer" /> <!-- 최소 진행값 -->
-    </declare-styleable>
-    <!-- ProgressView Attr [End] -->
-
     <!-- [s] BaseTabLayout Attr -->
     <declare-styleable name="BaseTabLayout">
         <attr name="tabType" format="enum">

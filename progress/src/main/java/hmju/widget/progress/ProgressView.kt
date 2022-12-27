@@ -6,7 +6,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import hmju.widget.R
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -15,6 +14,7 @@ import java.util.concurrent.Executors
  * ProgressView
  * Created by juhongmin on 6/13/21
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class ProgressView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
