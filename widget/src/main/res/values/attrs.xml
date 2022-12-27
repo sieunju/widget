@@ -78,17 +78,4 @@
     </declare-styleable>
     <!-- [e] LinePagerTabLayout Attr -->
 
-    <!-- [s] LineIndicator Attr -->
-    <declare-styleable name="LineIndicator">
-        <attr name="lineIndicatorType" format="enum">
-            <enum name="fill" value="0" />
-            <enum name="unit" value="1" />
-        </attr>
-        <attr name="lineIndicatorColor" format="color" />
-        <attr name="lineIndicatorBgColor" format="color" />
-        <attr name="lineIndicatorCorner" format="dimension" />
-        <attr name="lineIndicatorIsInfinite" format="boolean"/>
-    </declare-styleable>
-    <!-- [e] LineIndicator Attr -->
-
 </resources>

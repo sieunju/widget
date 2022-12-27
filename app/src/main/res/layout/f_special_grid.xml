@@ -3,10 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type="java.util.List"/>
-        <variable
-            name="gridTypeList"
-            type="List&lt;Integer>" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,7 +15,6 @@
             android:layout_height="match_parent"
             android:focusable="false"
             android:splitMotionEvents="false"
-            app:specialGridTypeList="@{gridTypeList}"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="2" />
 

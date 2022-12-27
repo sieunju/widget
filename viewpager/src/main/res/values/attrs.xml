@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- [s] LineIndicator Attr -->
+    <declare-styleable name="LineIndicator">
+        <attr name="lineIndicatorType" format="enum">
+            <enum name="fill" value="0" />
+            <enum name="unit" value="1" />
+        </attr>
+        <attr name="lineIndicatorColor" format="color" />
+        <attr name="lineIndicatorBgColor" format="color" />
+        <attr name="lineIndicatorCorner" format="dimension" />
+        <attr name="lineIndicatorIsInfinite" format="boolean"/>
+    </declare-styleable>
+    <!-- [e] LineIndicator Attr -->
+
+    <!-- [s] DotIndicator Attr -->
+    <declare-styleable name="DotIndicator">
+        <attr name="dotIndicatorGravity" format="enum">
+            <enum name="left" value="0" />
+            <enum name="center" value="1" />
+            <enum name="right" value="2" />
+        </attr>
+        <attr name="dotIndicatorEnableColor" format="color" />
+        <attr name="dotIndicatorEnableCorner" format="dimension" />
+        <attr name="dotIndicatorEnableSize" format="dimension" />
+        <attr name="dotIndicatorDisableColor" format="color" />
+        <attr name="dotIndicatorDisableSize" format="dimension" />
+        <attr name="dotIndicatorDisableCorner" format="dimension" />
+        <attr name="dotIndicatorDivider" format="dimension" />
+        <attr name="dotIndicatorIsInfinite" format="boolean" />
+    </declare-styleable>
+    <!-- [e] DotIndicator Attr -->
+
+</resources>

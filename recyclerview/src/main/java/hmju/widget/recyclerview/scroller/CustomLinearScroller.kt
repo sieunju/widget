@@ -1,9 +1,10 @@
-package hmju.widget.scroller
+package hmju.widget.recyclerview.scroller
 
 import android.content.Context
 import android.view.View
 import android.view.animation.Interpolator
 import android.view.animation.LinearInterpolator
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.sqrt
@@ -12,11 +13,16 @@ import kotlin.math.sqrt
  * Description : RecyclerView Smooth Scroller
  * @see [LinearSmoothScroller] 에서 포커싱을 중간으로 하는것과 애니메이션 효과만 커스텀화 한
  * 컨트롤러
- * 수평 스크롤만 지원
+ * 수평 or 수직 스크롤 지원
  *
  * Created by juhongmin on 2022/02/03
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class CustomLinearScroller(context: Context) : LinearSmoothScroller(context) {
+
+    enum class ScrollerType {
+        START, END, CENTER
+    }
 
     companion object {
         const val TARGET_SEEK_SCROLL_DISTANCE_PX = 10000
@@ -25,7 +31,7 @@ class CustomLinearScroller(context: Context) : LinearSmoothScroller(context) {
 
     var type: ScrollerType = ScrollerType.START
     var scrollOffset: Int = 0
-    var interceptor: Interpolator = LinearInterpolator()
+    var interceptor: Interpolator = FastOutSlowInInterpolator()
     var duration: Int = 400
 
     override fun getHorizontalSnapPreference(): Int {

@@ -9,9 +9,9 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import hmju.widget.viewpager.scroller.AutoScrollMediator
 import hmju.widget.extensions.currentItem
-import hmju.widget.indicator.LineIndicator
+import hmju.widget.viewpager.indicator.LineIndicator
+import hmju.widget.viewpager.scroller.AutoScrollMediator
 
 /**
  * Description :
@@ -22,7 +22,7 @@ class LineIndicatorFragment : Fragment(R.layout.f_line_indicator) {
 
     data class Sample(val pos: Int, val color: Int)
 
-    lateinit var autoScrollMediator: hmju.widget.viewpager.scroller.AutoScrollMediator
+    lateinit var autoScrollMediator: AutoScrollMediator
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(view) {
@@ -31,7 +31,7 @@ class LineIndicatorFragment : Fragment(R.layout.f_line_indicator) {
             val viewPager: ViewPager2 = findViewById(R.id.vp)
             unitIndicator.viewPager = viewPager
             fillIndicator.viewPager = viewPager
-            autoScrollMediator = hmju.widget.viewpager.scroller.AutoScrollMediator(viewPager, 3000L)
+            autoScrollMediator = AutoScrollMediator(viewPager, 3000L)
 
             val list = mutableListOf<Sample>()
             list.add(Sample(0, Color.BLACK))

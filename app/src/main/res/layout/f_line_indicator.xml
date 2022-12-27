@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <hmju.widget.indicator.LineIndicator
+    <hmju.widget.viewpager.indicator.LineIndicator
         android:id="@+id/fillIndicator"
         android:layout_width="match_parent"
         android:layout_height="6dp"
@@ -18,7 +18,7 @@
         app:lineIndicatorIsInfinite="true"
         app:lineIndicatorType="fill" />
 
-    <hmju.widget.indicator.LineIndicator
+    <hmju.widget.viewpager.indicator.LineIndicator
         android:id="@+id/unitIndicator"
         android:layout_width="match_parent"
         android:layout_height="6dp"

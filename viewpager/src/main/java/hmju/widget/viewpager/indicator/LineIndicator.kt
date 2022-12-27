@@ -1,4 +1,4 @@
-package hmju.widget.indicator
+package hmju.widget.viewpager.indicator
 
 import android.content.Context
 import android.graphics.Canvas
@@ -11,13 +11,14 @@ import android.util.Log
 import androidx.annotation.Dimension
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.viewpager2.widget.ViewPager2
-import hmju.widget.R
+import hmju.widget.viewpager.R
 
 /**
  * Description : LineIndicator
  *
  * Created by juhongmin on 2022/01/10
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class LineIndicator @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
