@@ -2,7 +2,6 @@ package hmju.widget.tablayout
 
 import android.view.View
 import androidx.annotation.StyleRes
-import androidx.lifecycle.MutableLiveData
 
 /**
  * Description : Pager TabItem
@@ -22,11 +21,11 @@ class PagerTabItem(
     var view: View? = null
 
     // 해당 탭 선택 유부 LiveData
-    var isSelected: MutableLiveData<Boolean>? = null
-        get() {
-            if (field == null) {
-                field = MutableLiveData(false)
-            }
-            return field
-        }
+//    var isSelected: MutableLiveData<Boolean>? = null
+//        get() {
+//            if (field == null) {
+//                field = MutableLiveData(false)
+//            }
+//            return field
+//        }
 }

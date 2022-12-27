@@ -54,7 +54,7 @@ class LineIndicatorFragment : Fragment(R.layout.f_line_indicator) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        lifecycle.removeObserver(autoScrollMediator)
+        // lifecycle.removeObserver(autoScrollMediator)
     }
 
     class Adapter(

@@ -14,13 +14,13 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.viewpager2.widget.ViewPager2
-import hmju.widget.R
 
 /**
  * Description : BaseTabLayout
  *
  * Created by juhongmin on 2021/12/31
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 abstract class BaseTabLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

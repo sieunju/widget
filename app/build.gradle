@@ -48,6 +48,7 @@ dependencies {
     implementation(project(":recyclerview"))
     implementation(project(":viewpager"))
     implementation(project(":progress"))
+    implementation(project(":tablayout"))
 
     implementation project(path: ':widget')
 

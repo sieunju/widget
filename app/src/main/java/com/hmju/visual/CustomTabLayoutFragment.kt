@@ -32,19 +32,19 @@ class CustomTabLayoutFragment : Fragment(R.layout.fragment_custom_tab_layout) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(view) {
-            val tabLayout = findViewById<LinePagerTabLayout>(R.id.tabLayout)
+            val tabLayout = findViewById<hmju.widget.tablayout.LinePagerTabLayout>(R.id.tabLayout)
             val viewPager = findViewById<ViewPager2>(R.id.vp)
 
             tabLayout.viewPager = viewPager
             tabLayout.addObserver(this@CustomTabLayoutFragment)
 
             GlobalScope.launch(Dispatchers.Main) {
-                val tabList = mutableListOf<PagerTabItem>()
+                val tabList = mutableListOf<hmju.widget.tablayout.PagerTabItem>()
                 val colorList = mutableListOf<Int>()
-                tabList.add(PagerTabItem("oneTab"))
-                tabList.add(PagerTabItem("TwoTwoTab"))
-                tabList.add(PagerTabItem("ThreeTab"))
-                tabList.add(PagerTabItem("FourTab"))
+                tabList.add(hmju.widget.tablayout.PagerTabItem("oneTab"))
+                tabList.add(hmju.widget.tablayout.PagerTabItem("TwoTwoTab"))
+                tabList.add(hmju.widget.tablayout.PagerTabItem("ThreeTab"))
+                tabList.add(hmju.widget.tablayout.PagerTabItem("FourTab"))
 
                 colorList.add(Color.WHITE)
                 colorList.add(Color.BLACK)

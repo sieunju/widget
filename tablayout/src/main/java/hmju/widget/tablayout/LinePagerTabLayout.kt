@@ -13,22 +13,16 @@ import androidx.annotation.Dimension
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.postDelayed
-import androidx.core.view.size
 import androidx.core.widget.TextViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.viewpager2.widget.ViewPager2
-import hmju.widget.R
-import hmju.widget.databinding.VLineTabLayoutBinding
-import hmju.widget.extensions.currentItem
-import hmju.widget.extensions.getFragmentActivity
-import hmju.widget.extensions.initBinding
-import hmju.widget.extensions.multiNullCheck
+import hmju.widget.extensions.Extensions.multiNullCheck
 
 /**
  * LinePagerTabLayout
  * Created by juhongmin on 2021/12/31
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class LinePagerTabLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -87,7 +81,7 @@ class LinePagerTabLayout @JvmOverloads constructor(
         }
     }
 
-    private val tabContainer: VLineTabLayoutBinding
+    private val tabContainer: LinearLayoutCompat
     private val dataList: MutableList<PagerTabItem> by lazy { mutableListOf() }
     private val currentPosition: MutableLiveData<Int> by lazy { MutableLiveData() }
 
@@ -128,7 +122,7 @@ class LinePagerTabLayout @JvmOverloads constructor(
             recycle()
         }
 
-        tabContainer = initBinding(R.layout.v_line_tab_layout, this)
+        tabContainer = LinearLayoutCompat(context)
 
         // Preview Mode
         if (isInEditMode) {
@@ -142,7 +136,7 @@ class LinePagerTabLayout @JvmOverloads constructor(
             }
             addPreviewTabItems(previewTabItems, previewTabPos)
         } else {
-            this.getFragmentActivity()?.lifecycle?.addObserver(this)
+            // this.getFragmentActivity()?.lifecycle?.addObserver(this)
         }
     }
 
@@ -155,10 +149,10 @@ class LinePagerTabLayout @JvmOverloads constructor(
         try {
             val split = tabItems.split(",")
             if (type == Type.FIXED) {
-                tabContainer.linerLayout.weightSum = split.size.toFloat()
+                tabContainer.weightSum = split.size.toFloat()
             }
             split.forEachIndexed { index, s ->
-                tabContainer.linerLayout.addView(initPreview(s, index, pos))
+                tabContainer.addView(initPreview(s, index, pos))
             }
         } catch (ex: Exception) {
             // ignore
@@ -260,7 +254,7 @@ class LinePagerTabLayout @JvmOverloads constructor(
                 bottomLineRectF.top = height - bottomLineHeight
                 bottomLineRectF.bottom = height.toFloat()
             }
-            bottomLineRectF.right = tabContainer.linerLayout.right.toFloat()
+            bottomLineRectF.right = tabContainer.right.toFloat()
             canvas.drawRect(bottomLineRectF, bottomLinePaint)
             canvas.save()
         }
@@ -278,7 +272,7 @@ class LinePagerTabLayout @JvmOverloads constructor(
 
         // Scroll 할때만 처리
         if (scrollOffset > 0F && currentPos < tabCount.minus(1)) {
-            tabContainer.linerLayout.runCatching {
+            tabContainer.runCatching {
                 multiNullCheck(
                     dataList[currPos].view,
                     dataList[currPos.plus(1)].view
@@ -325,7 +319,7 @@ class LinePagerTabLayout @JvmOverloads constructor(
         currentPos = 0
         currentPosition.value = 0
         tabCount = list.size
-        tabContainer.linerLayout.removeAllViews()
+        tabContainer.removeAllViews()
         positionMap.clear()
         // [e] 초기화 처리
 
@@ -336,9 +330,9 @@ class LinePagerTabLayout @JvmOverloads constructor(
 
         if (type == Type.FIXED) {
             if (fixedSize != -1) {
-                tabContainer.linerLayout.weightSum = fixedSize.toFloat()
+                tabContainer.weightSum = fixedSize.toFloat()
             } else {
-                tabContainer.linerLayout.weightSum = tabCount.toFloat()
+                tabContainer.weightSum = tabCount.toFloat()
             }
             layoutParams.width = 0
             layoutParams.weight = 1F
@@ -347,53 +341,53 @@ class LinePagerTabLayout @JvmOverloads constructor(
         // 데이터 리스트에 맞게 아이템 Binding 한다.
         list.forEachIndexed { index, data ->
             data.pos = index
-            data.isSelected?.value = index == currentPos
+            // data.isSelected?.value = index == currentPos
             data.enableTextStyle = enableStyle
             data.disableTextStyle = disableStyle
-            initBinding<hmju.widget.databinding.VChildDefaultTabLayoutBinding>(
-                R.layout.v_child_default_tab_layout,
-                this,
-                false
-            ) {
-                this.lifecycleOwner = this@LinePagerTabLayout
-                setVariable(hmju.widget.BR.listener, tabListener)
-                setVariable(hmju.widget.BR.item, data)
-                data.view = this.root
-
-                // 특정 탭 레이아웃들 인디게이터 사이즈 처리
-                if (index == 0) {
-                    this.root.post {
-                        indicatorRectF.left = this.root.left.minus(indicatorPadding)
-                        indicatorRectF.right = this.root.right.plus(indicatorPadding)
-                        this@LinePagerTabLayout.invalidate()
-                    }
-                }
-
-                // [s] Left Decoration
-                if (type == Type.SCROLLABLE) {
-                    addEmptyView(
-                        tabContainer.linerLayout,
-                        index,
-                        if (index == 0) itemSide else itemDivider
-                    )
-                }
-                // [e] Left Decoration
-
-                // 맵 저장
-                positionMap[index] = tabContainer.linerLayout.childCount
-                tabContainer.linerLayout.addView(this.root)
-
-
-                // [s] Left Decoration
-                if (type == Type.SCROLLABLE) {
-                    addEmptyView(
-                        tabContainer.linerLayout,
-                        index,
-                        if (index == tabCount - 1) itemSide else itemDivider
-                    )
-                }
-                // [e] Left Decoration
-            }
+//            initBinding<hmju.widget.databinding.VChildDefaultTabLayoutBinding>(
+//                R.layout.v_child_default_tab_layout,
+//                this,
+//                false
+//            ) {
+//                this.lifecycleOwner = this@LinePagerTabLayout
+//                setVariable(hmju.widget.BR.listener, tabListener)
+//                setVariable(hmju.widget.BR.item, data)
+//                data.view = this.root
+//
+//                // 특정 탭 레이아웃들 인디게이터 사이즈 처리
+//                if (index == 0) {
+//                    this.root.post {
+//                        indicatorRectF.left = this.root.left.minus(indicatorPadding)
+//                        indicatorRectF.right = this.root.right.plus(indicatorPadding)
+//                        this@LinePagerTabLayout.invalidate()
+//                    }
+//                }
+//
+//                // [s] Left Decoration
+//                if (type == Type.SCROLLABLE) {
+//                    addEmptyView(
+//                        tabContainer.linerLayout,
+//                        index,
+//                        if (index == 0) itemSide else itemDivider
+//                    )
+//                }
+//                // [e] Left Decoration
+//
+//                // 맵 저장
+//                positionMap[index] = tabContainer.linerLayout.childCount
+//                tabContainer.linerLayout.addView(this.root)
+//
+//
+//                // [s] Left Decoration
+//                if (type == Type.SCROLLABLE) {
+//                    addEmptyView(
+//                        tabContainer.linerLayout,
+//                        index,
+//                        if (index == tabCount - 1) itemSide else itemDivider
+//                    )
+//                }
+//                // [e] Left Decoration
+//            }
         }
 
         dataList.clear()
@@ -420,7 +414,7 @@ class LinePagerTabLayout @JvmOverloads constructor(
      */
     private fun updateTab(pos: Int) {
         dataList.forEach { data ->
-            data.isSelected?.value = data.pos == pos
+            // data.isSelected?.value = data.pos == pos
         }
     }
 
@@ -433,7 +427,7 @@ class LinePagerTabLayout @JvmOverloads constructor(
     private fun scrollToChild(pos: Int, offset: Int) {
         if (tabCount == 0) return
 
-        var newScrollX = tabContainer.linerLayout.getChildAt(pos).left + offset
+        var newScrollX = tabContainer.getChildAt(pos).left + offset
 
         if (pos > 0 || offset > 0) {
             newScrollX -= scrollingOffset
@@ -451,8 +445,8 @@ class LinePagerTabLayout @JvmOverloads constructor(
         currentPos = pos
         posScrollOffset = offset
         try {
-            if (tabContainer.linerLayout.size > pos) {
-                val scrollOffset = offset * (tabContainer.linerLayout).getChildAt(pos).width
+            if (tabContainer.childCount > pos) {
+                val scrollOffset = offset * tabContainer.getChildAt(pos).width
                 scrollToChild(pos, scrollOffset.toInt())
             }
         } catch (ex: Exception) {
@@ -491,10 +485,10 @@ class LinePagerTabLayout @JvmOverloads constructor(
      * Indicator Update
      */
     fun updateLineIndicator() {
-        postDelayed(300) {
+        postDelayed({
             posScrollOffset = 0.0000001F
             invalidate()
-        }
+        }, 300)
     }
 
     fun moveTab(pos: Int) {
@@ -511,12 +505,20 @@ class LinePagerTabLayout @JvmOverloads constructor(
         return if (dataList.size > pos) {
             val tabItem = dataList[pos]
             try {
-                tabItem.view?.findViewById<AppCompatTextView>(R.id.tvTitle)
+                // tabItem.view?.findViewById<AppCompatTextView>(R.id.tvTitle)
+                null
             } catch (ex: Exception) {
                 null
             }
         } else {
             null
         }
+    }
+
+    private fun ViewPager2.currentItem(pos: Int, smoothScroll: Boolean = true) {
+        if (isFakeDragging) {
+            endFakeDrag()
+        }
+        setCurrentItem(pos, smoothScroll)
     }
 }
