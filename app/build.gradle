@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":viewpager"))
     implementation(project(":progress"))
     implementation(project(":tablayout"))
+    implementation(project(":coordinatorlayout"))
 
     implementation project(path: ':widget')
 

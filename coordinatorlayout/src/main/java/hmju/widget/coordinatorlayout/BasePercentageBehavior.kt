@@ -1,12 +1,11 @@
-package hmju.widget.behavior
+package hmju.widget.coordinatorlayout
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import hmju.widget.R
-import hmju.widget.extensions.actionBarHeight
-import hmju.widget.extensions.statusBarHeight
+import hmju.widget.extensions.Extensions.actionBarHeight
+import hmju.widget.extensions.Extensions.getStatusBarHeight
 import kotlin.math.abs
 
 /**
@@ -15,6 +14,7 @@ import kotlin.math.abs
  * 기반의 원하는 위치로 스크롤 했을경우 움직이도록 하는 기본 추상화 클래스.
  * Created by juhongmin on 6/13/21
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 abstract class BasePercentageBehavior<V : View> @JvmOverloads internal constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -124,13 +124,11 @@ abstract class BasePercentageBehavior<V : View> @JvmOverloads internal construct
             }
 
             // 스크롤 범위 최대값 -> Dependency View 높이 - 상태바 높이
-            val maxRange: Float = dependHeight - dependPin + ctx.statusBarHeight()
+            val maxRange: Float = dependHeight - dependPin + ctx.getStatusBarHeight()
             // 스크롤 범위 값 제한.
             if (maxRange < dependRange) {
                 dependRange = maxRange
             }
-        } else {
-            // TODO 나중에 Dependency 가 Horizontal 인경우 대응 해야함.
         }
 
         soundOnCreate = false

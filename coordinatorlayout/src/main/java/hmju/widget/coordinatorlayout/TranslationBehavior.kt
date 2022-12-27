@@ -1,14 +1,12 @@
-package hmju.widget.behavior
+package hmju.widget.coordinatorlayout
 
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
-import androidx.annotation.NonNull
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import hmju.widget.R
-import hmju.widget.extensions.statusBarHeight
+import hmju.widget.extensions.Extensions.getStatusBarHeight
 import kotlin.math.roundToInt
 
 /**
@@ -21,6 +19,7 @@ import kotlin.math.roundToInt
  * optional -> Scale,Alpha
  * 액션을 취하는 Behavior Class
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class TranslationBehavior @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -84,14 +83,14 @@ class TranslationBehavior @JvmOverloads constructor(
                     // $(s or e -> Optional},${Location Y -> Required}
                     when (split.size) {
                         1 -> endY = split[0].strToDp(context)
-                            .plus(if (isFitsSystemWindow) context.statusBarHeight() else 0)
+                            .plus(if (isFitsSystemWindow) context.getStatusBarHeight() else 0)
                         2 -> {
                             // 끝 기준인경우 Type 값 변경.
                             if (Type.END.value == split[0]) {
                                 endYType = Type.END
                             }
                             endY = split[1].strToDp(context)
-                                .plus(if (isFitsSystemWindow) context.statusBarHeight() else 0)
+                                .plus(if (isFitsSystemWindow) context.getStatusBarHeight() else 0)
                         }
                         else -> throw IllegalArgumentException("behaviorEndY does not match the format type. ex.) s,73 or 73")
                     }
@@ -232,4 +231,3 @@ class TranslationBehavior @JvmOverloads constructor(
         }
     }
 }
-

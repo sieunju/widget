@@ -75,7 +75,7 @@ object Extensions {
     /**
      * Get ActionBar Height
      */
-    internal fun Context.actionBarHeight(): Float {
+    fun Context.actionBarHeight(): Float {
         val attrs: TypedArray = theme.obtainStyledAttributes(
             intArrayOf(R.attr.actionBarSize)
         )
