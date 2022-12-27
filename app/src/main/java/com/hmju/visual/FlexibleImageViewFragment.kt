@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import hmju.widget.extensions.backgroundCaptureBitmap
-import hmju.widget.view.FlexibleImageView
+import hmju.widget.gesture.FlexibleImageEditView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -27,7 +27,7 @@ import kotlinx.coroutines.withContext
  */
 class FlexibleImageViewFragment : Fragment(R.layout.fragment_flexibleimageview) {
 
-    lateinit var imageView: FlexibleImageView
+    lateinit var imageView: FlexibleImageEditView
     lateinit var flexibleCaptureView: ConstraintLayout
 
     /**

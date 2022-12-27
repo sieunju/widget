@@ -1,7 +1,6 @@
-package hmju.widget.flexible.decector
+package hmju.widget.gesture.decetor
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.PointF
 import android.view.MotionEvent
 
@@ -10,8 +9,11 @@ import android.view.MotionEvent
  *
  * Created by juhongmin on 11/21/21
  */
-class MoveGestureDetector(private val listener: OnMoveGestureListener) :
-    BaseGestureDetector() {
+@Suppress("unused", "MemberVisibilityCanBePrivate")
+class MoveGestureDetector(
+    private val listener:
+    OnMoveGestureListener
+) : BaseGestureDetector() {
 
     interface OnMoveGestureListener {
         fun onMove(detector: MoveGestureDetector): Boolean

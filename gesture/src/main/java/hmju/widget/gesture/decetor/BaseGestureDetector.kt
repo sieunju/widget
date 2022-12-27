@@ -1,4 +1,4 @@
-package hmju.widget.flexible.decector
+package hmju.widget.gesture.decetor
 
 import android.annotation.SuppressLint
 import android.view.MotionEvent
@@ -8,6 +8,7 @@ import android.view.MotionEvent
  *
  * Created by juhongmin on 11/21/21
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 abstract class BaseGestureDetector {
 
     protected var gestureInProgress = false

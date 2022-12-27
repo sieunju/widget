@@ -7,7 +7,7 @@ import android.util.AttributeSet
 import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
-import hmju.widget.R
+import com.hmju.view.R
 
 /**
  * Description : Corner, Border 비/활성화 상태에 따라서도
@@ -15,6 +15,7 @@ import hmju.widget.R
  *
  * Created by juhongmin on 8/9/21
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class CustomLayout @JvmOverloads constructor(
     ctx: Context,
     attrs: AttributeSet? = null,
@@ -57,7 +58,7 @@ class CustomLayout @JvmOverloads constructor(
                         setStroke(strokeWidth, strokeColor)
                     }
                 }
-                
+
 
                 color = getColor(R.styleable.CustomLayout_layoutDisableBgColor, Color.WHITE)
                 strokeWidth =

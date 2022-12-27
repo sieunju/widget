@@ -1,18 +1,7 @@
 package com.hmju.visual
 
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.renderscript.Allocation
-import android.renderscript.Element
-import android.renderscript.RenderScript
-import android.renderscript.ScriptIntrinsicBlur
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import hmju.widget.view.FlexibleImageView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith

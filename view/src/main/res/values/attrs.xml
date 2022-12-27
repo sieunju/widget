@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- [s] CustomLayout Attr -->
+    <declare-styleable name="CustomLayout">
+        <attr name="layoutDefState" format="boolean" />
+        <attr name="layoutCorner" format="dimension" />
+        <attr name="layoutBgColor" format="color" />
+        <attr name="layoutBorder" format="dimension" />
+        <attr name="layoutBorderColor" format="color" />
+        <attr name="layoutDisableBgColor" format="color" />
+        <attr name="layoutDisableBorder" format="dimension" />
+        <attr name="layoutDisableBorderColor" format="color" />
+    </declare-styleable>
+    <!-- [e] CustomLayout Attr -->
+
+    <!-- [s] CustomTextView Attr -->
+    <declare-styleable name="CustomTextView">
+        <attr name="textViewDefState" format="boolean" /> <!-- Default 상태 -->
+        <attr name="textViewCorner" format="dimension" /> <!-- Corner Radius -->
+        <attr name="textViewTxtColor" format="color" /> <!-- Enable or Default TextColor -->
+        <attr name="textViewBgColor" format="color" /> <!-- Enable or Default Bg Color -->
+        <attr name="textViewBorder" format="dimension" /> <!-- Enable or Default Border Width -->
+        <attr name="textViewBorderColor" format="color" /> <!--Enable or Default Border Color  -->
+        <attr name="textViewDisableTxtColor" format="color" /> <!-- Disable or Not Selected Text Color-->
+        <attr name="textViewDisableBgColor" format="color" /> <!-- Disable or Not Selected Bg Color -->
+        <attr name="textViewDisableBorder" format="dimension" /> <!-- Disable or Not Selected Border Width -->
+        <attr name="textViewDisableBorderColor" format="color" /> <!-- Disable Or Not Selected Border Color -->
+        <attr name="textViewDisableCorner" format="dimension"/> <!-- Disable Or Not Selected Corner Radius -->
+        <attr name="textViewAutoMaxSize" format="dimension" /> <!-- Auto Sizing Max Size -->
+        <attr name="textViewAutoMinSize" format="dimension" /> <!-- Auto Sizing Min Size -->
+        <attr name="textViewTextStyle" format="reference"/>
+        <attr name="textViewDisableTextStyle" format="reference"/>
+    </declare-styleable>
+    <!-- [e] CustomTextView Attr -->
+
+    <!-- [s] ParallaxView Attr -->
+    <declare-styleable name="ParallaxView">
+        <attr name="parallaxStartDp" format="dimension" /> <!-- 디바이스 하단 기준 시작점 고정 DP -->
+        <attr name="parallaxEndDp" format="dimension" /> <!-- 디바이스 상단 기준 종료점 고정 DP -->
+        <attr name="parallaxStartPer" format="integer" /> <!-- 디바이스 하단 기준 시작점 0~100% -->
+        <attr name="parallaxEndPer" format="integer" /> <!-- 디바이스 하단 기준 종료점 0~100% -->
+        <attr name="parallaxMaxHeight" format="dimension" />
+        <attr name="parallaxMinHeight" format="dimension" />
+    </declare-styleable>
+    <!-- [e] ParallaxView Attr -->
+
+</resources>

@@ -12,7 +12,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <hmju.widget.view.CustomTextView
+        <com.hmju.view.CustomTextView
             android:id="@+id/tvAuto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
             app:textViewBgColor="#673AB7"
             app:textViewTxtColor="#FFFFF0" />
 
-        <hmju.widget.view.CustomLayout
+        <com.hmju.view.CustomLayout
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_margin="15dp"
@@ -35,9 +35,9 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
 
-        </hmju.widget.view.CustomLayout>
+        </com.hmju.view.CustomLayout>
 
-        <hmju.widget.view.CustomLayout
+        <com.hmju.view.CustomLayout
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_margin="10dp"
@@ -47,9 +47,9 @@
             app:layoutBorderColor="@color/teal_200"
             app:layoutCorner="50dp">
 
-        </hmju.widget.view.CustomLayout>
+        </com.hmju.view.CustomLayout>
 
-        <hmju.widget.view.CustomTextView
+        <com.hmju.view.CustomTextView
             android:id="@+id/tvSample"
             android:layout_width="wrap_content"
             android:layout_height="50dp"

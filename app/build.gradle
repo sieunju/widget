@@ -43,6 +43,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":view"))
+    implementation(project(":gesture"))
+
     implementation project(path: ':widget')
 
     implementation deps.kotlin.stdlib

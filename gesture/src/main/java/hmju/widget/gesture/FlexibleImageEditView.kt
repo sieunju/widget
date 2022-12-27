@@ -1,4 +1,4 @@
-package hmju.widget.view
+package hmju.widget.gesture
 
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
@@ -11,19 +11,13 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.annotation.MainThread
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.animation.addListener
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
-import hmju.widget.ImageLoader
-import hmju.widget.flexible.FlexibleStateItem
-import hmju.widget.flexible.decector.MoveGestureDetector
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import hmju.widget.gesture.decetor.MoveGestureDetector
 import kotlin.math.*
 
 
@@ -32,11 +26,13 @@ import kotlin.math.*
  *
  * Created by juhongmin on 11/21/21
  */
-class FlexibleImageView @JvmOverloads constructor(
+@Suppress("unused")
+class FlexibleImageEditView @JvmOverloads constructor(
     ctx: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : AppCompatImageView(ctx, attrs, defStyleAttr) {
+
     companion object {
         const val MAX_SCALE_FACTOR = 10.0F
         const val MIN_SCALE_FACTOR = 0.3F
@@ -51,6 +47,10 @@ class FlexibleImageView @JvmOverloads constructor(
         }
     }
 
+    interface Listener {
+        fun onUpdateStateItem(newItem: FlexibleStateItem)
+    }
+
     private val scaleGestureDetector: ScaleGestureDetector by lazy {
         ScaleGestureDetector(ctx, ScaleListener())
     }
@@ -59,21 +59,14 @@ class FlexibleImageView @JvmOverloads constructor(
         MoveGestureDetector(MoveListener())
     }
 
-    private var stateItem = FlexibleStateItem(
-        scale = 1.0F,
-        focusX = 0F,
-        focusY = 0F,
-        rotationDegree = 0F,
-        flipX = 1F,
-        flipY = 1F
-    )
+    private val stateItem: FlexibleStateItem by lazy { FlexibleStateItem() }
 
     private var isMultiTouch: Boolean = false
     private var moveDistance: Double = 0.0
     private var touchPoint = PointF()
-    private var viewWidth = -1
-    private var viewHeight = -1
     private var isTouchLock: Boolean = false // 애니메이션 동작중 터치 잠금하기위한 Flag 값
+
+    private var listener: Listener? = null
 
     init {
         if (isInEditMode) {
@@ -82,46 +75,50 @@ class FlexibleImageView @JvmOverloads constructor(
     }
 
     /**
-     * Load Url Http or content://
-     * @param url Request Url
+     * Load Bitmap
+     * @param bitmap Image Bitmap
      */
-    fun loadUrl(url: String) {
-        GlobalScope.launch(Dispatchers.IO) {
-            val bitmap = if (url.startsWith("http")) {
-                ImageLoader.loadBitmapHttp(url)
-            } else {
-                ImageLoader.loadBitmapFile(context, url)
-            }
-            loadBitmap(bitmap)
-        }
+    @MainThread
+    fun loadBitmap(bitmap: Bitmap?) {
+        loadBitmap(bitmap, null)
     }
 
     /**
      * Load Bitmap
      * @param bitmap Image Bitmap
+     * @param newItem Target FlexibleStateItem
      */
-    fun loadBitmap(bitmap: Bitmap?) {
+    @MainThread
+    fun loadBitmap(bitmap: Bitmap?, newItem: FlexibleStateItem? = null) {
         if (bitmap == null) return
 
-        GlobalScope.launch(Dispatchers.IO) {
-            resetView()
-            withContext(Dispatchers.Main) {
-                val pair = cropBitmap(bitmap)
-                // 비트맵의 주소값이 서로 다른 경우 Recycle 처리
-                if (bitmap !== pair.first && !bitmap.isRecycled) {
-                    // bitmap.recycle()
-                }
+        resetView()
 
-                stateItem.run {
-                    imgWidth = (pair.first.width.toFloat() / pair.second).toInt()
-                    imgHeight = (pair.first.height.toFloat() / pair.second).toInt()
-                    scale = pair.second
-                    startScale = pair.second
-                    minScale = 1F
-                }
-
-                setImageBitmap(pair.first)
+        if (newItem != null) {
+            setImageBitmap(bitmap)
+            stateItem.run {
+                focusX = newItem.focusX
+                focusY = newItem.focusY
+                imgWidth = newItem.imgWidth
+                imgHeight = newItem.imgHeight
+                scale = newItem.scale
+                startScale = newItem.startScale
+                minScale = newItem.minScale
+                viewWidth = newItem.viewWidth
+                viewHeight = newItem.viewHeight
             }
+            invalidate()
+        } else {
+            val pair = cropBitmap(bitmap)
+            stateItem.run {
+                imgWidth = (pair.first.width.toFloat() / pair.second).toInt()
+                imgHeight = (pair.first.height.toFloat() / pair.second).toInt()
+                scale = pair.second
+                startScale = pair.second
+                minScale = 1F
+            }
+
+            setImageBitmap(pair.first)
         }
     }
 
@@ -134,7 +131,9 @@ class FlexibleImageView @JvmOverloads constructor(
         // 애니메이션 처리 유무 검사
         if (stateItem.imgWidth == 0 || stateItem.imgHeight == 0 ||
             stateItem.scale == stateItem.startScale
-        ) return
+        ) {
+            return
+        }
 
         ObjectAnimator.ofPropertyValuesHolder(
             this,
@@ -144,15 +143,15 @@ class FlexibleImageView @JvmOverloads constructor(
             PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0F)
         ).apply {
             duration = 200
-            interpolator = AccelerateDecelerateInterpolator()
+            interpolator = FastOutSlowInInterpolator()
             addListener(
                 onStart = {
                     isTouchLock = true
                 },
                 onEnd = {
-                    stateItem.scale = this@FlexibleImageView.scaleX
-                    stateItem.focusX = this@FlexibleImageView.translationX
-                    stateItem.focusY = this@FlexibleImageView.translationY
+                    stateItem.scale = this@FlexibleImageEditView.scaleX
+                    stateItem.focusX = this@FlexibleImageEditView.translationX
+                    stateItem.focusY = this@FlexibleImageEditView.translationY
                     invalidate()
                     isTouchLock = false
                 }
@@ -168,7 +167,11 @@ class FlexibleImageView @JvmOverloads constructor(
     @MainThread
     fun fitCenter() {
         // 애니메이션 처리 유무 검사
-        if (stateItem.imgWidth == 0 || stateItem.imgHeight == 0 || stateItem.scale == stateItem.minScale) return
+        if (stateItem.imgWidth == 0 || stateItem.imgHeight == 0 ||
+            stateItem.scale == stateItem.minScale
+        ) {
+            return
+        }
 
         ObjectAnimator.ofPropertyValuesHolder(
             this,
@@ -178,15 +181,15 @@ class FlexibleImageView @JvmOverloads constructor(
             PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0F)
         ).apply {
             duration = 200
-            interpolator = AccelerateDecelerateInterpolator()
+            interpolator = FastOutSlowInInterpolator()
             addListener(
                 onStart = {
                     isTouchLock = true
                 },
                 onEnd = {
-                    stateItem.scale = this@FlexibleImageView.scaleX
-                    stateItem.focusX = this@FlexibleImageView.translationX
-                    stateItem.focusY = this@FlexibleImageView.translationY
+                    stateItem.scale = this@FlexibleImageEditView.scaleX
+                    stateItem.focusX = this@FlexibleImageEditView.translationX
+                    stateItem.focusY = this@FlexibleImageEditView.translationY
                     invalidate()
                     isTouchLock = false
                 }
@@ -205,6 +208,11 @@ class FlexibleImageView @JvmOverloads constructor(
     }
 
     /**
+     * 해당 이미지가 위치한 State Item Model
+     */
+    fun getFlexibleStateItem() = stateItem
+
+    /**
      * 해당 이미지 비트맵 Getter 처리함수
      */
     @Throws(IllegalArgumentException::class)
@@ -217,6 +225,13 @@ class FlexibleImageView @JvmOverloads constructor(
     }
 
     /**
+     * set Listener
+     */
+    fun setListener(listener: Listener) {
+        this.listener = listener
+    }
+
+    /**
      * View 및 데이터 리셋 처리 함수
      */
     private fun resetView() {
@@ -224,7 +239,6 @@ class FlexibleImageView @JvmOverloads constructor(
         isMultiTouch = false
         moveDistance = 0.0
         touchPoint = PointF()
-        alpha = 1F
     }
 
     /**
@@ -365,40 +379,40 @@ class FlexibleImageView @JvmOverloads constructor(
         }
 
         // rotation = stateItem.rotationDegree 회전은 나중에 처리 할 예정
+        onDelegatedListener()
         super.onDraw(canvas)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        viewWidth = MeasureSpec.getSize(widthMeasureSpec)
-        viewHeight = MeasureSpec.getSize(heightMeasureSpec)
+        stateItem.viewWidth = MeasureSpec.getSize(widthMeasureSpec)
+        stateItem.viewHeight = MeasureSpec.getSize(heightMeasureSpec)
     }
+
 
     /**
      * 이미지 View 너비 높이에 맞게 줄이거나 늘리는 처리 함수
      * @param bitmap Source Bitmap
      * @return 알맞게 Scale 한 비트맵, 해당 비트맵과 뷰의 Max Scale 값
      */
-    private suspend fun cropBitmap(bitmap: Bitmap): Pair<Bitmap, Float> {
-        return withContext(Dispatchers.Default) {
-            var xScale: Float = viewWidth.toFloat() / bitmap.width.toFloat()
-            var yScale: Float = viewHeight.toFloat() / bitmap.height.toFloat()
-            // 가장 큰 비율 가져옴
-            var maxScale = xScale.coerceAtLeast(yScale)
+    private fun cropBitmap(bitmap: Bitmap): Pair<Bitmap, Float> {
+        var xScale: Float = stateItem.viewWidth.toFloat() / bitmap.width.toFloat()
+        var yScale: Float = stateItem.viewHeight.toFloat() / bitmap.height.toFloat()
+        // 가장 큰 비율 가져옴
+        var maxScale = xScale.coerceAtLeast(yScale)
 
-            val scaledWidth = maxScale * bitmap.width
-            val scaledHeight = maxScale * bitmap.height
+        val scaledWidth = maxScale * bitmap.width
+        val scaledHeight = maxScale * bitmap.height
 
-            xScale = scaledWidth / viewWidth.toFloat()
-            yScale = scaledHeight / viewHeight.toFloat()
-            maxScale = xScale.coerceAtLeast(yScale)
-            Bitmap.createScaledBitmap(
-                bitmap,
-                scaledWidth.toInt(),
-                scaledHeight.toInt(),
-                true
-            ) to maxScale
-        }
+        xScale = scaledWidth / stateItem.viewWidth.toFloat()
+        yScale = scaledHeight / stateItem.viewHeight.toFloat()
+        maxScale = xScale.coerceAtLeast(yScale)
+        return Bitmap.createScaledBitmap(
+            bitmap,
+            scaledWidth.toInt(),
+            scaledHeight.toInt(),
+            true
+        ) to maxScale
     }
 
     /**
@@ -418,8 +432,8 @@ class FlexibleImageView @JvmOverloads constructor(
      * 이미지 현재 너비 와 높이 값과 현재 포커싱 잡힌 X,Y 값을 기준으로
      * Top, Left, Right, Bottom 값들을 구할수 있다.
      */
-    private fun computeImageLocation(): RectF? {
-        if (viewWidth == -1 || viewHeight == -1 ||
+    internal fun computeImageLocation(): RectF? {
+        if (stateItem.viewWidth == -1 || stateItem.viewHeight == -1 ||
             stateItem.currentImgWidth == -1F ||
             stateItem.currentImgHeight == -1F
         ) return null
@@ -429,10 +443,10 @@ class FlexibleImageView @JvmOverloads constructor(
         val focusX = stateItem.focusX
         val focusY = stateItem.focusY
 
-        val imgTop = (focusY + (viewHeight / 2F)) - imgHeight / 2F
-        val imgLeft = (focusX + (viewWidth / 2F)) - imgWidth / 2F
-        val imgRight = (focusX + (viewWidth / 2F)) + imgWidth / 2F
-        val imgBottom = (focusY + (viewHeight / 2F)) + imgHeight / 2F
+        val imgTop = (focusY + (stateItem.viewHeight / 2F)) - imgHeight / 2F
+        val imgLeft = (focusX + (stateItem.viewWidth / 2F)) - imgWidth / 2F
+        val imgRight = (focusX + (stateItem.viewWidth / 2F)) + imgWidth / 2F
+        val imgBottom = (focusY + (stateItem.viewHeight / 2F)) + imgHeight / 2F
         return RectF(imgLeft, imgTop, imgRight, imgBottom)
     }
 
@@ -446,13 +460,13 @@ class FlexibleImageView @JvmOverloads constructor(
 
         // 좌우 모자란 부분이 있는 경우 -> X 좌표 가운데
         // MinScale 이 1.0 이하인 경우에만 존재
-        if ((rect.left > 0 && rect.right < viewWidth) && (rect.top > 0 && rect.bottom < viewHeight)) {
+        if ((rect.left > 0 && rect.right < stateItem.viewWidth) && (rect.top > 0 && rect.bottom < stateItem.viewHeight)) {
             // 0으로 초기화
             return Pair(-stateItem.focusX, -stateItem.focusY)
         }
 
         when {
-            rect.width() < viewWidth -> {
+            rect.width() < stateItem.viewWidth -> {
                 // 좌우 공간이 부족한 경우
                 diffFocusX = -stateItem.focusX
             }
@@ -460,14 +474,14 @@ class FlexibleImageView @JvmOverloads constructor(
                 // 왼쪽에 빈공간이 있는 경우
                 diffFocusX = -abs(rect.left)
             }
-            rect.right < viewWidth -> {
+            rect.right < stateItem.viewWidth -> {
                 // 오른쪽에 빈공간이 있는 경우
-                diffFocusX = abs(rect.right - viewWidth)
+                diffFocusX = abs(rect.right - stateItem.viewWidth)
             }
         }
 
         when {
-            rect.height() < viewHeight -> {
+            rect.height() < stateItem.viewHeight -> {
                 // 상하 공간이 부족한 경우
                 diffFocusY = -stateItem.focusY
             }
@@ -475,9 +489,9 @@ class FlexibleImageView @JvmOverloads constructor(
                 // 위쪽에 빈공간이 있는 경우
                 diffFocusY = -abs(rect.top)
             }
-            rect.bottom < viewHeight -> {
+            rect.bottom < stateItem.viewHeight -> {
                 // 아래쪽에 빈공간이 있는 경우
-                diffFocusY = abs(rect.bottom - viewHeight)
+                diffFocusY = abs(rect.bottom - stateItem.viewHeight)
             }
         }
 
@@ -497,21 +511,27 @@ class FlexibleImageView @JvmOverloads constructor(
      * @param targetY Target Y 좌표
      */
     private fun handleTargetTranslation(targetX: Float, targetY: Float) {
-        // LogD("Ani $targetX $targetY")
         val pvhX = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, targetX)
         val pvhY = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, targetY)
-        ObjectAnimator.ofPropertyValuesHolder(this@FlexibleImageView, pvhX, pvhY).apply {
+        ObjectAnimator.ofPropertyValuesHolder(this@FlexibleImageEditView, pvhX, pvhY).apply {
             duration = 200
-            interpolator = AccelerateDecelerateInterpolator()
+            interpolator = FastOutSlowInInterpolator()
             doOnStart { isTouchLock = true }
             doOnEnd {
-                stateItem.focusX = this@FlexibleImageView.translationX
-                stateItem.focusY = this@FlexibleImageView.translationY
+                stateItem.focusX = this@FlexibleImageEditView.translationX
+                stateItem.focusY = this@FlexibleImageEditView.translationY
                 invalidate()
                 isTouchLock = false
             }
             start()
         }
+    }
+
+    /**
+     * 설정한 리스너에 FlexibleStateItem 전달하는 함수
+     */
+    private fun onDelegatedListener() {
+        listener?.onUpdateStateItem(stateItem)
     }
 
     inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -529,7 +549,6 @@ class FlexibleImageView @JvmOverloads constructor(
             }
 
             stateItem.scale = scale
-
             return true
         }
 
@@ -557,7 +576,7 @@ class FlexibleImageView @JvmOverloads constructor(
 
         override fun onMoveEnd(detector: MoveGestureDetector) {
             computeImageLocation()?.let { rect ->
-                val pair = computeInBoundary(rect) ?: return
+                val pair = computeInBoundary(rect)
 
                 handleTargetTranslation(
                     stateItem.focusX.plus(pair.first),

@@ -14,7 +14,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintTop_toTopOf="parent">
 
-        <hmju.widget.view.FlexibleImageView
+        <hmju.widget.gesture.FlexibleImageView
             android:id="@+id/imgThumb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

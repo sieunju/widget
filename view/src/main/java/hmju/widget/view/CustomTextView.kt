@@ -13,8 +13,8 @@ import androidx.annotation.Dimension
 import androidx.annotation.StyleRes
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.widget.TextViewCompat
-import hmju.widget.R
-import hmju.widget.extensions.toSize
+import com.hmju.view.R
+import hmju.widget.view.Extensions.toSize
 
 /**
  * Description : Corner, Border, AutoTextSize 비/활성화 상태에 따라서도
@@ -22,6 +22,7 @@ import hmju.widget.extensions.toSize
  *
  * Created by hmju on 2021-08-09
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class CustomTextView @JvmOverloads constructor(
     ctx: Context,
     attrs: AttributeSet? = null,
