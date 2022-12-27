@@ -1,4 +1,4 @@
-package hmju.widget.autoscroll
+package hmju.widget.viewpager.scroller
 
 import android.animation.Animator
 import android.animation.TimeInterpolator
@@ -7,11 +7,9 @@ import android.view.MotionEvent
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.widget.ViewPager2
-import hmju.widget.extensions.getFragmentActivity
-import hmju.widget.indicator.LineIndicator
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -23,17 +21,18 @@ import kotlin.math.abs
  *
  * Created by juhongmin on 2022/01/19
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class AutoScrollMediator(
     private val viewPager: ViewPager2,
     private val delayTime: Long = 3500L
-) : LifecycleObserver {
+) : LifecycleEventObserver {
 
     private val CLICK_RANGE = 10 // 클릭 이벤트 처리하기 위한 범위값
 
     private var isStopByTouch = false // 터치 한 상태 Flag
     private var prevX = -1F
     private var prevY = -1F
-    private var disposable: Disposable? = null
+    // private var disposable: Disposable? = null
     private var activity: FragmentActivity? = null
         set(value) {
             value?.lifecycle?.addObserver(this)
@@ -41,7 +40,6 @@ class AutoScrollMediator(
         }
 
     init {
-        activity = viewPager.getFragmentActivity()
 
         // ViewPager2 Touch Listener
         viewPager.getChildAt(0).setOnTouchListener { v, event ->
@@ -81,40 +79,32 @@ class AutoScrollMediator(
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    private fun onResume() {
-        LineIndicator.LogD("onResume")
-        startAutoScroll()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    private fun onStop() {
-        LineIndicator.LogD("onStop")
-        stopAutoScroll()
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    private fun onDestroy() {
-        LineIndicator.LogD("onStop")
-        activity?.lifecycle?.removeObserver(this)
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        if (event == Lifecycle.Event.ON_RESUME) {
+            startAutoScroll()
+        } else if (event == Lifecycle.Event.ON_STOP) {
+            stopAutoScroll()
+        } else if (event == Lifecycle.Event.ON_DESTROY) {
+            activity?.lifecycle?.removeObserver(this)
+        }
     }
 
     fun startAutoScroll() {
-        disposable?.dispose()
-        disposable = null
-        disposable =
-            Observable.interval(delayTime, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                .doOnNext {
-                    smoothScrollItem(viewPager.currentItem.plus(1))
-                }.subscribe()
+//        disposable?.dispose()
+//        disposable = null
+//        disposable =
+//            Observable.interval(delayTime, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+//                .doOnNext {
+//                    smoothScrollItem(viewPager.currentItem.plus(1))
+//                }.subscribe()
     }
 
     /**
      * Stop Auto Scroll
      */
     fun stopAutoScroll() {
-        disposable?.dispose()
-        disposable = null
+        // disposable?.dispose()
+        // disposable = null
     }
 
     /**

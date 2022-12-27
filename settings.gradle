@@ -3,3 +3,4 @@ include(":app",":widget")
 include ':view'
 include ':gesture'
 include ':recyclerview'
+include ':viewpager'
