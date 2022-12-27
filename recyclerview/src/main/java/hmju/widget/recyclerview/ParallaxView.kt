@@ -1,4 +1,4 @@
-package hmju.widget.view
+package hmju.widget.recyclerview
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,9 +7,8 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.annotation.FloatRange
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.hmju.view.R
-import hmju.widget.view.Extensions.dp
-import hmju.widget.view.Extensions.getRealContentsHeight
+import hmju.widget.recyclerview.Extensions.dp
+import hmju.widget.recyclerview.Extensions.getRealContentsHeight
 import kotlin.math.ceil
 
 /**

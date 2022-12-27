@@ -2,3 +2,4 @@ rootProject.name = "visual"
 include(":app",":widget")
 include ':view'
 include ':gesture'
+include ':recyclerview'

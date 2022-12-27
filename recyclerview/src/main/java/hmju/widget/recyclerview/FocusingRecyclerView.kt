@@ -1,4 +1,4 @@
-package hmju.widget.view
+package hmju.widget.recyclerview
 
 import android.content.Context
 import android.util.AttributeSet

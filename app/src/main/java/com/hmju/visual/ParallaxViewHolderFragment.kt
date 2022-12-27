@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import hmju.widget.extensions.deviceWidth
 import hmju.widget.extensions.dp
-import hmju.widget.view.ParallaxView
+import hmju.widget.recyclerview.ParallaxView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -84,13 +84,13 @@ class ParallaxViewHolderFragment : Fragment(R.layout.fragment_parallax) {
             LayoutInflater.from(parent.context).inflate(R.layout.parallax_header, parent, false)
         ) {
             private val tvTitle: AppCompatTextView by lazy { itemView.findViewById(R.id.tvTitle) }
-            private val parallaxView: ParallaxView by lazy { itemView.findViewById(R.id.parallax) }
+            private val parallaxView: hmju.widget.recyclerview.ParallaxView by lazy { itemView.findViewById(R.id.parallax) }
             private val imgThumb: AppCompatImageView by lazy { itemView.findViewById(R.id.imgThumb) }
             private val vAlpha: View by lazy { itemView.findViewById(R.id.vAlpha) }
             private val tempImgUrl =
                 "https://cdn.qtzz.synology.me/resource/img/20210921/1632238064795dwalkkz7dea.png"
 
-            private val listener: ParallaxView.Listener = object : ParallaxView.Listener {
+            private val listener: hmju.widget.recyclerview.ParallaxView.Listener = object : hmju.widget.recyclerview.ParallaxView.Listener {
                 /**
                  * 아래 기준으로 View 위치에 따라서 0.0 ~ 0.9999
                  * 전달하는 리스너

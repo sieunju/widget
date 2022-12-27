@@ -33,15 +33,4 @@
     </declare-styleable>
     <!-- [e] CustomTextView Attr -->
 
-    <!-- [s] ParallaxView Attr -->
-    <declare-styleable name="ParallaxView">
-        <attr name="parallaxStartDp" format="dimension" /> <!-- 디바이스 하단 기준 시작점 고정 DP -->
-        <attr name="parallaxEndDp" format="dimension" /> <!-- 디바이스 상단 기준 종료점 고정 DP -->
-        <attr name="parallaxStartPer" format="integer" /> <!-- 디바이스 하단 기준 시작점 0~100% -->
-        <attr name="parallaxEndPer" format="integer" /> <!-- 디바이스 하단 기준 종료점 0~100% -->
-        <attr name="parallaxMaxHeight" format="dimension" />
-        <attr name="parallaxMinHeight" format="dimension" />
-    </declare-styleable>
-    <!-- [e] ParallaxView Attr -->
-
 </resources>
