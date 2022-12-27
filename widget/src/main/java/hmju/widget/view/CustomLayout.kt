@@ -57,6 +57,7 @@ class CustomLayout @JvmOverloads constructor(
                         setStroke(strokeWidth, strokeColor)
                     }
                 }
+                
 
                 color = getColor(R.styleable.CustomLayout_layoutDisableBgColor, Color.WHITE)
                 strokeWidth =
