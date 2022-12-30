@@ -1,4 +1,4 @@
-package com.hmju.visual
+package com.hmju.visual.ui.gesture
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import hmju.widget.extensions.backgroundCaptureBitmap
+import com.hmju.visual.R
 import hmju.widget.gesture.FlexibleImageEditView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -90,16 +90,16 @@ class FlexibleImageViewFragment : Fragment(R.layout.fragment_flexibleimageview) 
                         val bitmapDrawable = resource as BitmapDrawable
                         GlobalScope.launch {
                             val bitmap = withContext(Dispatchers.IO) {
-                                backgroundCaptureBitmap(
-                                    bitmapDrawable.bitmap,
-                                    stateItem,
-                                    flexibleCaptureView.width,
-                                    flexibleCaptureView.height
-                                )
+//                                backgroundCaptureBitmap(
+//                                    bitmapDrawable.bitmap,
+//                                    stateItem,
+//                                    flexibleCaptureView.width,
+//                                    flexibleCaptureView.height
+//                                )
                             }
                             withContext(Dispatchers.Main) {
                                 view.findViewById<AppCompatImageView>(R.id.imgCapture)
-                                    .setImageBitmap(bitmap)
+                                //.setImageBitmap(bitmap)
                             }
                         }
                     }

@@ -4,7 +4,7 @@
     <data>
         <variable
             name="model"
-            type="com.hmju.visual.SpecialGridFragment.SpecialItem" />
+            type="com.hmju.visual.ui.recyclerview.SpecialGridFragment" />
         <variable
             name="pos"
             type="java.lang.String" />

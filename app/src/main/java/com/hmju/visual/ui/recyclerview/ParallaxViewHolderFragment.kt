@@ -1,4 +1,4 @@
-package com.hmju.visual
+package com.hmju.visual.ui.recyclerview
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,9 +9,10 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import hmju.widget.extensions.deviceWidth
-import hmju.widget.extensions.dp
-import hmju.widget.recyclerview.ParallaxView
+import com.hmju.visual.ImageLoader
+import com.hmju.visual.R
+import hmju.widget.extensions.Extensions.dp
+import hmju.widget.extensions.Extensions.getDeviceWidth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -84,7 +85,9 @@ class ParallaxViewHolderFragment : Fragment(R.layout.fragment_parallax) {
             LayoutInflater.from(parent.context).inflate(R.layout.parallax_header, parent, false)
         ) {
             private val tvTitle: AppCompatTextView by lazy { itemView.findViewById(R.id.tvTitle) }
-            private val parallaxView: hmju.widget.recyclerview.ParallaxView by lazy { itemView.findViewById(R.id.parallax) }
+            private val parallaxView: hmju.widget.recyclerview.ParallaxView by lazy { itemView.findViewById(
+                R.id.parallax
+            ) }
             private val imgThumb: AppCompatImageView by lazy { itemView.findViewById(R.id.imgThumb) }
             private val vAlpha: View by lazy { itemView.findViewById(R.id.vAlpha) }
             private val tempImgUrl =
@@ -108,7 +111,7 @@ class ParallaxViewHolderFragment : Fragment(R.layout.fragment_parallax) {
                     imgThumb.setImageBitmap(
                         ImageLoader.imageBitmap(
                             tempImgUrl,
-                            itemView.context.deviceWidth(),
+                            itemView.context.getDeviceWidth(),
                             200.dp
                         )
                     )

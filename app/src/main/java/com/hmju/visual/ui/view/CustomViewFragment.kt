@@ -1,10 +1,12 @@
-package com.hmju.visual
+package com.hmju.visual.ui.view
 
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.hmju.visual.ImageLoader
+import com.hmju.visual.R
 import hmju.widget.view.CustomTextView
 import kotlinx.coroutines.*
 

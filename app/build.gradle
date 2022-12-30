@@ -49,9 +49,12 @@ dependencies {
     implementation(project(":viewpager"))
     implementation(project(":progress"))
     implementation(project(":tablayout"))
+    implementation(project(":extensions"))
     implementation(project(":coordinatorlayout"))
 
-    implementation project(path: ':widget')
+    // implementation project(path: ':widget')
+
+    implementation("androidx.multidex:multidex:2.0.1")
 
     implementation deps.kotlin.stdlib
     implementation deps.kotlin.core
@@ -65,6 +68,8 @@ dependencies {
     implementation(deps.glide.base)
     implementation(deps.glide.okhttp)
     kapt(deps.glide.compiler)
+
+    implementation(deps.timber)
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

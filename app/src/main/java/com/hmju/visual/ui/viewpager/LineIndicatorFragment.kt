@@ -1,4 +1,4 @@
-package com.hmju.visual
+package com.hmju.visual.ui.viewpager
 
 import android.graphics.Color
 import android.os.Bundle
@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import hmju.widget.extensions.currentItem
+import com.hmju.visual.R
 import hmju.widget.viewpager.indicator.LineIndicator
 import hmju.widget.viewpager.scroller.AutoScrollMediator
 
@@ -118,7 +118,6 @@ class LineIndicatorFragment : Fragment(R.layout.f_line_indicator) {
                         currentPos = 1
                     }
                 }
-
                 viewPager.currentItem(currentPos, false)
             }
         }
@@ -160,6 +159,13 @@ class LineIndicatorFragment : Fragment(R.layout.f_line_indicator) {
                 view.setBackgroundColor(item.color)
                 tvTitle.text = "POS ${item.pos}"
             }
+        }
+
+        fun ViewPager2.currentItem(pos: Int, smoothScroll: Boolean = true) {
+            if (isFakeDragging) {
+                endFakeDrag()
+            }
+            setCurrentItem(pos, smoothScroll)
         }
     }
 }

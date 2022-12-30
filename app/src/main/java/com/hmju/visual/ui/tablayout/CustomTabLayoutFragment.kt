@@ -1,4 +1,4 @@
-package com.hmju.visual
+package com.hmju.visual.ui.tablayout
 
 import android.graphics.Color
 import android.os.Bundle
@@ -9,8 +9,7 @@ import androidx.annotation.ColorInt
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import hmju.widget.tablayout.LinePagerTabLayout
-import hmju.widget.tablayout.PagerTabItem
+import com.hmju.visual.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay

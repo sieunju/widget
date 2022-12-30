@@ -1,4 +1,4 @@
-package com.hmju.visual
+package com.hmju.visual.ui.recyclerview
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +10,10 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.hmju.visual.BR
+import com.hmju.visual.R
 import com.hmju.visual.databinding.*
-import hmju.widget.extensions.dp
+import hmju.widget.extensions.Extensions.dp
 import hmju.widget.recyclerview.decoration.SpecialGridItemDecoration
 import kotlinx.coroutines.*
 import kotlin.random.Random

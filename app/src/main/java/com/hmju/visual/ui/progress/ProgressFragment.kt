@@ -1,10 +1,10 @@
-package com.hmju.visual
+package com.hmju.visual.ui.progress
 
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
-import hmju.widget.progress.ProgressView
+import com.hmju.visual.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
