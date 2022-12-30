@@ -6,16 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.hmju.visual.ImageLoader
 import com.hmju.visual.MainActivity.Companion.moveToFragment
 import com.hmju.visual.R
 import com.hmju.visual.ui.gesture.FlexibleImageViewFragment
 import com.hmju.visual.ui.view.CustomViewFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.reflect.KClass
 
@@ -35,6 +39,7 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
     private lateinit var rvContents: RecyclerView
 
     private val adapter: Adapter by lazy { Adapter() }
+    private val IMG_BASE_RUL = "https://raw.githubusercontent.com/sieunju/widget/develop/stroage"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -45,8 +50,19 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
 
     private fun getMenuList(): List<MenuUiModel> {
         val list = mutableListOf<MenuUiModel>()
-        list.add(MenuUiModel("CustomView", targetFragment = CustomViewFragment::class))
-        list.add(MenuUiModel("Gesture-FlexibleImageEditView", targetFragment = FlexibleImageViewFragment::class))
+        list.add(
+            MenuUiModel(
+                "CustomView",
+                IMG_BASE_RUL.plus("/example_view.gif"),
+                CustomViewFragment::class
+            )
+        )
+        list.add(
+            MenuUiModel(
+                "Gesture-FlexibleImageEditView",
+                targetFragment = FlexibleImageViewFragment::class
+            )
+        )
         list.add(MenuUiModel("ProgressView", targetFragment = FlexibleImageViewFragment::class))
         return list
     }
@@ -114,7 +130,7 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
         private val tvTitle: AppCompatTextView by lazy { itemView.findViewById(R.id.tvTitle) }
         private val ivThumb: AppCompatImageView by lazy { itemView.findViewById(R.id.ivThumb) }
         private var model: MenuUiModel? = null
-        private val requestManager : RequestManager by lazy { Glide.with(fragment) }
+        private val requestManager: RequestManager by lazy { Glide.with(fragment) }
 
         init {
             itemView.setOnClickListener {
@@ -132,8 +148,9 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
             tvTitle.text = model.title
             val imageThumb = model.imageThumb
             if (!imageThumb.isNullOrEmpty()) {
-                ivThumb.setImageURI(imageThumb.toUri())
-                ivThumb.visibility = View.VISIBLE
+                requestManager.load(imageThumb)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .into(ivThumb)
             } else {
                 ivThumb.visibility = View.GONE
             }

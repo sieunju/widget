@@ -33,7 +33,7 @@ object ImageLoader {
 			if (bitmap == null) {
 				return@withContext null
 			} else {
-				imageCache.put(url, bitmap)
+				imageCache[url] = bitmap
 				if (width != -1 && height != -1) {
 					return@withContext Bitmap.createScaledBitmap(bitmap, width, height, true)
 				} else {

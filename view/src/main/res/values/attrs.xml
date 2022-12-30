@@ -25,12 +25,26 @@
         <attr name="textViewDisableBgColor" format="color" /> <!-- Disable or Not Selected Bg Color -->
         <attr name="textViewDisableBorder" format="dimension" /> <!-- Disable or Not Selected Border Width -->
         <attr name="textViewDisableBorderColor" format="color" /> <!-- Disable Or Not Selected Border Color -->
-        <attr name="textViewDisableCorner" format="dimension"/> <!-- Disable Or Not Selected Corner Radius -->
+        <attr name="textViewDisableCorner" format="dimension" /> <!-- Disable Or Not Selected Corner Radius -->
         <attr name="textViewAutoMaxSize" format="dimension" /> <!-- Auto Sizing Max Size -->
         <attr name="textViewAutoMinSize" format="dimension" /> <!-- Auto Sizing Min Size -->
-        <attr name="textViewTextStyle" format="reference"/>
-        <attr name="textViewDisableTextStyle" format="reference"/>
+        <attr name="textViewTextStyle" format="reference" />
+        <attr name="textViewDisableTextStyle" format="reference" />
     </declare-styleable>
     <!-- [e] CustomTextView Attr -->
+
+    <!-- [s] CustomImageView Attr -->
+    <declare-styleable name="CustomImageView">
+        <attr name="imgViewDefState" format="boolean" /> <!-- Default Status -->
+        <attr name="imgViewBgColor" format="color" />
+        <attr name="imgViewCorner" format="dimension" />
+        <attr name="imgViewBorder" format="dimension" />
+        <attr name="imgViewBorderColor" format="color" />
+        <attr name="imgViewDisableBgColor" format="color" />
+        <attr name="imgViewDisableCorner" format="dimension" />
+        <attr name="imgViewDisableBorder" format="dimension" />
+        <attr name="imgViewDisableBorderColor" format="color" />
+    </declare-styleable>
+    <!-- [e] CustomImageView Attr -->
 
 </resources>
