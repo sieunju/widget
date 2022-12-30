@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -13,61 +14,72 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <hmju.widget.view.CustomTextView
-            android:id="@+id/tvAuto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:elevation="6dp"
+            android:padding="10dp"
+            android:text="CustomTextView TextStyle Type :)"
+            app:textViewBgColor="#95989A"
+            app:textViewCorner="5dp"
+            app:textViewDisableTextStyle="@style/TextAppearance.AppCompat.Body2"
+            app:textViewTextStyle="@style/TextAppearance.AppCompat.Body1" />
+
+        <hmju.widget.view.CustomTextView
+            android:id="@+id/tvChangeStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:padding="15dp"
-            android:text="안녕하세요 오토 싸이징 테스트 입니다..."
-            app:textViewBgColor="#673AB7"
-            app:textViewTxtColor="#FFFFF0" />
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:elevation="6dp"
+            android:padding="10dp"
+            android:text="CustomTextView Change Status Type :)"
+            android:textSize="16sp"
+            app:textViewBgColor="#F2762C"
+            app:textViewBorder="2dp"
+            app:textViewBorderColor="#958F8F"
+            app:textViewCorner="40dp"
+            app:textViewDefState="false"
+            app:textViewDisableBgColor="#BC3F06"
+            app:textViewDisableBorder="3dp"
+            app:textViewDisableBorderColor="#454445"
+            app:textViewDisableCorner="40dp"
+            app:textViewDisableTxtColor="@color/white"
+            app:textViewTxtColor="@color/white" />
 
         <hmju.widget.view.CustomLayout
+            android:id="@+id/clImage"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_margin="15dp"
-            app:layoutBgColor="@color/purple_700"
+            app:layoutBgColor="#3A416F"
+            app:layoutBorder="2dp"
+            app:layoutBorderColor="#999999"
             app:layoutCorner="20dp">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imgThumb"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop" />
+                android:id="@+id/ivThumb"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="20dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@tools:sample/avatars" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="CustomLayout"
+                android:textColor="@color/white"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivThumb" />
 
         </hmju.widget.view.CustomLayout>
-
-        <hmju.widget.view.CustomLayout
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="10dp"
-            android:elevation="5dp"
-            app:layoutBgColor="@color/purple_500"
-            app:layoutBorder="5dp"
-            app:layoutBorderColor="@color/teal_200"
-            app:layoutCorner="50dp">
-
-        </hmju.widget.view.CustomLayout>
-
-        <hmju.widget.view.CustomTextView
-            android:id="@+id/tvSample"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:text="this is Sample TextView"
-            app:textViewBgColor="#601F1F"
-            app:textViewBorder="3dp"
-            app:textViewBorderColor="#FFFFFF"
-            app:textViewCorner="12dp"
-            app:textViewDefState="true"
-            app:textViewDisableBgColor="#FFC107"
-            app:textViewDisableBorder="2dp"
-            app:textViewDisableBorderColor="#00BCD4"
-            app:textViewDisableCorner="25dp"
-            app:textViewDisableTextStyle="@style/SampleText.Medium"
-            app:textViewTextStyle="@style/SampleText.Bold" />
-
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>
