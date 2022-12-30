@@ -1,0 +1,37 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'maven-publish'
+}
+
+android {
+    compileSdkVersion buildVersions.compileSdk
+
+    defaultConfig {
+        minSdkVersion buildVersions.minSdk
+        targetSdkVersion buildVersions.targetSdk
+
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
+    kapt("androidx.lifecycle:lifecycle-compiler:2.5.1")
+}

@@ -57,7 +57,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="80dp"
         android:layout_height="80dp"
-        app:layout_behavior="hmju.widget.behavior.TranslationBehavior"
+        app:layout_behavior="hmju.widget.coordinatorlayout.TranslationBehavior"
         app:behaviorDependId="@id/abl_header"
         app:behaviorDependPin="50dp"
         app:behaviorEndX="e,10"

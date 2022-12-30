@@ -6,7 +6,7 @@
 
         <variable
             name="model"
-            type="com.hmju.visual.SpecialGridFragment.SpecialItem" />
+            type="com.hmju.visual.ui.recyclerview.SpecialGridFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
