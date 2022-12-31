@@ -10,8 +10,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
-class ProgressFragment : Fragment(R.layout.fragment_progress) {
+internal class ProgressFragment : Fragment(R.layout.fragment_progress) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

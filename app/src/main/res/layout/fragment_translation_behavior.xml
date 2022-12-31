@@ -57,31 +57,31 @@
     <androidx.cardview.widget.CardView
         android:layout_width="80dp"
         android:layout_height="80dp"
-        app:layout_behavior="hmju.widget.coordinatorlayout.TranslationBehavior"
-        app:behaviorDependId="@id/abl_header"
-        app:behaviorDependPin="50dp"
-        app:behaviorEndX="e,10"
-        app:behaviorEndY="14"
-        app:behaviorEndWidth="30dp"
+        android:layout_gravity="right|top"
         android:layout_marginTop="30dp"
         android:layout_marginRight="10dp"
+        app:behaviorDependId="@id/abl_header"
+        app:behaviorDependPin="50dp"
         app:behaviorEndHeight="30dp"
-        android:layout_gravity="right|top"
+        app:behaviorEndWidth="30dp"
+        app:behaviorEndX="e,10"
+        app:behaviorEndY="14"
         app:cardCornerRadius="40dp"
-        app:cardElevation="5dp">
+        app:cardElevation="5dp"
+        app:layout_behavior="hmju.widget.coordinatorlayout.TranslationBehavior">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_launcher_foreground" />
+            android:src="@mipmap/ic_launcher" />
 
     </androidx.cardview.widget.CardView>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
-        android:text="hello"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="hello" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

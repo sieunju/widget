@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
  *
  * Created by juhongmin on 2022/01/07
  */
-class CustomTabLayoutFragment : Fragment(R.layout.fragment_custom_tab_layout) {
+internal class CustomTabLayoutFragment : Fragment(R.layout.fragment_custom_tab_layout) {
 
     private val colorArr = arrayOf(
         Color.BLACK, Color.WHITE,

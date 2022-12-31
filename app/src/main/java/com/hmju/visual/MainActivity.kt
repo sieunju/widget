@@ -8,7 +8,7 @@ import com.hmju.visual.ui.select.SelectMenuFragment
 import timber.log.Timber
 import kotlin.reflect.KClass
 
-class MainActivity : AppCompatActivity() {
+internal class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,4 +1,4 @@
-rootProject.name = "visual"
+rootProject.name = "widget"
 include(":app",":widget")
 include ':view'
 include ':gesture'

@@ -18,7 +18,8 @@
             android:id="@+id/ivThumb"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:adjustViewBounds="true" />
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTitle"

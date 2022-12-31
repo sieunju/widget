@@ -17,6 +17,7 @@ import com.hmju.visual.MainActivity.Companion.moveToFragment
 import com.hmju.visual.MenuThumb
 import com.hmju.visual.R
 import com.hmju.visual.ui.gesture.FlexibleImageViewFragment
+import com.hmju.visual.ui.progress.ProgressFragment
 import com.hmju.visual.ui.view.CustomViewFragment
 import timber.log.Timber
 import kotlin.reflect.KClass
@@ -50,17 +51,18 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
         list.add(
             MenuUiModel(
                 "CustomView",
-                Constants.IMG_BASE_URL.plus(MenuThumb.VIEW),
+                MenuThumb.VIEW,
                 CustomViewFragment::class
             )
         )
         list.add(
             MenuUiModel(
                 "Gesture-FlexibleImageEditView",
-                targetFragment = FlexibleImageViewFragment::class
+                MenuThumb.FLEXIBLE,
+                FlexibleImageViewFragment::class
             )
         )
-        list.add(MenuUiModel("ProgressView", targetFragment = FlexibleImageViewFragment::class))
+        list.add(MenuUiModel("ProgressView", targetFragment = ProgressFragment::class))
         return list
     }
 

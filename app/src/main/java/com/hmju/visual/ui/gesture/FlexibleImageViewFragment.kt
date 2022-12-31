@@ -11,7 +11,7 @@ import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.hmju.visual.Constants
+import com.hmju.visual.ExampleThumb
 import com.hmju.visual.ImageLoader
 import com.hmju.visual.R
 import hmju.widget.gesture.FlexibleImageEditView
@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
  *
  * Created by juhongmin on 11/21/21
  */
-class FlexibleImageViewFragment : Fragment(R.layout.fragment_flexibleimageview) {
+internal class FlexibleImageViewFragment : Fragment(R.layout.fragment_flexibleimageview) {
 
     lateinit var edit: FlexibleImageEditView
     lateinit var editFrame: FrameLayout
@@ -56,7 +56,7 @@ class FlexibleImageViewFragment : Fragment(R.layout.fragment_flexibleimageview) 
 
     private fun handleImageThumb() {
         lifecycleScope.launch(Dispatchers.Main) {
-            ImageLoader.reqBitmap(Constants.ExampleThumb.GALAXY)
+            ImageLoader.reqBitmap(ExampleThumb.GALAXY)
                 .onSuccess { edit.loadBitmap(it) }
         }
     }

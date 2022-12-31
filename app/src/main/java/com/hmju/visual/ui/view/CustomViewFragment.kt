@@ -1,31 +1,29 @@
 package com.hmju.visual.ui.view
 
-import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.animation.ValueAnimator.REVERSE
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.hmju.visual.ExampleThumb
 import com.hmju.visual.ImageLoader
 import com.hmju.visual.R
 import hmju.widget.extensions.Extensions.dp
 import hmju.widget.view.CustomImageView
 import hmju.widget.view.CustomLayout
 import hmju.widget.view.CustomTextView
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
+internal class CustomViewFragment : Fragment(R.layout.fragment_custom_view) {
 
-class CustomViewFragment : Fragment(R.layout.fragment_custom_view) {
-
-    private lateinit var tvChangeStatus : CustomTextView
-    private lateinit var clImage : CustomLayout
+    private lateinit var tvChangeStatus: CustomTextView
+    private lateinit var clImage: CustomLayout
     private lateinit var ivThumb: CustomImageView
-
-    private val TEMP_URL =
-        "https://lh3.googleusercontent.com/S_MBydsRjGbgJDrohpdJlA5ESktGymJrYMftIT3CWYggm86pPSiq26b8P9dwbOI2IYRs"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,13 +38,13 @@ class CustomViewFragment : Fragment(R.layout.fragment_custom_view) {
         }
     }
 
-    private fun requestTestImage(){
+    private fun requestTestImage() {
         lifecycleScope.launch(Dispatchers.Main) {
-            ivThumb.setImageBitmap(ImageLoader.imageBitmap(TEMP_URL))
+            ivThumb.setImageBitmap(ImageLoader.imageBitmap(ExampleThumb.DEEP_LINK_WALLPAPER))
         }
     }
 
-    private fun handleTvChangeStatus(){
+    private fun handleTvChangeStatus() {
         lifecycleScope.launch(Dispatchers.IO) {
             repeat(30) {
                 delay(1000)
@@ -57,8 +55,8 @@ class CustomViewFragment : Fragment(R.layout.fragment_custom_view) {
         }
     }
 
-    private fun handleImageCornerAni(view: CustomImageView){
-        ValueAnimator.ofFloat(50F.dp,0F).apply {
+    private fun handleImageCornerAni(view: CustomImageView) {
+        ValueAnimator.ofFloat(50F.dp, 0F).apply {
             interpolator = AccelerateDecelerateInterpolator()
             addUpdateListener {
                 val corner = it.animatedValue as Float
