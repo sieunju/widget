@@ -37,7 +37,7 @@ class SpecialGridItemDecoration(
          * @param gridTypeList Grid Span 1 로 리턴할 레이아웃 아이디
          * @param spanCnt Span Cnt 현재 무조건 2여야 함
          */
-        fun RecyclerView.spanSpecialGridType(gridTypeList: List<Int>, spanCnt: Int) {
+        fun RecyclerView.setSpanSpecialGridType(gridTypeList: List<Int>, spanCnt: Int) {
             val gridTypeMap = HashMap<Int, Boolean>()
             gridTypeMap.putAll(gridTypeList.map { it to true })
             if (layoutManager is GridLayoutManager) {
@@ -76,11 +76,16 @@ class SpecialGridItemDecoration(
         state: RecyclerView.State
     ) {
         super.getItemOffsets(outRect, view, parent, state)
-
         runCatching {
             outRect.setEmpty()
 
-            val pos = parent.getChildAdapterPosition(view)
+            var pos = parent.getChildAdapterPosition(view)
+            // -1 일때 이전 포지션 값을 가져와서 최대한 위치값을 가져오는 처리
+            if (pos == RecyclerView.NO_POSITION) {
+                val oldPos = parent.getChildViewHolder(view).oldPosition
+                if (oldPos == RecyclerView.NO_POSITION) return@runCatching
+                pos = oldPos
+            }
             val viewType = parent.adapter?.getItemViewType(pos) ?: 0
 
             // Grid 를 표시해야하는 레이아웃
@@ -114,8 +119,6 @@ class SpecialGridItemDecoration(
                     outRect.top = verticalDivider
                 }
             }
-        }.onFailure {
-            LogD("Error $it")
         }
     }
 

@@ -5,17 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DiffUtil
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.hmju.visual.BR
 import com.hmju.visual.R
-import com.hmju.visual.databinding.*
 import hmju.widget.extensions.Extensions.dp
 import hmju.widget.recyclerview.decoration.SpecialGridItemDecoration
-import kotlinx.coroutines.*
+import hmju.widget.recyclerview.decoration.SpecialGridItemDecoration.Companion.setSpanSpecialGridType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 /**
@@ -23,75 +24,51 @@ import kotlin.random.Random
  *
  * Created by juhongmin on 2022/03/21
  */
-class SpecialGridFragment : Fragment() {
-
-    companion object {
-        class SimpleDiffUtil(
-            private val oldList: List<SpecialItem>,
-            private val newList: List<SpecialItem>
-        ) : DiffUtil.Callback() {
-            override fun getOldListSize() = oldList.size
-
-            override fun getNewListSize() = newList.size
-
-            override fun areItemsTheSame(oldPos: Int, newPos: Int): Boolean {
-                val oldItem = oldList[oldPos]
-                val newItem = newList[newPos]
-                return oldItem.msg == newItem.msg
-            }
-
-            override fun areContentsTheSame(oldPos: Int, newPos: Int): Boolean {
-                val oldItem = oldList[oldPos]
-                val newItem = newList[newPos]
-                return oldItem.msg == newItem.msg
-            }
-        }
-    }
+class SpecialGridFragment : Fragment(R.layout.f_special_grid) {
 
     data class SpecialItem(
-        val msg: String,
         @LayoutRes val layoutId: Int
     )
 
-    private val dummyAdapter: Adapter by lazy { Adapter() }
+    private val adapter: Adapter by lazy { Adapter() }
 
-    private lateinit var binding: FSpecialGridBinding
+    private lateinit var rvContents: RecyclerView
+
     private val gridTypeList = listOf(R.layout.vh_special_grid_1)
     private val dummyList = mutableListOf<SpecialItem>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return DataBindingUtil.inflate<FSpecialGridBinding>(
-            inflater,
-            R.layout.f_special_grid,
-            container,
-            false
-        ).run {
-            binding = this
-            this.root
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.rvContents.addItemDecoration(
-            SpecialGridItemDecoration(
-                horizontalDivider = 20.dp,
-                verticalDivider = 30.dp,
-                side = 15.dp,
-                gridTypeList = gridTypeList
+        with(view) {
+            rvContents = findViewById(R.id.rvContents)
+            rvContents.layoutManager =
+                GridLayoutManager(view.context, 2, RecyclerView.VERTICAL, false)
+            rvContents.addItemDecoration(
+                SpecialGridItemDecoration(
+                    horizontalDivider = 20.dp,
+                    verticalDivider = 30.dp,
+                    side = 15.dp,
+                    gridTypeList = gridTypeList
+                )
             )
-        )
-        GlobalScope.launch(Dispatchers.Main) {
-            binding.rvContents.adapter = dummyAdapter
+            rvContents.setSpanSpecialGridType(gridTypeList, 2)
+            rvContents.adapter = adapter
+        }
+
+        handleDummy()
+    }
+
+    private fun handleDummy() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            dummyList.clear()
             dummyList.addAll(getDummyList())
-            dummyAdapter.setData(dummyList)
-            delay(5_000)
+            adapter.submitList(dummyList)
+            delay(3_000)
             dummyList.removeLast()
-            val tmpDummyList = getDummyList(dummyList.size.plus(1))
+            dummyList.removeLast()
+            dummyList.removeLast()
+            dummyList.removeLast()
+            val tmpDummyList = getDummyList()
             val each = dummyList.iterator()
             while (each.hasNext()) {
                 if (each.next().layoutId == R.layout.vh_bottom_space) {
@@ -99,79 +76,54 @@ class SpecialGridFragment : Fragment() {
                 }
             }
             dummyList.addAll(tmpDummyList)
-            dummyAdapter.setData(dummyList)
+            adapter.submitList(dummyList)
         }
     }
 
-    private suspend fun getDummyList(startIdx: Int = 0): List<SpecialItem> {
-        return withContext(Dispatchers.IO) {
-            val list = mutableListOf<SpecialItem>()
-            val ranSize = Random.nextInt(60, 61)
-            for (idx in 0 until ranSize) {
-                val tmpIdx = startIdx.plus(idx)
-                if (idx < 10) {
-                    list.add(
-                        if (Random.nextBoolean()) {
-                            SpecialItem(
-                                "POS_$tmpIdx",
-                                R.layout.vh_special_linear_1
-                            )
-                        } else {
-                            SpecialItem(
-                                "POS_$tmpIdx",
-                                R.layout.vh_special_linear_2
-                            )
-                        }
-                    )
-                } else if (idx in 16..19)
-                    list.add(
-                        if (Random.nextBoolean()) {
-                            SpecialItem(
-                                "POS_$tmpIdx",
-                                R.layout.vh_special_linear_1
-                            )
-                        } else {
-                            SpecialItem(
-                                "POS_$tmpIdx",
-                                R.layout.vh_special_linear_2
-                            )
-                        }
-                    )
-                else {
-                    list.add(
-                        SpecialItem(
-                            "POS_$tmpIdx",
-                            R.layout.vh_special_grid_1
-                        )
-                    )
-                }
-            }
-            // Last BottomSpace
-            list.add(
-                SpecialItem(
-                    msg = "LAST",
-                    R.layout.vh_bottom_space
+    private fun getDummyList(): List<SpecialItem> {
+        val list = mutableListOf<SpecialItem>()
+        val ranSize = Random.nextInt(20, 21)
+        for (idx in 0 until ranSize) {
+            if (idx < 5) {
+                list.add(
+                    if (Random.nextBoolean()) {
+                        SpecialItem(R.layout.vh_special_linear_1)
+                    } else {
+                        SpecialItem(R.layout.vh_special_linear_2)
+                    }
                 )
-            )
-            list
+            } else if (idx in 16..19)
+                list.add(
+                    if (Random.nextBoolean()) {
+                        SpecialItem(R.layout.vh_special_linear_1)
+                    } else {
+                        SpecialItem(R.layout.vh_special_linear_2)
+                    }
+                )
+            else {
+                list.add(SpecialItem(R.layout.vh_special_grid_1))
+            }
         }
+        // Last BottomSpace
+        list.add(SpecialItem(R.layout.vh_bottom_space))
+        return list
     }
 
-    class Adapter : RecyclerView.Adapter<BaseSpecialViewHolder<*>>() {
+    class Adapter : RecyclerView.Adapter<BaseSpecialViewHolder>() {
 
         private val dataList = mutableListOf<SpecialItem>()
 
-        fun setData(newList: List<SpecialItem>) {
-            val diffResult = DiffUtil.calculateDiff(SimpleDiffUtil(dataList, newList))
+        fun submitList(newList: List<SpecialItem>) {
+            val prevCount = dataList.size
             dataList.clear()
             dataList.addAll(newList)
-            diffResult.dispatchUpdatesTo(this)
+            notifyItemRangeChanged(prevCount, newList.size)
         }
 
         override fun onCreateViewHolder(
             parent: ViewGroup,
             viewType: Int
-        ): BaseSpecialViewHolder<*> {
+        ): BaseSpecialViewHolder {
             return when (viewType) {
                 R.layout.vh_special_linear_1 -> Linear1ViewHolder(parent)
                 R.layout.vh_special_linear_2 -> Linear2ViewHolder(parent)
@@ -180,7 +132,7 @@ class SpecialGridFragment : Fragment() {
             }
         }
 
-        override fun onBindViewHolder(holder: BaseSpecialViewHolder<*>, pos: Int) {
+        override fun onBindViewHolder(holder: BaseSpecialViewHolder, pos: Int) {
             if (dataList.size > pos) {
                 runCatching {
                     holder.onBindView(dataList[pos])
@@ -199,59 +151,60 @@ class SpecialGridFragment : Fragment() {
         override fun getItemCount() = dataList.size
 
         inner class Linear1ViewHolder(parent: ViewGroup) :
-            BaseSpecialViewHolder<VhSpecialLinear1Binding>(
+            BaseSpecialViewHolder(
                 parent,
                 R.layout.vh_special_linear_1
             ) {
 
+            private val tvTitle: AppCompatTextView by lazy { itemView.findViewById(R.id.tvTitle) }
+
             override fun onBindView(item: Any) {
-                binding.setVariable(BR.pos, "Pos $adapterPosition")
-                binding.setVariable(BR.model, item)
+                if (item is SpecialItem) {
+                    tvTitle.text = "$bindingAdapterPosition"
+                }
             }
         }
 
         inner class Linear2ViewHolder(parent: ViewGroup) :
-            BaseSpecialViewHolder<VhSpecialLinear2Binding>(
+            BaseSpecialViewHolder(
                 parent,
                 R.layout.vh_special_linear_2
             ) {
 
+            private val tvTitle: AppCompatTextView by lazy { itemView.findViewById(R.id.tvTitle) }
+
             override fun onBindView(item: Any) {
-                binding.setVariable(BR.pos, "Pos $adapterPosition")
-                binding.setVariable(BR.model, item)
+                if (item is SpecialItem) {
+                    tvTitle.text = "$bindingAdapterPosition"
+                }
             }
         }
 
         inner class Grid1ViewHolder(parent: ViewGroup) :
-            BaseSpecialViewHolder<VhSpecialGrid1Binding>(
-                parent,
-                R.layout.vh_special_grid_1
-            ) {
+            BaseSpecialViewHolder(parent, R.layout.vh_special_grid_1) {
+
+            private val tvTitle: AppCompatTextView by lazy { itemView.findViewById(R.id.tvTitle) }
+
             override fun onBindView(item: Any) {
-                binding.setVariable(BR.pos, "Pos $adapterPosition")
-                binding.setVariable(BR.model, item)
+                if (item is SpecialItem) {
+                    tvTitle.text = "$bindingAdapterPosition"
+                }
             }
         }
 
         inner class SpaceViewHolder(parent: ViewGroup) :
-            BaseSpecialViewHolder<VhBottomSpaceBinding>(
-                parent,
-                R.layout.vh_bottom_space
-            ) {
+            BaseSpecialViewHolder(parent, R.layout.vh_bottom_space) {
             override fun onBindView(item: Any) {
-                binding.setVariable(BR.model, item)
             }
         }
     }
 
-    abstract class BaseSpecialViewHolder<T : ViewDataBinding>(
+    abstract class BaseSpecialViewHolder(
         parent: ViewGroup,
         @LayoutRes layoutId: Int
     ) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
     ) {
-
-        val binding: T by lazy { DataBindingUtil.bind(itemView)!! }
 
         @Throws(Exception::class)
         abstract fun onBindView(item: Any)

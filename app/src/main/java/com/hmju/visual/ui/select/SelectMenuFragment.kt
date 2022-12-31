@@ -19,6 +19,7 @@ import com.hmju.visual.ui.coordinator.TranslationBehaviorFragment
 import com.hmju.visual.ui.gesture.FlexibleImageViewFragment
 import com.hmju.visual.ui.progress.ProgressFragment
 import com.hmju.visual.ui.recyclerview.ParallaxViewHolderFragment
+import com.hmju.visual.ui.recyclerview.SpecialGridFragment
 import com.hmju.visual.ui.tablayout.CustomTabLayoutFragment
 import com.hmju.visual.ui.view.CustomViewFragment
 import com.hmju.visual.ui.viewpager.ViewPagerFragment
@@ -85,6 +86,12 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
                 "RecyclerView-ParallaxViewHolder",
                 MenuThumb.PARALLAX,
                 ParallaxViewHolderFragment::class
+            )
+        )
+        list.add(
+            MenuUiModel(
+                "RecyclerView-SpecialGrid",
+                targetFragment = SpecialGridFragment::class
             )
         )
         list.add(
