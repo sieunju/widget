@@ -19,12 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-/**
- * Description :
- *
- * Created by juhongmin on 2022/03/21
- */
-class SpecialGridFragment : Fragment(R.layout.f_special_grid) {
+internal class SpecialGridDecorationFragment : Fragment(R.layout.f_special_grid) {
 
     data class SpecialItem(
         @LayoutRes val layoutId: Int

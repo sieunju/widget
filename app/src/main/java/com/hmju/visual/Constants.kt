@@ -10,6 +10,7 @@ object Constants {
         const val VIEWPAGER = IMG_BASE_URL.plus("/example_viewpager.gif")
         const val TAB_LAYOUT = IMG_BASE_URL.plus("/example_tab_layout.gif")
         const val PARALLAX = IMG_BASE_URL.plus("/example_parallax.gif")
+        const val SPECIAL_GRID_DECORATION = IMG_BASE_URL.plus("/example_special_grid_decoration.gif")
     }
 
     object ExampleThumb {
