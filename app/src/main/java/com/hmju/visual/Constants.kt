@@ -8,6 +8,7 @@ object Constants {
         const val FLEXIBLE = IMG_BASE_URL.plus("/example_flexible.gif")
         const val PROGRESS = IMG_BASE_URL.plus("/example_progress.gif")
         const val VIEWPAGER = IMG_BASE_URL.plus("/example_viewpager.gif")
+        const val TAB_LAYOUT = IMG_BASE_URL.plus("/example_tab_layout.gif")
     }
 
     object ExampleThumb {
