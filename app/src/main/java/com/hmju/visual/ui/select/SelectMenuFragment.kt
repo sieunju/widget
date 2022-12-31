@@ -73,11 +73,18 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
                 ViewPagerFragment::class
             )
         )
-        list.add(MenuUiModel("ViewPager-TabLayout", MenuThumb.TAB_LAYOUT, CustomTabLayoutFragment::class))
+        list.add(
+            MenuUiModel(
+                "ViewPager-TabLayout",
+                MenuThumb.TAB_LAYOUT,
+                CustomTabLayoutFragment::class
+            )
+        )
         list.add(
             MenuUiModel(
                 "RecyclerView-ParallaxViewHolder",
-                targetFragment = ParallaxViewHolderFragment::class
+                MenuThumb.PARALLAX,
+                ParallaxViewHolderFragment::class
             )
         )
         list.add(
