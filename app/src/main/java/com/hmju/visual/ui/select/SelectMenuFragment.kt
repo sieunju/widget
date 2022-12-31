@@ -12,14 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.hmju.visual.ImageLoader
+import com.hmju.visual.Constants
 import com.hmju.visual.MainActivity.Companion.moveToFragment
+import com.hmju.visual.MenuThumb
 import com.hmju.visual.R
 import com.hmju.visual.ui.gesture.FlexibleImageViewFragment
 import com.hmju.visual.ui.view.CustomViewFragment
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.reflect.KClass
 
@@ -39,7 +37,6 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
     private lateinit var rvContents: RecyclerView
 
     private val adapter: Adapter by lazy { Adapter() }
-    private val IMG_BASE_RUL = "https://raw.githubusercontent.com/sieunju/widget/develop/stroage"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,7 +50,7 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
         list.add(
             MenuUiModel(
                 "CustomView",
-                IMG_BASE_RUL.plus("/example_view.gif"),
+                Constants.IMG_BASE_URL.plus(MenuThumb.VIEW),
                 CustomViewFragment::class
             )
         )

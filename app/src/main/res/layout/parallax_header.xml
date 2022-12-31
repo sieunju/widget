@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.hmju.view.ParallaxView xmlns:android="http://schemas.android.com/apk/res/android"
+<hmju.widget.recyclerview.ParallaxView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parallax"
@@ -34,4 +34,4 @@
         android:layout_height="match_parent"
         android:background="#65000000" />
 
-</com.hmju.view.ParallaxView>
+</hmju.widget.recyclerview.ParallaxView>
