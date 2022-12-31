@@ -1,31 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <hmju.widget.tablayout.LinePagerTabLayout
-        android:id="@+id/tabLayout"
+        android:id="@+id/tbScrollable"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         app:layout_constraintTop_toTopOf="parent"
         app:tabBottomLineHeight="2dp"
+        app:tabDisableTextStyle="@style/SampleTab.Disable"
+        app:tabEnableTextStyle="@style/SampleTab.Enable"
         app:tabIndicatorCorner="2dp"
         app:tabIndicatorHeight="3dp"
         app:tabIndicatorPadding="3dp"
-        app:tabEnableTextStyle="@style/SampleTab.Enable"
-        app:tabDisableTextStyle="@style/SampleTab.Disable"
-        app:tabPreviewItems="Tab1,MainTab,SideTab"
+        app:tabItemDivider="10dp"
         app:tabItemSide="15dp"
-        app:tabItemDivider="5dp"
+        app:tabPreviewItems="Tab1,MainTab,SideTab"
         app:tabType="scrollable" />
+
+    <hmju.widget.tablayout.LinePagerTabLayout
+        android:id="@+id/tbFixed"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabBottomLineHeight="2dp"
+        app:tabDisableTextStyle="@style/SampleTab.Disable"
+        app:tabEnableTextStyle="@style/SampleTab.Enable"
+        app:tabIndicatorCorner="2dp"
+        app:tabIndicatorHeight="3dp"
+        app:tabItemSide="15dp"
+        app:tabPreviewItems="Tab1,MainTab,SideTab"
+        app:tabType="fixed" />
+
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/vp"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>
