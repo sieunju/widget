@@ -69,7 +69,8 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
         list.add(
             MenuUiModel(
                 "ViewPager-LineIndicator",
-                targetFragment = ViewPagerFragment::class
+                MenuThumb.VIEWPAGER,
+                ViewPagerFragment::class
             )
         )
         list.add(MenuUiModel("TabLayout", targetFragment = CustomTabLayoutFragment::class))
