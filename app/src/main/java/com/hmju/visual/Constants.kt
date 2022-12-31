@@ -14,6 +14,7 @@ object Constants {
     object ExampleThumb {
         const val GALAXY = IMG_BASE_URL.plus("/example_galaxy.jpg")
         const val DEEP_LINK_WALLPAPER = IMG_BASE_URL.plus("/example_deep_link_wallpaper.png")
+        const val PARALLAX_HEADER = IMG_BASE_URL.plus("/example_parallax_header_thumb.png")
     }
 }
 

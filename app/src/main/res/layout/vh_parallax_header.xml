@@ -16,7 +16,7 @@
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
-        tools:src="@drawable/ic_launcher_background" />
+        tools:src="@tools:sample/avatars" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvTitle"
