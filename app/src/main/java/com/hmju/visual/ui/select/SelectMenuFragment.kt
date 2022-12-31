@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.hmju.visual.Constants
 import com.hmju.visual.MainActivity.Companion.moveToFragment
 import com.hmju.visual.MenuThumb
 import com.hmju.visual.R
@@ -22,7 +21,7 @@ import com.hmju.visual.ui.progress.ProgressFragment
 import com.hmju.visual.ui.recyclerview.ParallaxViewHolderFragment
 import com.hmju.visual.ui.tablayout.CustomTabLayoutFragment
 import com.hmju.visual.ui.view.CustomViewFragment
-import com.hmju.visual.ui.viewpager.LineIndicatorFragment
+import com.hmju.visual.ui.viewpager.ViewPagerFragment
 import timber.log.Timber
 import kotlin.reflect.KClass
 
@@ -66,11 +65,11 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
                 FlexibleImageViewFragment::class
             )
         )
-        list.add(MenuUiModel("ProgressView", targetFragment = ProgressFragment::class))
+        list.add(MenuUiModel("ProgressView", MenuThumb.PROGRESS, ProgressFragment::class))
         list.add(
             MenuUiModel(
                 "ViewPager-LineIndicator",
-                targetFragment = LineIndicatorFragment::class
+                targetFragment = ViewPagerFragment::class
             )
         )
         list.add(MenuUiModel("TabLayout", targetFragment = CustomTabLayoutFragment::class))
