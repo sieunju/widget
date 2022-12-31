@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
  *
  * Created by juhongmin on 11/21/21
  */
-internal class FlexibleImageViewFragment : Fragment(R.layout.fragment_flexibleimageview) {
+internal class FlexibleImageViewFragment : Fragment(R.layout.f_flexibleimageview) {
 
     lateinit var edit: FlexibleImageEditView
     lateinit var editFrame: FrameLayout

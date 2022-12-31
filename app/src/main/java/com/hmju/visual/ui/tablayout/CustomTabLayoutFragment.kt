@@ -18,7 +18,7 @@ import hmju.widget.tablayout.PagerTabItem
  *
  * Created by juhongmin on 2022/01/07
  */
-internal class CustomTabLayoutFragment : Fragment(R.layout.fragment_custom_tab_layout) {
+internal class CustomTabLayoutFragment : Fragment(R.layout.f_custom_tab_layout) {
 
     private lateinit var tbScrollable: LinePagerTabLayout
     private lateinit var tbFixed: LinePagerTabLayout

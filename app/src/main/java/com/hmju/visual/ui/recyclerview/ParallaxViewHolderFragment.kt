@@ -21,7 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-internal class ParallaxViewHolderFragment : Fragment(R.layout.fragment_parallax) {
+internal class ParallaxViewHolderFragment : Fragment(R.layout.f_parallax) {
 
     sealed class UiModel {
         data class Header(val title: String) : UiModel()

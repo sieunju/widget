@@ -19,7 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-internal class CustomViewFragment : Fragment(R.layout.fragment_custom_view) {
+internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
 
     private lateinit var tvChangeStatus: CustomTextView
     private lateinit var clImage: CustomLayout

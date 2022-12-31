@@ -4,5 +4,5 @@ import androidx.fragment.app.Fragment
 import com.hmju.visual.R
 
 
-internal class TranslationBehaviorFragment : Fragment(R.layout.fragment_translation_behavior) {
+internal class TranslationBehaviorFragment : Fragment(R.layout.f_translation_behavior) {
 }

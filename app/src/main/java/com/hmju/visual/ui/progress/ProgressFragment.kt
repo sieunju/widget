@@ -15,7 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-internal class ProgressFragment : Fragment(R.layout.fragment_progress) {
+internal class ProgressFragment : Fragment(R.layout.f_progress) {
 
     private lateinit var normalProgress: ProgressView
     private lateinit var fastAndSlowProgress: ProgressView
