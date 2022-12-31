@@ -16,9 +16,13 @@ import com.hmju.visual.Constants
 import com.hmju.visual.MainActivity.Companion.moveToFragment
 import com.hmju.visual.MenuThumb
 import com.hmju.visual.R
+import com.hmju.visual.ui.coordinator.TranslationBehaviorFragment
 import com.hmju.visual.ui.gesture.FlexibleImageViewFragment
 import com.hmju.visual.ui.progress.ProgressFragment
+import com.hmju.visual.ui.recyclerview.ParallaxViewHolderFragment
+import com.hmju.visual.ui.tablayout.CustomTabLayoutFragment
 import com.hmju.visual.ui.view.CustomViewFragment
+import com.hmju.visual.ui.viewpager.LineIndicatorFragment
 import timber.log.Timber
 import kotlin.reflect.KClass
 
@@ -63,6 +67,25 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
             )
         )
         list.add(MenuUiModel("ProgressView", targetFragment = ProgressFragment::class))
+        list.add(
+            MenuUiModel(
+                "ViewPager-LineIndicator",
+                targetFragment = LineIndicatorFragment::class
+            )
+        )
+        list.add(MenuUiModel("TabLayout", targetFragment = CustomTabLayoutFragment::class))
+        list.add(
+            MenuUiModel(
+                "RecyclerView-ParallaxViewHolder",
+                targetFragment = ParallaxViewHolderFragment::class
+            )
+        )
+        list.add(
+            MenuUiModel(
+                "Coordinator-TranslationBehavior",
+                targetFragment = TranslationBehaviorFragment::class
+            )
+        )
         return list
     }
 
