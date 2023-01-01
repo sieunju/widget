@@ -49,15 +49,12 @@ dependencies {
     implementation(project(":extensions"))
     implementation(project(":coordinatorlayout"))
 
-    // implementation project(path: ':widget')
-
-    implementation("androidx.multidex:multidex:2.0.1")
-
-    implementation deps.kotlin.stdlib
-    implementation deps.kotlin.core
-    implementation deps.androidx.appCompat
-    implementation deps.androidx.constraintLayout
-    implementation deps.androidx.material
+    implementation(deps.kotlin.stdlib)
+    implementation(deps.kotlin.core)
+    implementation(deps.androidx.appCompat)
+    implementation(deps.androidx.constraintLayout)
+    implementation(deps.androidx.material)
+    implementation(deps.androidx.multidex)
 
     implementation(deps.coroutines.base)
     implementation(deps.coroutines.android)

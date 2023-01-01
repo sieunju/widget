@@ -1,5 +1,5 @@
 rootProject.name = "widget"
-include(":app",":widget")
+include(":app")
 include ':view'
 include ':gesture'
 include ':recyclerview'
