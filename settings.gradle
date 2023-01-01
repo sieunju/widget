@@ -1,2 +1,10 @@
-rootProject.name = "visual"
-include(":app",":widget")
+rootProject.name = "widget"
+include(":app")
+include ':view'
+include ':gesture'
+include ':recyclerview'
+include ':viewpager'
+include ':extensions'
+include ':progress'
+include ':tablayout'
+include ':coordinatorlayout'

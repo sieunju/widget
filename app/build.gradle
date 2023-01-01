@@ -2,15 +2,16 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'kotlinx-serialization'
 }
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "31.0.0"
+    compileSdkVersion buildVersions.compileSdk
+    buildToolsVersion buildVersions.buildTools
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 30
+        minSdkVersion buildVersions.minSdk
+        targetSdkVersion buildVersions.targetSdk
         versionCode 1
         versionName "1.0"
         archivesBaseName = "widget" + versionName + "_" + versionCode
@@ -43,20 +44,46 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':widget')
+    implementation(project(":view"))
+    implementation(project(":gesture"))
+    implementation(project(":recyclerview"))
+    implementation(project(":viewpager"))
+    implementation(project(":progress"))
+    implementation(project(":tablayout"))
+    implementation(project(":extensions"))
+    implementation(project(":coordinatorlayout"))
 
-    implementation deps.kotlin.stdlib
-    implementation deps.kotlin.core
-    implementation deps.androidx.appCompat
-    implementation deps.androidx.constraintLayout
-    implementation deps.androidx.material
+    implementation(deps.kotlin.stdlib)
+    implementation(deps.kotlin.core)
+    implementation(deps.androidx.appCompat)
+    implementation(deps.androidx.constraintLayout)
+    implementation(deps.androidx.material)
+    implementation(deps.androidx.multidex)
 
     implementation(deps.coroutines.base)
     implementation(deps.coroutines.android)
 
     implementation(deps.glide.base)
     implementation(deps.glide.okhttp)
+    implementation(deps.glide.webp)
     kapt(deps.glide.compiler)
+
+    implementation(deps.lifecycle.base)
+    implementation(deps.lifecycle.viewmodel)
+    implementation(deps.lifecycle.livedata)
+
+    implementation(deps.retrofit.okhttp)
+    implementation(deps.retrofit.base)
+    implementation(deps.retrofit.kotlinx)
+    implementation(deps.retrofit.coroutines)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
+
+    implementation(deps.timber)
+
+    // UI
+    implementation("com.github.sieunju.httptracking:ui:1.1.1")
+    // Interceptor Java Module
+    implementation("com.github.sieunju.httptracking:interceptor:1.1.1")
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

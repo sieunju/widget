@@ -1,0 +1,49 @@
+{
+  "payload": [
+    {
+      "title" : "CustomView",
+      "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_view.webp",
+      "fragmentName" : "CustomViewFragment"
+    },
+    {
+      "title" : "Gesture-FlexibleImageEditView",
+      "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_flexible.webp",
+      "fragmentName" : "FlexibleImageViewFragment"
+    },
+    {
+      "title" : "ProgressView",
+      "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_progress.webp",
+      "fragmentName" : "ProgressFragment"
+    },
+    {
+      "title" : "ViewPager-LineIndicator",
+      "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_viewpager.webp",
+      "fragmentName" : "ViewPagerFragment"
+    },
+    {
+      "title" : "ViewPager-TabLayout",
+      "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_tab_layout.webp",
+      "fragmentName" : "CustomTabLayoutFragment"
+    },
+    {
+      "title" : "RecyclerView-ParallaxViewHolder",
+      "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_parallax.webp",
+      "fragmentName" : "ParallaxViewHolderFragment"
+    },
+    {
+      "title" : "RecyclerView-SpecialGrid",
+      "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_special_grid_decoration.webp",
+      "fragmentName" : "SpecialGridDecorationFragment"
+    },
+    {
+      "title" : "RecyclerView-Scroller",
+      "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_recyclerview_scroller.webp",
+      "fragmentName" : "RecyclerViewScrollerFragment"
+    },
+    {
+      "title" : "Coordinator-TranslationBehavior",
+      "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_translation_behavior.webp",
+      "activityName" : "TranslationBehaviorActivity"
+    }
+  ]
+}

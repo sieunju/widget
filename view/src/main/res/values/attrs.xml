@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- [s] CustomLayout Attr -->
+    <declare-styleable name="CustomLayout">
+        <attr name="layoutDefState" format="boolean" />
+        <attr name="layoutCorner" format="dimension" />
+        <attr name="layoutBgColor" format="color" />
+        <attr name="layoutBorder" format="dimension" />
+        <attr name="layoutBorderColor" format="color" />
+        <attr name="layoutDisableBgColor" format="color" />
+        <attr name="layoutDisableBorder" format="dimension" />
+        <attr name="layoutDisableBorderColor" format="color" />
+    </declare-styleable>
+    <!-- [e] CustomLayout Attr -->
+
+    <!-- [s] CustomTextView Attr -->
+    <declare-styleable name="CustomTextView">
+        <attr name="textViewDefState" format="boolean" /> <!-- Default 상태 -->
+        <attr name="textViewCorner" format="dimension" /> <!-- Corner Radius -->
+        <attr name="textViewTxtColor" format="color" /> <!-- Enable or Default TextColor -->
+        <attr name="textViewBgColor" format="color" /> <!-- Enable or Default Bg Color -->
+        <attr name="textViewBorder" format="dimension" /> <!-- Enable or Default Border Width -->
+        <attr name="textViewBorderColor" format="color" /> <!--Enable or Default Border Color  -->
+        <attr name="textViewDisableTxtColor" format="color" /> <!-- Disable or Not Selected Text Color-->
+        <attr name="textViewDisableBgColor" format="color" /> <!-- Disable or Not Selected Bg Color -->
+        <attr name="textViewDisableBorder" format="dimension" /> <!-- Disable or Not Selected Border Width -->
+        <attr name="textViewDisableBorderColor" format="color" /> <!-- Disable Or Not Selected Border Color -->
+        <attr name="textViewDisableCorner" format="dimension" /> <!-- Disable Or Not Selected Corner Radius -->
+        <attr name="textViewAutoMaxSize" format="dimension" /> <!-- Auto Sizing Max Size -->
+        <attr name="textViewAutoMinSize" format="dimension" /> <!-- Auto Sizing Min Size -->
+        <attr name="textViewTextStyle" format="reference" />
+        <attr name="textViewDisableTextStyle" format="reference" />
+    </declare-styleable>
+    <!-- [e] CustomTextView Attr -->
+
+    <!-- [s] CustomImageView Attr -->
+    <declare-styleable name="CustomImageView">
+        <attr name="imgViewDefState" format="boolean" /> <!-- Default Status -->
+        <attr name="imgViewBgColor" format="color" />
+        <attr name="imgViewCorner" format="dimension" />
+        <attr name="imgViewBorder" format="dimension" />
+        <attr name="imgViewBorderColor" format="color" />
+        <attr name="imgViewDisableBgColor" format="color" />
+        <attr name="imgViewDisableCorner" format="dimension" />
+        <attr name="imgViewDisableBorder" format="dimension" />
+        <attr name="imgViewDisableBorderColor" format="color" />
+    </declare-styleable>
+    <!-- [e] CustomImageView Attr -->
+
+</resources>

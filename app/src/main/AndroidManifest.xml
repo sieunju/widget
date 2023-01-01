@@ -6,12 +6,20 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Visual">
+
+        <activity
+            android:name=".ui.coordinator.TranslationBehaviorActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false"
+            android:launchMode="singleTop" />
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize"
