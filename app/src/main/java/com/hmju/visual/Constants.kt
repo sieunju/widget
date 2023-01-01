@@ -12,6 +12,7 @@ object Constants {
         const val PARALLAX = IMG_BASE_URL.plus("/example_parallax.webp")
         const val SPECIAL_GRID_DECORATION = IMG_BASE_URL.plus("/example_special_grid_decoration.webp")
         const val TRANSLATION_BEHAVIOR = IMG_BASE_URL.plus("/example_translation_behavior.webp")
+        const val RECYCLERVIEW_CUSTOM_SCROLLER = IMG_BASE_URL.plus("/example_recyclerview_scroller.webp")
     }
 
     object ExampleThumb {

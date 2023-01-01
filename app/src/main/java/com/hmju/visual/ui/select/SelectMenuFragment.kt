@@ -127,9 +127,10 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
             )
         )
         list.add(
-            MenuUiModel(
+            MenuUiModel.toFragment(
                 "RecyclerView-Scroller",
-                targetFragment = RecyclerViewScrollerFragment::class
+                MenuThumb.RECYCLERVIEW_CUSTOM_SCROLLER,
+                RecyclerViewScrollerFragment::class
             )
         )
         list.add(
