@@ -44,7 +44,6 @@ abstract class BasePercentageBehavior<V : View> @JvmOverloads internal construct
     private var dependId: Int = 0                  // Dependency View Id
     private var dependPin: Float = 0F              // Dependency View Pin Height or Width
     private var dependRange: Float = 0F            // Dependency View 스크롤 범위.
-    private var dependType: Type = Type.VERTICAL   // Behavior Type
     //[e]=====================AttributeSet Variable=====================//
 
     private var soundOnCreate: Boolean = true
@@ -66,8 +65,6 @@ abstract class BasePercentageBehavior<V : View> @JvmOverloads internal construct
                     // Dependency Id 값을 셋팅 안안하는 경우 NullPointerException Throw
                     throw NullPointerException("behaviorDependId is a required attribute.")
                 }
-                dependType =
-                    Type.values()[getInt(R.styleable.TranslationBehavior_behaviorDependType, 1)]
                 dependRange = getDimension(
                     R.styleable.TranslationBehavior_behaviorDependRange,
                     UNSPECIFIED_FLOAT
@@ -116,21 +113,17 @@ abstract class BasePercentageBehavior<V : View> @JvmOverloads internal construct
         dependWidth = dependency.width
         dependHeight = dependency.height
 
-        // Dependency View Scroll Type Vertical 인 경우.
-        if (Type.VERTICAL == dependType) {
-            // Dependency View 의 Pint 값을 속성에서 셋팅 안한경우 기본 ActionBarSize 로 셋팅.
-            if (dependPin == UNSPECIFIED_FLOAT) {
-                dependPin = ctx.actionBarHeight()
-            }
-
-            // 스크롤 범위 최대값 -> Dependency View 높이 - 상태바 높이
-            val maxRange: Float = dependHeight - dependPin + ctx.getStatusBarHeight()
-            // 스크롤 범위 값 제한.
-            if (maxRange < dependRange) {
-                dependRange = maxRange
-            }
+        // Dependency View 의 Pint 값을 속성에서 셋팅 안한경우 기본 ActionBarSize 로 셋팅.
+        if (dependPin == UNSPECIFIED_FLOAT) {
+            dependPin = ctx.actionBarHeight()
         }
 
+        // 스크롤 범위 최대값 -> Dependency View 높이 - 상태바 높이
+        val maxRange: Float = dependHeight - dependPin + ctx.getStatusBarHeight()
+        // 스크롤 범위 값 제한.
+        if (maxRange < dependRange) {
+            dependRange = maxRange
+        }
         soundOnCreate = false
     }
 
@@ -144,23 +137,11 @@ abstract class BasePercentageBehavior<V : View> @JvmOverloads internal construct
     private fun onUpdateCal(child: V, dependency: View) {
 
         var percent: Float
-        val start: Float
-        val current: Float
-        val end: Float
 
         // 각 타입에 맞게 계산.
-        when (dependType) {
-            Type.HORIZONTAL -> {
-                start = dependX
-                current = dependency.x
-                end = dependRange
-            }
-            Type.VERTICAL -> {
-                start = dependY
-                current = dependency.y
-                end = dependRange
-            }
-        }
+        val start: Float = dependY
+        val current: Float = dependency.y
+        val end: Float = dependRange
         // Percentage Calculate.. 0.0 ~ 1.0
         percent = abs(current - start) / abs(end - start)
         if (percent.isNaN()) {

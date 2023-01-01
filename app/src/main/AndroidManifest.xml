@@ -13,6 +13,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Visual">
+
+        <activity
+            android:name=".ui.coordinator.TranslationBehaviorActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false"
+            android:launchMode="singleTop" />
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize"

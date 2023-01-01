@@ -3,11 +3,7 @@
     <declare-styleable name="TranslationBehavior">
         <!-- [s] BasePercentageBehavior Attr -->
         <attr name="behaviorDependId" format="reference" /> <!-- Dependency View Id -->
-        <attr name="behaviorDependType" format="enum"> <!-- Dependency View Type -->
-            <enum name="horizontal" value="0" />
-            <enum name="vertical" value="1" />
-        </attr>
-        <attr name="behaviorDependPin" format="dimension" /> <!-- Dependency Pin Height or Width-->
+        <attr name="behaviorDependPin" format="dimension" /> <!-- Dependency Pin Height-->
         <attr name="behaviorDependRange" format="dimension" /> <!-- Dependency Action Range -->
         <!-- [e] BasePercentageBehavior Attr -->
 

@@ -1,5 +1,6 @@
 package com.hmju.visual.ui.select
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -15,7 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.hmju.visual.MainActivity.Companion.moveToFragment
 import com.hmju.visual.MenuThumb
 import com.hmju.visual.R
-import com.hmju.visual.ui.coordinator.TranslationBehaviorFragment
+import com.hmju.visual.ui.coordinator.TranslationBehaviorActivity
 import com.hmju.visual.ui.gesture.FlexibleImageViewFragment
 import com.hmju.visual.ui.progress.ProgressFragment
 import com.hmju.visual.ui.recyclerview.ParallaxViewHolderFragment
@@ -37,7 +39,8 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
     data class MenuUiModel(
         val title: String,
         val imageThumb: String? = null,
-        val targetFragment: KClass<out Fragment>
+        val targetFragment: KClass<out Fragment>? = null,
+        val targetActivity: KClass<out FragmentActivity>? = null
     )
 
     private lateinit var rvContents: RecyclerView
@@ -105,7 +108,7 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
         list.add(
             MenuUiModel(
                 "Coordinator-TranslationBehavior",
-                targetFragment = TranslationBehaviorFragment::class
+                targetActivity = TranslationBehaviorActivity::class
             )
         )
         return list
@@ -179,10 +182,16 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
         init {
             itemView.setOnClickListener {
                 model?.runCatching {
-                    // 선택한 Fragment 이동
-                    fragment.parentFragmentManager.moveToFragment(targetFragment)
-                }?.onFailure {
-                    Timber.d("ERROR $it")
+                    val targetFragment = targetFragment
+                    val targetActivity = targetActivity
+                    // 선택한 Fragment or Activity 이동
+                    if (targetFragment != null) {
+                        fragment.parentFragmentManager.moveToFragment(targetFragment)
+                    } else if (targetActivity != null) {
+                        Intent(itemView.context, targetActivity.java).apply {
+                            startActivity(this)
+                        }
+                    }
                 }
             }
         }

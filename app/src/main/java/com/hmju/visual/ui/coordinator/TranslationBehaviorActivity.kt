@@ -1,18 +1,20 @@
-package com.hmju.visual.ui.recyclerview
+package com.hmju.visual.ui.coordinator
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
-import com.hmju.visual.ExampleThumb
+import com.hmju.visual.Constants.ExampleThumb.PARALLAX_HEADER
 import com.hmju.visual.R
 import hmju.widget.extensions.Extensions.dp
 import hmju.widget.extensions.Extensions.getDeviceWidth
@@ -21,32 +23,44 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-internal class ParallaxViewHolderFragment : Fragment(R.layout.f_parallax) {
+internal class TranslationBehaviorActivity : AppCompatActivity() {
 
-    sealed class UiModel {
-        data class Header(val title: String) : UiModel()
-        data class Contents(val contents: String = "") : UiModel()
+    sealed class UiModel(@LayoutRes val layoutId: Int) {
+        data class Header(val title: String) : UiModel(R.layout.vh_parallax_header)
+        data class Contents(val contents: String = "") : UiModel(R.layout.vh_parallax_contents)
     }
 
     private lateinit var rvContents: RecyclerView
+    private lateinit var tvBeforeTitle: AppCompatTextView
+    private lateinit var tvAfterTitle: AppCompatTextView
+
     private val adapter: Adapter by lazy { Adapter() }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        with(view) {
-            rvContents = findViewById(R.id.rvContents)
-            rvContents.layoutManager = LinearLayoutManager(view.context)
-            rvContents.adapter = adapter
-        }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.a_translation_behavior)
 
+        initView()
+
+        tvBeforeTitle.text = "Hello"
+        tvAfterTitle.text = "It's Me..."
         handleDataList()
+    }
+
+    private fun initView() {
+        window.statusBarColor = Color.TRANSPARENT
+        rvContents = findViewById(R.id.rvContents)
+        rvContents.layoutManager = LinearLayoutManager(this)
+        rvContents.adapter = adapter
+        tvBeforeTitle = findViewById(R.id.tvBeforeTitle)
+        tvAfterTitle = findViewById(R.id.tvAfterTitle)
     }
 
     private fun handleDataList() {
         lifecycleScope.launch(Dispatchers.Main) {
             val newList = withContext(Dispatchers.IO) {
                 val dataList = mutableListOf<UiModel>()
-                val longText = requireContext().getString(R.string.str_long_txt)
+                val longText = getString(R.string.str_long_txt)
                 for (idx in 0 until 50) {
                     if (idx % 5 == 0) {
                         dataList.add(UiModel.Header("Tag $idx"))
@@ -60,11 +74,7 @@ internal class ParallaxViewHolderFragment : Fragment(R.layout.f_parallax) {
         }
     }
 
-
     inner class Adapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-        private val TYPE_HEADER = 100
-        private val TYPE_CONTENTS = 101
 
         private val dataList: MutableList<UiModel> by lazy { mutableListOf() }
 
@@ -77,10 +87,10 @@ internal class ParallaxViewHolderFragment : Fragment(R.layout.f_parallax) {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            if (viewType == TYPE_HEADER) {
-                return HeaderViewHolder(parent)
+            return if (viewType == R.layout.vh_parallax_header) {
+                HeaderViewHolder(parent)
             } else {
-                return ContentViewHolder(parent)
+                ContentViewHolder(parent)
             }
         }
 
@@ -96,10 +106,10 @@ internal class ParallaxViewHolderFragment : Fragment(R.layout.f_parallax) {
         }
 
         override fun getItemViewType(pos: Int): Int {
-            return if (dataList[pos] is UiModel.Header) {
-                TYPE_HEADER
+            return if (dataList.size > pos) {
+                dataList[pos].layoutId
             } else {
-                TYPE_CONTENTS
+                super.getItemViewType(pos)
             }
         }
 
@@ -108,7 +118,7 @@ internal class ParallaxViewHolderFragment : Fragment(R.layout.f_parallax) {
         inner class HeaderViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.vh_parallax_header, parent, false)
         ) {
-            private val requestManager: RequestManager by lazy { Glide.with(this@ParallaxViewHolderFragment) }
+            private val requestManager: RequestManager by lazy { Glide.with(this@TranslationBehaviorActivity) }
             private val tvTitle: AppCompatTextView by lazy { itemView.findViewById(R.id.tvTitle) }
             private val parallaxView: ParallaxView by lazy { itemView.findViewById(R.id.parallax) }
             private val imgThumb: AppCompatImageView by lazy { itemView.findViewById(R.id.imgThumb) }
@@ -134,7 +144,7 @@ internal class ParallaxViewHolderFragment : Fragment(R.layout.f_parallax) {
                 if (data is UiModel.Header) {
                     tvTitle.text = data.title
                     requestManager
-                        .load(ExampleThumb.PARALLAX_HEADER)
+                        .load(PARALLAX_HEADER)
                         .override(itemView.context.getDeviceWidth(), 200.dp)
                         .into(imgThumb)
                 }
