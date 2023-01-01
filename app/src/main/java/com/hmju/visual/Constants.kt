@@ -4,13 +4,14 @@ object Constants {
     const val IMG_BASE_URL = "https://raw.githubusercontent.com/sieunju/widget/develop/stroage"
 
     object SelectMenuThumb {
-        const val VIEW = IMG_BASE_URL.plus("/example_view.gif")
-        const val FLEXIBLE = IMG_BASE_URL.plus("/example_flexible.gif")
-        const val PROGRESS = IMG_BASE_URL.plus("/example_progress.gif")
-        const val VIEWPAGER = IMG_BASE_URL.plus("/example_viewpager.gif")
-        const val TAB_LAYOUT = IMG_BASE_URL.plus("/example_tab_layout.gif")
-        const val PARALLAX = IMG_BASE_URL.plus("/example_parallax.gif")
-        const val SPECIAL_GRID_DECORATION = IMG_BASE_URL.plus("/example_special_grid_decoration.gif")
+        const val VIEW = IMG_BASE_URL.plus("/example_view.webp")
+        const val FLEXIBLE = IMG_BASE_URL.plus("/example_flexible.webp")
+        const val PROGRESS = IMG_BASE_URL.plus("/example_progress.webp")
+        const val VIEWPAGER = IMG_BASE_URL.plus("/example_viewpager.webp")
+        const val TAB_LAYOUT = IMG_BASE_URL.plus("/example_tab_layout.webp")
+        const val PARALLAX = IMG_BASE_URL.plus("/example_parallax.webp")
+        const val SPECIAL_GRID_DECORATION = IMG_BASE_URL.plus("/example_special_grid_decoration.webp")
+        const val TRANSLATION_BEHAVIOR = IMG_BASE_URL.plus("/example_translation_behavior.webp")
     }
 
     object ExampleThumb {

@@ -13,7 +13,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.bumptech.glide.integration.webp.decoder.WebpDrawable
+import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.hmju.visual.MainActivity.Companion.moveToFragment
 import com.hmju.visual.MenuThumb
 import com.hmju.visual.R
@@ -26,7 +29,6 @@ import com.hmju.visual.ui.recyclerview.SpecialGridDecorationFragment
 import com.hmju.visual.ui.tablayout.CustomTabLayoutFragment
 import com.hmju.visual.ui.view.CustomViewFragment
 import com.hmju.visual.ui.viewpager.ViewPagerFragment
-import timber.log.Timber
 import kotlin.reflect.KClass
 
 /**
@@ -41,7 +43,26 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
         val imageThumb: String? = null,
         val targetFragment: KClass<out Fragment>? = null,
         val targetActivity: KClass<out FragmentActivity>? = null
-    )
+    ) {
+        companion object {
+
+            fun toActivity(
+                title: String,
+                imageThumb: String,
+                activity: KClass<out FragmentActivity>
+            ): MenuUiModel {
+                return MenuUiModel(title, imageThumb, targetActivity = activity)
+            }
+
+            fun toFragment(
+                title: String,
+                imageThumb: String,
+                fragment: KClass<out Fragment>
+            ): MenuUiModel {
+                return MenuUiModel(title, imageThumb, targetFragment = fragment)
+            }
+        }
+    }
 
     private lateinit var rvContents: RecyclerView
 
@@ -57,43 +78,49 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
     private fun getMenuList(): List<MenuUiModel> {
         val list = mutableListOf<MenuUiModel>()
         list.add(
-            MenuUiModel(
+            MenuUiModel.toFragment(
                 "CustomView",
                 MenuThumb.VIEW,
                 CustomViewFragment::class
             )
         )
         list.add(
-            MenuUiModel(
+            MenuUiModel.toFragment(
                 "Gesture-FlexibleImageEditView",
                 MenuThumb.FLEXIBLE,
                 FlexibleImageViewFragment::class
             )
         )
-        list.add(MenuUiModel("ProgressView", MenuThumb.PROGRESS, ProgressFragment::class))
         list.add(
-            MenuUiModel(
+            MenuUiModel.toFragment(
+                "ProgressView",
+                MenuThumb.PROGRESS,
+                ProgressFragment::class
+            )
+        )
+        list.add(
+            MenuUiModel.toFragment(
                 "ViewPager-LineIndicator",
                 MenuThumb.VIEWPAGER,
                 ViewPagerFragment::class
             )
         )
         list.add(
-            MenuUiModel(
+            MenuUiModel.toFragment(
                 "ViewPager-TabLayout",
                 MenuThumb.TAB_LAYOUT,
                 CustomTabLayoutFragment::class
             )
         )
         list.add(
-            MenuUiModel(
+            MenuUiModel.toFragment(
                 "RecyclerView-ParallaxViewHolder",
                 MenuThumb.PARALLAX,
                 ParallaxViewHolderFragment::class
             )
         )
         list.add(
-            MenuUiModel(
+            MenuUiModel.toFragment(
                 "RecyclerView-SpecialGrid",
                 MenuThumb.SPECIAL_GRID_DECORATION,
                 SpecialGridDecorationFragment::class
@@ -106,9 +133,10 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
             )
         )
         list.add(
-            MenuUiModel(
+            MenuUiModel.toActivity(
                 "Coordinator-TranslationBehavior",
-                targetActivity = TranslationBehaviorActivity::class
+                MenuThumb.TRANSLATION_BEHAVIOR,
+                TranslationBehaviorActivity::class
             )
         )
         return list
@@ -201,9 +229,20 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
             tvTitle.text = model.title
             val imageThumb = model.imageThumb
             if (!imageThumb.isNullOrEmpty()) {
-                requestManager.load(imageThumb)
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .into(ivThumb)
+                if (imageThumb.endsWith(".webp")) {
+                    requestManager.load(imageThumb)
+                        .optionalTransform(
+                            WebpDrawable::class.java,
+                            WebpDrawableTransformation(FitCenter())
+                        )
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .into(ivThumb)
+                } else {
+                    requestManager.load(imageThumb)
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .into(ivThumb)
+                }
+
             } else {
                 ivThumb.visibility = View.GONE
             }

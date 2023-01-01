@@ -64,6 +64,7 @@ dependencies {
 
     implementation(deps.glide.base)
     implementation(deps.glide.okhttp)
+    implementation(deps.glide.webp)
     kapt(deps.glide.compiler)
 
     implementation(deps.lifecycle.base)
