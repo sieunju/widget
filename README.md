@@ -29,9 +29,14 @@ allprojects {
 
 ```groovy
 dependencies {
-    	implementation 'com.github.sieunju:widget:$latestVersion'
+    	implementation 'com.github.sieunju.widget:gesture:$latestVersion'
+    	implementation 'com.github.sieunju.widget:progress:$latestVersion'
+    	implementation 'com.github.sieunju.widget:recyclerview:$latestVersion'
+    	implementation 'com.github.sieunju.widget:tablayout:$latestVersion'
+    	implementation 'com.github.sieunju.widget:view:$latestVersion'
 }
 ```
+
 ## Example Screen
 |CustomView|FlexibleImageEidtView|ProgressView|
 |:--:|:--:|:--:|
@@ -48,7 +53,6 @@ dependencies {
 
 - A.K.A exclude
 ```groovy
-
 implementation("com.github.sieunju:widget:$lateversion") {
         exclude("com.google.android.material")
         exclude("androidx.appcompat:appcompat")
