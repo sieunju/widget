@@ -59,12 +59,15 @@
             app:layoutBorderColor="#999999"
             app:layoutCorner="20dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <hmju.widget.view.CustomImageView
                 android:id="@+id/ivThumb"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="20dp"
                 android:scaleType="centerCrop"
+                app:imgViewCorner="50dp"
+                app:imgViewBorder="2dp"
+                app:imgViewBorderColor="#FFFFFF"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

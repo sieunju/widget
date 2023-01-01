@@ -18,14 +18,8 @@ class PagerTabItem(
 
     @StyleRes
     var disableTextStyle: Int = View.NO_ID
+
     var view: View? = null
 
-    // 해당 탭 선택 유부 LiveData
-//    var isSelected: MutableLiveData<Boolean>? = null
-//        get() {
-//            if (field == null) {
-//                field = MutableLiveData(false)
-//            }
-//            return field
-//        }
+    var isSelected: Boolean = false
 }

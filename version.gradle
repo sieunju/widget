@@ -68,6 +68,7 @@ retrofit.okhttp = "com.squareup.okhttp3:okhttp:4.9.1"
 retrofit.base = "com.squareup.retrofit2:retrofit:2.9.0"
 retrofit.rxjava = "com.squareup.retrofit2:adapter-rxjava3:2.9.0"
 retrofit.kotlinx = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
+retrofit.coroutines = "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2"
 
 deps.retrofit = retrofit
 
@@ -81,10 +82,11 @@ deps.timber = "com.jakewharton.timber:timber:5.0.1"
 
 /* Glide */
 def glide = [:]
-versions.glide = "4.11.0"
+versions.glide = "4.13.2"
 glide.base = "com.github.bumptech.glide:glide:$versions.glide"
 glide.okhttp = "com.github.bumptech.glide:okhttp3-integration:$versions.glide"
 glide.compiler = "com.github.bumptech.glide:compiler:$versions.glide"
+glide.webp = "com.github.zjupure:webpdecoder:2.3.$versions.glide"
 deps.glide = glide
 
 /* RxJava */

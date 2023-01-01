@@ -4,13 +4,17 @@ import android.animation.Animator
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.view.MotionEvent
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.viewpager2.widget.ViewPager2
 
 /**
  * Description : ViewPager2 기반의 자동 스크롤
- *
+ * 최대한 라이브러리를 사용하지 않기 위함으로 Handler 로 사용했지만, 되도록이면 아래 코드를 참고하여
+ * Rx or Coroutines 로 처리하시기 바랍니다.
  * Created by juhongmin on 2022/01/19
  */
 @SuppressLint("ClickableViewAccessibility")
@@ -20,11 +24,11 @@ class AutoScrollMediator(
     private val delayTime: Long = 3000L
 ) {
 
+    private val HANDLER_WHAT = 100
+    private val handler: AutoScrollHandler by lazy { AutoScrollHandler() }
     private var isStopByTouch = false
-    // private var disposable: Disposable? = null
 
     init {
-
         // ViewPager2 Touch Listener
         viewPager.getChildAt(0).setOnTouchListener { v, event ->
             when (event.action) {
@@ -48,31 +52,20 @@ class AutoScrollMediator(
         }
     }
 
+    /**
+     * Start Auto Scroll!
+     */
     fun startAutoScroll() {
-//        disposable?.dispose()
-//        disposable = null
-//        disposable =
-//            Observable.interval(
-//                delayTime, TimeUnit.MILLISECONDS,
-//                AndroidSchedulers.mainThread()
-//            ).doOnNext {
-//                // 페이지가 하나인경우 Interval 중지
-//                if (viewPager.itemCount <= viewPager.currentItem.plus(1)) {
-//                    throw IllegalArgumentException("Not AutoScroll")
-//                }
-//            }.subscribe({
-//                smoothScrollItem(viewPager.currentItem.plus(1))
-//            }, {
-//                Timber.d("ERROR $it ${viewPager.tag}")
-//            })
+        handler.resetDispose()
+        sendNextEvent()
     }
 
     /**
      * Stop Auto Scroll
      */
     fun stopAutoScroll() {
-//        disposable?.dispose()
-//        disposable = null
+        handler.dispose()
+        handler.removeMessages(HANDLER_WHAT)
     }
 
     /**
@@ -104,6 +97,7 @@ class AutoScrollMediator(
 
                 override fun onAnimationEnd(animation: Animator?) {
                     viewPager.endFakeDrag()
+                    sendNextEvent()
                 }
 
                 override fun onAnimationCancel(animation: Animator?) {}
@@ -113,6 +107,40 @@ class AutoScrollMediator(
             this.interpolator = interpolator
             this.duration = duration
             start()
+        }
+    }
+
+    private fun sendNextEvent() {
+        handler.sendEmptyMessageDelayed(HANDLER_WHAT, delayTime)
+    }
+
+    @SuppressLint("HandlerLeak")
+    internal inner class AutoScrollHandler : Handler(Looper.getMainLooper()) {
+
+        private var isDispose: Boolean = false
+
+        fun dispose() {
+            isDispose = true
+        }
+
+        fun resetDispose() {
+            isDispose = false
+        }
+
+        override fun handleMessage(msg: Message) {
+            if (isDispose) {
+                return
+            }
+
+            runCatching {
+                val itemCount = viewPager.adapter?.itemCount ?: 0
+                if (itemCount <= viewPager.currentItem.plus(1)) {
+                    return
+                }
+
+                removeMessages(HANDLER_WHAT)
+                smoothScrollItem(viewPager.currentItem.plus(1))
+            }
         }
     }
 }

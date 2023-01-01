@@ -4,6 +4,7 @@ buildscript {
     dependencies {
         classpath (deps.androidPlugin)
         classpath (deps.kotlinPlugin)
+        classpath("org.jetbrains.kotlin:kotlin-serialization:1.6.21")
         classpath "com.github.dcendents:android-maven-gradle-plugin:2.1"
     }
 }

@@ -10,54 +10,52 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.hmju.visual.R
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import hmju.widget.tablayout.LinePagerTabLayout
+import hmju.widget.tablayout.PagerTabItem
 
 /**
  * Description :
  *
  * Created by juhongmin on 2022/01/07
  */
-class CustomTabLayoutFragment : Fragment(R.layout.fragment_custom_tab_layout) {
+internal class CustomTabLayoutFragment : Fragment(R.layout.f_custom_tab_layout) {
 
-    private val colorArr = arrayOf(
-        Color.BLACK, Color.WHITE,
-        Color.BLUE, Color.RED,
-        Color.GREEN, Color.CYAN
-    )
+    private lateinit var tbScrollable: LinePagerTabLayout
+    private lateinit var tbFixed: LinePagerTabLayout
+    private lateinit var viewPager: ViewPager2
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(view) {
-            val tabLayout = findViewById<hmju.widget.tablayout.LinePagerTabLayout>(R.id.tabLayout)
-            val viewPager = findViewById<ViewPager2>(R.id.vp)
+            tbScrollable = findViewById(R.id.tbScrollable)
+            tbFixed = findViewById(R.id.tbFixed)
+            viewPager = findViewById(R.id.vp)
 
-            tabLayout.viewPager = viewPager
-            tabLayout.addObserver(this@CustomTabLayoutFragment)
+            tbScrollable.viewPager = viewPager
+            tbScrollable.setDataList(getTabDataList())
+            tbFixed.viewPager = viewPager
+            tbFixed.setDataList(getTabDataList())
 
-            GlobalScope.launch(Dispatchers.Main) {
-                val tabList = mutableListOf<hmju.widget.tablayout.PagerTabItem>()
-                val colorList = mutableListOf<Int>()
-                tabList.add(hmju.widget.tablayout.PagerTabItem("oneTab"))
-                tabList.add(hmju.widget.tablayout.PagerTabItem("TwoTwoTab"))
-                tabList.add(hmju.widget.tablayout.PagerTabItem("ThreeTab"))
-                tabList.add(hmju.widget.tablayout.PagerTabItem("FourTab"))
-
-                colorList.add(Color.WHITE)
-                colorList.add(Color.BLACK)
-                colorList.add(Color.RED)
-                colorList.add(Color.CYAN)
-
-                viewPager.adapter = Adapter(colorList)
-                tabLayout.setDataList(tabList)
-            }
-            GlobalScope.launch(Dispatchers.Main) {
-                delay(5000)
-                viewPager.setCurrentItem(2,true)
-            }
+            viewPager.adapter = Adapter(getViewPagerList())
         }
+    }
+
+    private fun getTabDataList(): List<PagerTabItem> {
+        val list = mutableListOf<PagerTabItem>()
+        list.add(PagerTabItem("OneTab"))
+        list.add(PagerTabItem("Two....Tab"))
+        list.add(PagerTabItem("ThreeTab"))
+        list.add(PagerTabItem("Four"))
+        return list
+    }
+
+    private fun getViewPagerList(): List<Int> {
+        val list = mutableListOf<Int>()
+        list.add(Color.GRAY)
+        list.add(Color.BLACK)
+        list.add(Color.RED)
+        list.add(Color.CYAN)
+        return list
     }
 
     class Adapter(private val data: List<Int>) : RecyclerView.Adapter<Adapter.ViewHolder>() {
