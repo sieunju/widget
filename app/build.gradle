@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'kotlinx-serialization'
 }
 
 android {
@@ -36,6 +37,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11
+    }
+    buildFeatures {
+        dataBinding = true
     }
 }
 
@@ -72,8 +76,14 @@ dependencies {
     implementation(deps.retrofit.base)
     implementation(deps.retrofit.kotlinx)
     implementation(deps.retrofit.coroutines)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
 
     implementation(deps.timber)
+
+    // UI
+    implementation("com.github.sieunju.httptracking:ui:1.1.1")
+    // Interceptor Java Module
+    implementation("com.github.sieunju.httptracking:interceptor:1.1.1")
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

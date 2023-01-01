@@ -1,7 +1,8 @@
 package com.hmju.visual
 
 object Constants {
-    const val IMG_BASE_URL = "https://raw.githubusercontent.com/sieunju/widget/develop/stroage"
+    const val BASE_URL = "https://raw.githubusercontent.com"
+    const val IMG_BASE_URL = "https://raw.githubusercontent.com/sieunju/widget/develop/storage"
 
     object SelectMenuThumb {
         const val VIEW = IMG_BASE_URL.plus("/example_view.webp")

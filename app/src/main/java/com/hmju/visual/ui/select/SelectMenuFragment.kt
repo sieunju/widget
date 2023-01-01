@@ -9,7 +9,9 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
@@ -17,8 +19,8 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.FitCenter
+import com.hmju.visual.Constants
 import com.hmju.visual.MainActivity.Companion.moveToFragment
-import com.hmju.visual.MenuThumb
 import com.hmju.visual.R
 import com.hmju.visual.ui.coordinator.TranslationBehaviorActivity
 import com.hmju.visual.ui.gesture.FlexibleImageViewFragment
@@ -29,6 +31,17 @@ import com.hmju.visual.ui.recyclerview.SpecialGridDecorationFragment
 import com.hmju.visual.ui.tablayout.CustomTabLayoutFragment
 import com.hmju.visual.ui.view.CustomViewFragment
 import com.hmju.visual.ui.viewpager.ViewPagerFragment
+import com.http.tracking_interceptor.TrackingHttpInterceptor
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
 import kotlin.reflect.KClass
 
 /**
@@ -38,31 +51,17 @@ import kotlin.reflect.KClass
  */
 internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
 
+    @OptIn(ExperimentalSerializationApi::class)
+    private val apiService: GithubApiService by lazy {
+        createRetrofit().create(GithubApiService::class.java)
+    }
+
     data class MenuUiModel(
         val title: String,
         val imageThumb: String? = null,
         val targetFragment: KClass<out Fragment>? = null,
         val targetActivity: KClass<out FragmentActivity>? = null
-    ) {
-        companion object {
-
-            fun toActivity(
-                title: String,
-                imageThumb: String,
-                activity: KClass<out FragmentActivity>
-            ): MenuUiModel {
-                return MenuUiModel(title, imageThumb, targetActivity = activity)
-            }
-
-            fun toFragment(
-                title: String,
-                imageThumb: String,
-                fragment: KClass<out Fragment>
-            ): MenuUiModel {
-                return MenuUiModel(title, imageThumb, targetFragment = fragment)
-            }
-        }
-    }
+    )
 
     private lateinit var rvContents: RecyclerView
 
@@ -71,76 +70,71 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rvContents = view.findViewById(R.id.rvContents)
+        rvContents.layoutManager = GridLayoutManager(view.context, 2)
         rvContents.adapter = adapter
-        adapter.setDataList(getMenuList())
+        reqSelectionList()
     }
 
-    private fun getMenuList(): List<MenuUiModel> {
-        val list = mutableListOf<MenuUiModel>()
-        list.add(
-            MenuUiModel.toFragment(
-                "CustomView",
-                MenuThumb.VIEW,
-                CustomViewFragment::class
-            )
+    @ExperimentalSerializationApi
+    private fun createRetrofit(): Retrofit {
+        val httpClient = OkHttpClient.Builder()
+            .addInterceptor(TrackingHttpInterceptor())
+            .build()
+        val json = Json {
+            isLenient = true // Json 큰따옴표 느슨하게 체크.
+            ignoreUnknownKeys = true // Field 값이 없는 경우 무시
+            coerceInputValues = true // "null" 이 들어간경우 default Argument 값으로 대체
+        }
+        return Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL)
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .client(httpClient)
+            .build()
+    }
+
+    private fun reqSelectionList() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            val uiList = withContext(Dispatchers.IO) {
+                try {
+                    val result = apiService.fetchSelectionAsync().await()
+                    Result.success(result.list.map { it.toUiModel() })
+                } catch (ex: Exception) {
+                    Result.failure(ex)
+                }
+            }
+            adapter.setDataList(uiList.getOrNull())
+        }
+    }
+
+    private fun strToFragment(str: String): KClass<out Fragment>? {
+        return when (str) {
+            "CustomViewFragment" -> CustomViewFragment::class
+            "FlexibleImageViewFragment" -> FlexibleImageViewFragment::class
+            "ProgressFragment" -> ProgressFragment::class
+            "ViewPagerFragment" -> ViewPagerFragment::class
+            "CustomTabLayoutFragment" -> CustomTabLayoutFragment::class
+            "ParallaxViewHolderFragment" -> ParallaxViewHolderFragment::class
+            "SpecialGridDecorationFragment" -> SpecialGridDecorationFragment::class
+            "RecyclerViewScrollerFragment" -> RecyclerViewScrollerFragment::class
+            else -> null
+        }
+    }
+
+    private fun strToActivity(str: String): KClass<out FragmentActivity>? {
+        return when (str) {
+            "TranslationBehaviorActivity" -> TranslationBehaviorActivity::class
+            else -> null
+        }
+    }
+
+    private fun SelectionModel.toUiModel(): MenuUiModel {
+        return MenuUiModel(
+            title,
+            imageUrl,
+            strToFragment(fragmentName),
+            strToActivity(activityName)
         )
-        list.add(
-            MenuUiModel.toFragment(
-                "Gesture-FlexibleImageEditView",
-                MenuThumb.FLEXIBLE,
-                FlexibleImageViewFragment::class
-            )
-        )
-        list.add(
-            MenuUiModel.toFragment(
-                "ProgressView",
-                MenuThumb.PROGRESS,
-                ProgressFragment::class
-            )
-        )
-        list.add(
-            MenuUiModel.toFragment(
-                "ViewPager-LineIndicator",
-                MenuThumb.VIEWPAGER,
-                ViewPagerFragment::class
-            )
-        )
-        list.add(
-            MenuUiModel.toFragment(
-                "ViewPager-TabLayout",
-                MenuThumb.TAB_LAYOUT,
-                CustomTabLayoutFragment::class
-            )
-        )
-        list.add(
-            MenuUiModel.toFragment(
-                "RecyclerView-ParallaxViewHolder",
-                MenuThumb.PARALLAX,
-                ParallaxViewHolderFragment::class
-            )
-        )
-        list.add(
-            MenuUiModel.toFragment(
-                "RecyclerView-SpecialGrid",
-                MenuThumb.SPECIAL_GRID_DECORATION,
-                SpecialGridDecorationFragment::class
-            )
-        )
-        list.add(
-            MenuUiModel.toFragment(
-                "RecyclerView-Scroller",
-                MenuThumb.RECYCLERVIEW_CUSTOM_SCROLLER,
-                RecyclerViewScrollerFragment::class
-            )
-        )
-        list.add(
-            MenuUiModel.toActivity(
-                "Coordinator-TranslationBehavior",
-                MenuThumb.TRANSLATION_BEHAVIOR,
-                TranslationBehaviorActivity::class
-            )
-        )
-        return list
     }
 
     inner class Adapter : RecyclerView.Adapter<ViewHolder>() {

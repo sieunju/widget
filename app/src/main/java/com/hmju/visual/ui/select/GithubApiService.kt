@@ -1,5 +1,6 @@
 package com.hmju.visual.ui.select
 
+import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 
 /**
@@ -9,6 +10,6 @@ import retrofit2.http.GET
  */
 interface GithubApiService {
 
-    @GET("/stroage/selection.json")
-    fun fetchSelected()
+    @GET("/sieunju/widget/develop/storage/selection.json")
+    fun fetchSelectionAsync(): Deferred<SelectionResponse>
 }
