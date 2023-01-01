@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/sieunju/widget/develop/stroage/widget_logo.png" alt="widgetLogo" width="300" />
+  <img src="https://raw.githubusercontent.com/sieunju/widget/develop/storage/widget_logo.png" alt="widgetLogo" width="300" />
 </p>
 
 > [![](https://jitpack.io/v/sieunju/widget.svg)](https://jitpack.io/#sieunju/widget)   
