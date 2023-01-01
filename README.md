@@ -34,7 +34,7 @@ dependencies {
 ```
 ## Example Screen
 |CustomView|FlexibleImageEidtView|ProgressView|
-|---|---|---|
+|:--:|:--:|:--:|
 |![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_view.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_flexible.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_progress.webp)
 |LineIndicator|TabLayout|ParallaxViewHolder|
 |![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_viewpager.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_tab_layout.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_parallax.webp)|
