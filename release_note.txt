@@ -1,7 +1,7 @@
-Version: 1.0.6-alpha01
-Title: v1.0.6-alpha01 릴리즈 배포
+Version: 1.0.6
+Title: v1.0.6 릴리즈 정식 배포
 Message:
-## Release v1.0.6-alpha01 History
+## Release v1.0.6 History
 KO-KR
 ## 소개
 > Custom Component 관련 라이브러리 입니다. 🥰
