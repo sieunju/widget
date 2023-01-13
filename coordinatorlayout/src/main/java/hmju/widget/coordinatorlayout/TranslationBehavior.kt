@@ -6,7 +6,6 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import hmju.widget.extensions.Extensions.getStatusBarHeight
 import kotlin.math.roundToInt
 
 /**

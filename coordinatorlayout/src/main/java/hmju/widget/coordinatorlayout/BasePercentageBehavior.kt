@@ -1,11 +1,10 @@
 package hmju.widget.coordinatorlayout
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import hmju.widget.extensions.Extensions.actionBarHeight
-import hmju.widget.extensions.Extensions.getStatusBarHeight
 import kotlin.math.abs
 
 /**
@@ -153,5 +152,26 @@ abstract class BasePercentageBehavior<V : View> @JvmOverloads internal construct
 
         // onReDraw
         onRedraw(child, if (percent > 1F) 1F else percent)
+    }
+
+    /**
+     * StatusBar Height
+     */
+    protected fun Context.getStatusBarHeight(): Int {
+        val id = resources.getIdentifier("status_bar_height", "dimen", "android")
+        return if (id > 0) resources.getDimensionPixelSize(id) else -1
+    }
+
+    /**
+     * Get ActionBar Height
+     */
+    protected fun Context.actionBarHeight(): Float {
+        val attrs: TypedArray = theme.obtainStyledAttributes(
+            intArrayOf(R.attr.actionBarSize)
+        )
+
+        val actionBarSize: Float = attrs.getDimension(0, 0f)
+        attrs.recycle()
+        return actionBarSize
     }
 }

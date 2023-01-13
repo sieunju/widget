@@ -17,7 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.TextViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.viewpager2.widget.ViewPager2
-import hmju.widget.extensions.Extensions.multiNullCheck
+import hmju.widget.tablayout.Extensions.multiNullCheck
 
 /**
  * LinePagerTabLayout
