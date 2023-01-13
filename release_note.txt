@@ -1,21 +1,19 @@
-Version: 1.0.6
-Title: v1.0.6 릴리즈 정식 배포
+Version: 1.0.7
+Title: v1.0.7 릴리즈 정식 배포
 Message:
-## Release v1.0.6 History
+## Release v1.0.7 History
 KO-KR
 ## 소개
 > Custom Component 관련 라이브러리 입니다. 🥰
 > 많은 애용 바랍니다. 그리고 추가 하고 싶은 기능이 있으면 이슈로 남겨주시기 바랍니다.
 
-## 기능 추가
-- 기능별로 라이브러리를 나눴어요!
-- 예시 코드들을 좀더 고도화 해서 어떻게 사용하는지 쉽게 알수 있도록 만들었어요!
+## 핫픽스
+- [fix extensions module ERROR?!](https://github.com/sieunju/widget/issues/130)
 
 EN-US
 ## Introduction
 > Library related to Custom Component. 🥰
 > Please use it a lot. And if there is a function you want to add, please leave it as an issue.
 
-## Features
-- multi-feature!
-- We upgraded the example codes to make it easier to understand how to use them!
+## HotFix
+- [fix extensions module ERROR?!](https://github.com/sieunju/widget/issues/130)

@@ -1,14 +1,17 @@
 package hmju.widget.recyclerview
 
 import android.content.Context
+import android.content.res.Resources
+import android.os.Build
 import android.util.AttributeSet
+import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.view.WindowManager
 import androidx.annotation.FloatRange
 import androidx.constraintlayout.widget.ConstraintLayout
-import hmju.widget.extensions.Extensions.dp
-import hmju.widget.extensions.Extensions.getRealContentsHeight
 import kotlin.math.ceil
 
 /**
@@ -152,5 +155,61 @@ class ParallaxView @JvmOverloads constructor(
      */
     override fun onScrollChanged() {
         resizeHeight()
+    }
+
+    private fun Context.getDeviceHeight(): Int {
+        val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            wm.currentWindowMetrics.bounds.height()
+        } else {
+            val displayMetrics = DisplayMetrics()
+            @Suppress("DEPRECATION")
+            wm.defaultDisplay.getMetrics(displayMetrics)
+            displayMetrics.heightPixels
+        }
+    }
+
+    /**
+     * Convert Dp to Int
+     * ex. 5.dp
+     */
+    private val Int.dp: Int
+        get() = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            this.toFloat(),
+            Resources.getSystem().displayMetrics
+        ).toInt()
+
+    /**
+     * StatusBar Height
+     */
+    private fun Context.getStatusBarHeight(): Int {
+        val id = resources.getIdentifier("status_bar_height", "dimen", "android")
+        return if (id > 0) resources.getDimensionPixelSize(id) else -1
+    }
+
+    /**
+     * NavigationBar Height
+     */
+    private fun Context.getNavigationBarHeight(): Int {
+        val id = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return if (id > 0) resources.getDimensionPixelSize(id) else -1
+    }
+
+    /**
+     * is NavigationBar Height
+     */
+    private fun Context.isNavigationBar(): Boolean {
+        val id = resources.getIdentifier("config_showNavigationBar", "bool", "android")
+        return id > 0 && resources.getBoolean(id)
+    }
+
+    /**
+     * get Real ContentsHeight
+     */
+    private fun Context.getRealContentsHeight(): Int {
+        return getDeviceHeight()
+            .minus(getStatusBarHeight())
+            .minus(getNavigationBarHeight())
     }
 }

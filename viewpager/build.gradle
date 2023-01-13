@@ -35,3 +35,16 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
     kapt("androidx.lifecycle:lifecycle-compiler:2.5.1")
 }
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.sieunju.widget'
+                artifactId = 'viewpager'
+                version = deps.release
+            }
+        }
+    }
+}
