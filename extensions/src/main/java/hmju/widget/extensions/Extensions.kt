@@ -20,7 +20,7 @@ import androidx.annotation.LayoutRes
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 
-@Suppress("unused", "MemberVisibilityCanBePrivate")
+// @Suppress("unused", "MemberVisibilityCanBePrivate")
 object Extensions {
 
     /**

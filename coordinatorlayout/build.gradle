@@ -31,7 +31,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":extensions"))
     implementation("androidx.appcompat:appcompat:1.2.0")
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.1.0")
 }

@@ -1,6 +1,7 @@
 package hmju.widget.view
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
@@ -14,7 +15,6 @@ import androidx.annotation.StyleRes
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.widget.TextViewCompat
 import com.hmju.view.R
-import hmju.widget.extensions.Extensions.toSize
 
 /**
  * Description : Corner, Border, AutoTextSize 비/활성화 상태에 따라서도
@@ -344,4 +344,7 @@ class CustomTextView @JvmOverloads constructor(
             )
         }
     }
+
+    val Float.toSize: Float
+        get() = this / Resources.getSystem().displayMetrics.density
 }
