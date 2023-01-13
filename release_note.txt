@@ -1,7 +1,7 @@
-Version: 1.0.7
-Title: v1.0.7 릴리즈 정식 배포
+Version: 1.0.8
+Title: v1.0.8 릴리즈 정식 배포
 Message:
-## Release v1.0.7 History
+## Release v1.0.8 History
 KO-KR
 ## 소개
 > Custom Component 관련 라이브러리 입니다. 🥰
