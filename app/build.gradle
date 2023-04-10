@@ -81,9 +81,9 @@ dependencies {
     implementation(deps.timber)
 
     // UI
-    implementation("com.github.sieunju.httptracking:ui:1.1.1")
+    implementation("com.github.sieunju.httptracking:ui:1.2.3")
     // Interceptor Java Module
-    implementation("com.github.sieunju.httptracking:interceptor:1.1.1")
+    implementation("com.github.sieunju.httptracking:interceptor:1.2.3")
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
