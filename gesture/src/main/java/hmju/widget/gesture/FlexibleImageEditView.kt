@@ -350,6 +350,7 @@ class FlexibleImageEditView @JvmOverloads constructor(
                 isMultiTouch = ev.pointerCount >= 2
                 touchPoint = PointF(ev.rawX, ev.rawY)
             }
+
             MotionEvent.ACTION_MOVE,
             MotionEvent.ACTION_CANCEL,
             MotionEvent.ACTION_UP -> {
@@ -470,10 +471,12 @@ class FlexibleImageEditView @JvmOverloads constructor(
                 // 좌우 공간이 부족한 경우
                 diffFocusX = -stateItem.focusX
             }
+
             rect.left > 0 -> {
                 // 왼쪽에 빈공간이 있는 경우
                 diffFocusX = -abs(rect.left)
             }
+
             rect.right < stateItem.viewWidth -> {
                 // 오른쪽에 빈공간이 있는 경우
                 diffFocusX = abs(rect.right - stateItem.viewWidth)
@@ -485,10 +488,12 @@ class FlexibleImageEditView @JvmOverloads constructor(
                 // 상하 공간이 부족한 경우
                 diffFocusY = -stateItem.focusY
             }
+
             rect.top > 0 -> {
                 // 위쪽에 빈공간이 있는 경우
                 diffFocusY = -abs(rect.top)
             }
+
             rect.bottom < stateItem.viewHeight -> {
                 // 아래쪽에 빈공간이 있는 경우
                 diffFocusY = abs(rect.bottom - stateItem.viewHeight)
@@ -552,7 +557,7 @@ class FlexibleImageEditView @JvmOverloads constructor(
             return true
         }
 
-        override fun onScaleEnd(detector: ScaleGestureDetector?) {
+        override fun onScaleEnd(detector: ScaleGestureDetector) {
             // 이미지 확대 축소 제한
             if (prevScale < stateItem.minScale) {
                 fitCenter()
