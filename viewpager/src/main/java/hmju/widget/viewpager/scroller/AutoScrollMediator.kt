@@ -91,18 +91,18 @@ class AutoScrollMediator(
                 prevValue = currentValue
             }
             addListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator?) {
+                override fun onAnimationStart(animation: Animator) {
                     viewPager.beginFakeDrag()
                 }
 
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     viewPager.endFakeDrag()
                     sendNextEvent()
                 }
 
-                override fun onAnimationCancel(animation: Animator?) {}
+                override fun onAnimationCancel(animation: Animator) {}
 
-                override fun onAnimationRepeat(animation: Animator?) {}
+                override fun onAnimationRepeat(animation: Animator) {}
             })
             this.interpolator = interpolator
             this.duration = duration
