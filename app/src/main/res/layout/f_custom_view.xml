@@ -65,9 +65,9 @@
                 android:layout_height="100dp"
                 android:layout_marginTop="20dp"
                 android:scaleType="centerCrop"
-                app:imgViewCorner="50dp"
                 app:imgViewBorder="2dp"
                 app:imgViewBorderColor="#FFFFFF"
+                app:imgViewCorner="50dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -84,5 +84,28 @@
                 app:layout_constraintTop_toBottomOf="@+id/ivThumb" />
 
         </hmju.widget.view.CustomLayout>
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:max="100"
+            android:progress="30"
+            android:progressDrawable="@drawable/seekbar_line"
+            android:thumb="@drawable/seekbar_select" />
+
+        <com.google.android.material.slider.RangeSlider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:valueFrom="0.0"
+            android:valueTo="100.0"
+            app:thumbColor="#222"
+            app:tickVisible="true"
+            app:tickColor="#222"
+            app:trackColor="#F0F0F0"
+            app:trackHeight="4dp"
+            app:values="@array/initial_slider_values" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>
