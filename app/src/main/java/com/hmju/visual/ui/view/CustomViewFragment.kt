@@ -5,8 +5,10 @@ import android.animation.ValueAnimator.REVERSE
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.slider.RangeSlider
 import com.hmju.visual.ExampleThumb
 import com.hmju.visual.ImageLoader
 import com.hmju.visual.R
@@ -35,6 +37,12 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
             requestTestImage()
             handleTvChangeStatus()
             handleImageCornerAni(ivThumb)
+
+            setMaterialSlider(
+                view.findViewById(R.id.rsMaterial),
+                view.findViewById(R.id.tvRsMaterialMin),
+                view.findViewById(R.id.tvRsMaterialMax)
+            )
         }
     }
 
@@ -68,5 +76,40 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
             repeatMode = REVERSE
             start()
         }
+    }
+
+    private fun setMaterialSlider(
+        slider: RangeSlider,
+        tvMin: AppCompatTextView,
+        tvMax: AppCompatTextView
+    ) {
+        try {
+            val supperClass: Class<in RangeSlider>? = slider.javaClass.superclass
+            supperClass?.getDeclaredField("widgetHeight")?.let {
+                it.isAccessible = true
+                it.set(slider, 25.dp)
+            }
+            supperClass?.getDeclaredField("labelPadding")?.let {
+                it.isAccessible = true
+                it.set(slider, 0)
+            }
+            supperClass?.getDeclaredField("trackTop")?.let {
+                it.isAccessible = true
+                it.set(slider, 12.dp)
+            }
+        } catch (ex: Exception) {
+            // ignore
+        }
+        slider.setValues(95F, 95F)
+        slider.valueFrom = 95F
+        slider.valueTo = 108F
+        slider.addOnChangeListener(RangeSlider.OnChangeListener { _, value, fromUser ->
+            if (slider.values.size > 1) {
+                tvMin.text = "${slider.values[0].toInt()}"
+                tvMax.text = "${slider.values[1].toInt()}"
+            }
+        })
+        tvMin.text = "${slider.values[0].toInt()}"
+        tvMax.text = "${slider.values[1].toInt()}"
     }
 }

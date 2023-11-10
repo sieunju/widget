@@ -85,27 +85,52 @@
 
         </hmju.widget.view.CustomLayout>
 
-        <androidx.appcompat.widget.AppCompatSeekBar
-            android:id="@+id/seekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:max="100"
-            android:progress="30"
-            android:progressDrawable="@drawable/seekbar_line"
-            android:thumb="@drawable/seekbar_select" />
-
         <com.google.android.material.slider.RangeSlider
+            android:id="@+id/rsMaterial"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:valueFrom="0.0"
-            android:valueTo="100.0"
-            app:thumbColor="#222"
-            app:tickVisible="true"
-            app:tickColor="#222"
-            app:trackColor="#F0F0F0"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="15dp"
+            app:haloColor="#00FFFFFF"
+            app:labelBehavior="gone"
+            app:rippleColor="@android:color/transparent"
+            app:thumbColor="#FFF"
+            app:thumbRadius="12dp"
+            app:thumbStrokeColor="#222"
+            app:thumbStrokeWidth="3dp"
+            app:trackColorActive="#222"
+            app:trackColorInactive="#F0F0F0"
             app:trackHeight="4dp"
-            app:values="@array/initial_slider_values" />
+            tools:valueFrom="0.0"
+            tools:valueTo="100.0"
+            tools:values="@array/initial_slider_values" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:weightSum="2">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvRsMaterialMin"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#222"
+                tools:text="95" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvRsMaterialMax"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:textColor="#222"
+                tools:text="108" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>
