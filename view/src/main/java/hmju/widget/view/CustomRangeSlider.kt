@@ -73,6 +73,7 @@ class CustomRangeSlider @JvmOverloads constructor(
     private var trackCorner = 4.dp
     private var currentPosition: Float = 0F
     private val values: MutableList<Float> by lazy { mutableListOf() } // 사이즈 2 고정
+    private var startPosition : Float = -1F
 
     init {
         thumbDrawable.setSize(thumbWidth.toInt(), thumbHeight.toInt())
@@ -92,16 +93,20 @@ class CustomRangeSlider @JvmOverloads constructor(
         updateValues()
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-
+                parent.requestDisallowInterceptTouchEvent(true)
+                startPosition = currentPosition
             }
 
             MotionEvent.ACTION_MOVE -> {
-
+                parent.requestDisallowInterceptTouchEvent(true)
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-
+                parent.requestDisallowInterceptTouchEvent(false)
+                startPosition = -1F
             }
+
+            else -> {}
         }
         invalidate()
         return true
@@ -142,11 +147,21 @@ class CustomRangeSlider @JvmOverloads constructor(
             fgRect.left = bgRect.right
             fgRect.right = bgRect.right
         } else {
+            // 시작한 위치값이 최소값보다 작은 경우
+            if (minPos >= startPosition) {
+                LogD("여기입니다. ")
+                return
+            }
             val minX = getPositionToX(minPos)
             val maxX = getPositionToX(maxPos)
-            fgRect.left = Math.max(bgRect.left, minX)
-            fgRect.right = Math.min(bgRect.right, maxX)
+            fgRect.left = Math.max(minX, bgRect.left)
+            fgRect.right = Math.min(maxX, bgRect.right)
+            if (fgRect.left > fgRect.right) {
+                LogD("클때가 있습니다.")
+                fgRect.right = bgRect.left
+            }
             LogD("DrawTrack [${fgRect.left},${minX}]-[${fgRect.right},${maxX}]")
+            LogD("Values $values  | ${minPos},$maxPos")
         }
 
 
