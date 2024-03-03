@@ -44,6 +44,11 @@
       "title" : "Coordinator-TranslationBehavior",
       "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_translation_behavior.webp",
       "activityName" : "TranslationBehaviorActivity"
+    },
+    {
+      "title" : "Coordinator-DynamicCoordi",
+      "imageUrl" : "",
+      "activityName" : "DynamicCoordinatorActivity"
     }
   ]
 }
