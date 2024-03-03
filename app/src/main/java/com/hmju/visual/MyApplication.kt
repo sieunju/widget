@@ -30,6 +30,7 @@ class MyApplication : MultiDexApplication() {
                     str.append(":")
                     str.append(element.methodName.substringAfterLast("."))
                 } catch (ex: Exception) {
+                    // ignore
                 }
                 return str.toString()
             }

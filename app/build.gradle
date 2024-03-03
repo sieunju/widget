@@ -52,7 +52,6 @@ dependencies {
     implementation(project(":extensions"))
     implementation(project(":coordinatorlayout"))
 
-    implementation(deps.kotlin.stdlib)
     implementation(deps.kotlin.core)
     implementation(deps.androidx.appCompat)
     implementation(deps.androidx.constraintLayout)

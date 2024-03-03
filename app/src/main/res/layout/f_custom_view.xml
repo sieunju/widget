@@ -65,9 +65,9 @@
                 android:layout_height="100dp"
                 android:layout_marginTop="20dp"
                 android:scaleType="centerCrop"
-                app:imgViewCorner="50dp"
                 app:imgViewBorder="2dp"
                 app:imgViewBorderColor="#FFFFFF"
+                app:imgViewCorner="50dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -84,5 +84,61 @@
                 app:layout_constraintTop_toBottomOf="@+id/ivThumb" />
 
         </hmju.widget.view.CustomLayout>
+
+        <com.google.android.material.slider.RangeSlider
+            android:id="@+id/rsMaterial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="15dp"
+            app:haloColor="#00FFFFFF"
+            app:labelBehavior="gone"
+            app:rippleColor="@android:color/transparent"
+            app:thumbColor="#FFF"
+            app:thumbRadius="12dp"
+            app:thumbStrokeColor="#222"
+            app:thumbStrokeWidth="3dp"
+            app:trackColorActive="#222"
+            app:trackColorInactive="#F0F0F0"
+            app:trackHeight="4dp"
+            tools:valueFrom="0.0"
+            tools:valueTo="100.0"
+            tools:values="@array/initial_slider_values" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:weightSum="2">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvRsMaterialMin"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#222"
+                tools:text="95" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvRsMaterialMax"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:textColor="#222"
+                tools:text="108" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <hmju.widget.view.CustomRangeSlider
+            android:id="@+id/sb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="20dp" />
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>
