@@ -39,46 +39,24 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.a_dynamic_coordinator)
-        val llHeader = findViewById<LinearLayoutCompat>(R.id.llHeader)
-        val tbCustomTest = findViewById<CustomCollapsingToolbarLayout>(R.id.tbCustomTest)
-        val tbTest = findViewById<Toolbar>(R.id.tvTest)
-        val tbFilter = findViewById<Toolbar>(R.id.tbFilter)
+        // val llHeader = findViewById<LinearLayoutCompat>(R.id.llHeader)
+//        val tbCustom = findViewById<CustomCollapsingToolbarLayout>(R.id.tbCustom)
+//        val tbHeader = findViewById<Toolbar>(R.id.tbHeader)
+//        val llContents = findViewById<LinearLayoutCompat>(R.id.llContents)
+//        val tbTop = findViewById<Toolbar>(R.id.tbTop)
+//        val tbBottom = findViewById<Toolbar>(R.id.tbBottom)
+//        val tbCustom = findViewById<CustomCollapsingToolbarLayout>(R.id.tbCustom)
+        val tbCategory = findViewById<Toolbar>(R.id.tbCategory)
         val abl = findViewById<AppBarLayout>(R.id.abl)
         val statusBarHeight = getStatusBarHeight()
+        Timber.d("StatusBar $statusBarHeight")
         abl.addOnOffsetChangedListener(object : AppBarLayout.OnOffsetChangedListener {
             var currentState: State? = null
             var currentOffset = 0
             override fun onOffsetChanged(appBarLayout: AppBarLayout, verticalOffset: Int) {
-                val totalRange = appBarLayout.totalScrollRange
+                val totalRange = appBarLayout.totalScrollRange // 750
                 val offset = Math.abs(verticalOffset)
-                if (offset == 0) {
-                    currentState = State.EXPANDED
-                } else if (offset >= totalRange) {
-                    currentState = State.COLLAPSED
-                }
-                val tbLocation = IntArray(2)
-                val tbTestLocation = IntArray(2)
-                tbTest.getLocationOnScreen(tbTestLocation)
-                tbTestLocation[1] = tbTestLocation[1].minus(statusBarHeight)
-                // Timber.d("1111 ${tbCustomTest.measuredHeight}")
-                val aOffset = Math.min(tbTestLocation[1],50.dp)
-                Timber.d("호호 ${aOffset}")
-                // llHeader.translationY = aOffset.minus(50.dp).toFloat()
-                tbFilter.getLocationOnScreen(tbLocation)
-                tbLocation[1] = tbLocation[1].minus(statusBarHeight).minus(50.dp) // max 900, 필터 영역 까지 Top. 300.dp
-                val isGestureUp = (offset - currentOffset) > 0
-                // Timber.d("ScrollOffset ${tbLocation[1]}")
-                val diffOffset = if (tbLocation[1] in 0..50.dp && currentState == State.COLLAPSED) {
-                    // 150 .. 300
-                    // return -150 .. 0
-                    tbLocation[1].minus(50.dp)
-                } else {
-                    val aOffset = tbLocation[1].minus(totalRange).minus(50.dp)
-                    val bOffset = Math.max(aOffset,-50.dp)
-                    // Timber.d("호호호 $bOffset")
-                    bOffset
-                }
-                // llHeader.translationY = diffOffset.toFloat()
+                tbCategory.translationY = -Math.min(50.dp,offset.minus(100.dp)).toFloat()
                 currentOffset = offset
             }
         })
@@ -87,6 +65,6 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
     @SuppressLint("InternalInsetResource")
     fun getStatusBarHeight(): Int {
         val id = resources.getIdentifier("status_bar_height", "dimen", "android")
-        return if (id > 0) resources.getDimensionPixelSize(id) else -1
+        return if (id > 0) resources.getDimensionPixelSize(id) else 0
     }
 }
