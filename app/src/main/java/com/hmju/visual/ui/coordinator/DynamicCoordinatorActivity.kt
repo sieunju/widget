@@ -40,7 +40,8 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.a_dynamic_coordinator)
         val llHeader = findViewById<LinearLayoutCompat>(R.id.llHeader)
-        val tbHeader = findViewById<Toolbar>(R.id.tbHeader)
+        val tbCustomTest = findViewById<CustomCollapsingToolbarLayout>(R.id.tbCustomTest)
+        val tbTest = findViewById<Toolbar>(R.id.tvTest)
         val tbFilter = findViewById<Toolbar>(R.id.tbFilter)
         val abl = findViewById<AppBarLayout>(R.id.abl)
         val statusBarHeight = getStatusBarHeight()
@@ -50,38 +51,34 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
             override fun onOffsetChanged(appBarLayout: AppBarLayout, verticalOffset: Int) {
                 val totalRange = appBarLayout.totalScrollRange
                 val offset = Math.abs(verticalOffset)
+                if (offset == 0) {
+                    currentState = State.EXPANDED
+                } else if (offset >= totalRange) {
+                    currentState = State.COLLAPSED
+                }
                 val tbLocation = IntArray(2)
+                val tbTestLocation = IntArray(2)
+                tbTest.getLocationOnScreen(tbTestLocation)
+                tbTestLocation[1] = tbTestLocation[1].minus(statusBarHeight)
+                // Timber.d("1111 ${tbCustomTest.measuredHeight}")
+                val aOffset = Math.min(tbTestLocation[1],50.dp)
+                Timber.d("호호 ${aOffset}")
+                // llHeader.translationY = aOffset.minus(50.dp).toFloat()
                 tbFilter.getLocationOnScreen(tbLocation)
-                tbLocation[1] = tbLocation[1].minus(statusBarHeight) // max 900, 필터 영역 까지 Top. 300.dp
+                tbLocation[1] = tbLocation[1].minus(statusBarHeight).minus(50.dp) // max 900, 필터 영역 까지 Top. 300.dp
                 val isGestureUp = (offset - currentOffset) > 0
-//                if (offset == 0) {
-//                    currentState = State.EXPANDED
-//                } else if (offset >= appBarLayout.totalScrollRange && currentState == State.EXPANDED) {
-//                    currentState = State.COLLAPSED
-//                }
-                // Timber.d("Scroll Offset $offset $isGestureUp ${tbLocation[1]}")
-                val diffOffset = if (offset <= 50.dp) {
-                    -offset
+                // Timber.d("ScrollOffset ${tbLocation[1]}")
+                val diffOffset = if (tbLocation[1] in 0..50.dp && currentState == State.COLLAPSED) {
+                    // 150 .. 300
+                    // return -150 .. 0
+                    tbLocation[1].minus(50.dp)
+                } else {
+                    val aOffset = tbLocation[1].minus(totalRange).minus(50.dp)
+                    val bOffset = Math.max(aOffset,-50.dp)
+                    // Timber.d("호호호 $bOffset")
+                    bOffset
                 }
-//                else if (offset in totalRange.minus(50.dp)..totalRange && !isGestureUp) {
-//                    val downOffset = offset - totalRange.minus(50.dp)
-//                    // Timber.d("아래 제스쳐 Offset $downOffset")
-//                    -downOffset
-//                } else if (offset in 51.dp until totalRange.minus(50.dp) && !isGestureUp) {
-//                    Timber.d("Gesture Up")
-//                    0
-//                } else {
-//                    Timber.d("여기를 탑니까? ")
-//                    null
-//                    // (-50).dp
-//                }
-                else {
-                    val aOffset = totalRange.minus(tbLocation[1])
-                    Timber.d("ScrollOffset ${Math.min(50.dp,aOffset)} ${aOffset}")
-                    // -Math.min(tbLocation[1].minus(50.dp),50.dp)
-                     -50.dp
-                }
-                llHeader.translationY = diffOffset.toFloat()
+                // llHeader.translationY = diffOffset.toFloat()
                 currentOffset = offset
             }
         })
