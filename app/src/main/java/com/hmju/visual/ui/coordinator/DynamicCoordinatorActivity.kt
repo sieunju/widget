@@ -2,19 +2,15 @@ package com.hmju.visual.ui.coordinator
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
-import android.graphics.Rect
-import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.appcompat.widget.Toolbar
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.databinding.DataBindingUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.hmju.visual.R
+import com.hmju.visual.databinding.ADynamicCoordinatorBinding
 import timber.log.Timber
-import kotlin.math.min
+import kotlin.math.abs
 
 
 /**
@@ -37,39 +33,55 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
         HALF_COLLAPSED
     }
 
+    private lateinit var binding: ADynamicCoordinatorBinding
+
     @SuppressLint("MissingInflatedId", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.a_dynamic_coordinator)
-        // val llHeader = findViewById<LinearLayoutCompat>(R.id.llHeader)
-//        val tbCustom = findViewById<CustomCollapsingToolbarLayout>(R.id.tbCustom)
-//        val tbHeader = findViewById<Toolbar>(R.id.tbHeader)
-//        val llContents = findViewById<LinearLayoutCompat>(R.id.llContents)
-//        val tbTop = findViewById<Toolbar>(R.id.tbTop)
-//        val tbBottom = findViewById<Toolbar>(R.id.tbBottom)
-//        val tbCustom = findViewById<CustomCollapsingToolbarLayout>(R.id.tbCustom)
-        val tbCategory = findViewById<Toolbar>(R.id.tbCategory)
-        val abl = findViewById<AppBarLayout>(R.id.abl)
+        binding = DataBindingUtil.setContentView(this,R.layout.a_dynamic_coordinator)
         val statusBarHeight = getStatusBarHeight()
         Timber.d("StatusBar $statusBarHeight")
-        abl.addOnOffsetChangedListener(object : AppBarLayout.OnOffsetChangedListener {
+        binding.abl.addOnOffsetChangedListener(object : AppBarLayout.OnOffsetChangedListener {
             var currentState: State? = null
             var currentOffset = 0
             override fun onOffsetChanged(appBarLayout: AppBarLayout, verticalOffset: Int) {
                 val totalRange = appBarLayout.totalScrollRange // 750
                 val offset = Math.abs(verticalOffset)
-                // tbCategory.translationY = -Math.min(50.dp,offset.minus(100.dp)).toFloat()
-                Timber.d("ScrollOffset $offset")
-                if (offset <= 50.dp) {
-                    tbCategory.translationY = -Math.max(offset, 0).toFloat()
-                } else if (offset in 50.dp .. totalRange.minus(50.dp)) {
-                    tbCategory.translationY = -50.dp.toFloat()
-                } else if (offset in totalRange.minus(50.dp)..totalRange) {
-                    tbCategory.translationY = -totalRange.minus(offset).toFloat()
+                val appBarTop = appBarLayout.top
+                val appBarBottom = appBarLayout.bottom
+                val appBarHeight = if (appBarTop > appBarBottom) {
+                    appBarTop.plus(appBarBottom)
+                } else {
+                    appBarBottom.plus(appBarTop)
                 }
-                currentOffset = offset
+
+                if (offset == 0) {
+                    currentState = State.EXPANDED
+                } else if (offset >= totalRange) {
+                    currentState = State.COLLAPSED
+                }
+
+                // 아직 안걸쳐짐
+                if (appBarHeight > (-50).dp) {
+                    binding.llHeader.translationY = -(Math.min(50.dp,offset)).toFloat()
+                    Timber.d("아직 안걸쳐짐 ${appBarHeight} $offset ${binding.llHeader.translationY}")
+                } else {
+                    // 걸쳐진 상태
+                    // -150.dp ~ -50.dp
+                    if (currentState == State.COLLAPSED) {
+                        val newValue = adjustRange(abs(appBarHeight), 50.dp,150.dp,0,50.dp)
+                        binding.llHeader.translationY = -newValue
+                        Timber.d("걸쳐진 상태 $appBarHeight $newValue  ${binding.nsv.top}")
+                    }
+                }
             }
         })
+    }
+
+    fun adjustRange(value: Int, min1: Int, max1: Int, min2: Int, max2: Int): Float {
+        // 현재 값의 비율 계산
+        val ratio = (value.toFloat() - min1.toFloat()) / (max1.toFloat() - min1.toFloat())
+        return ratio * (max2 - min2) + min2
     }
 
     @SuppressLint("InternalInsetResource")
