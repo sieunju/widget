@@ -14,6 +14,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.appbar.AppBarLayout
 import com.hmju.visual.R
 import timber.log.Timber
+import kotlin.math.min
 
 
 /**
@@ -32,7 +33,8 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
 
     enum class State {
         EXPANDED,
-        COLLAPSED
+        COLLAPSED,
+        HALF_COLLAPSED
     }
 
     @SuppressLint("MissingInflatedId", "ClickableViewAccessibility")
@@ -56,7 +58,15 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
             override fun onOffsetChanged(appBarLayout: AppBarLayout, verticalOffset: Int) {
                 val totalRange = appBarLayout.totalScrollRange // 750
                 val offset = Math.abs(verticalOffset)
-                tbCategory.translationY = -Math.min(50.dp,offset.minus(100.dp)).toFloat()
+                // tbCategory.translationY = -Math.min(50.dp,offset.minus(100.dp)).toFloat()
+                Timber.d("ScrollOffset $offset")
+                if (offset <= 50.dp) {
+                    tbCategory.translationY = -Math.max(offset, 0).toFloat()
+                } else if (offset in 50.dp .. totalRange.minus(50.dp)) {
+                    tbCategory.translationY = -50.dp.toFloat()
+                } else if (offset in totalRange.minus(50.dp)..totalRange) {
+                    tbCategory.translationY = -totalRange.minus(offset).toFloat()
+                }
                 currentOffset = offset
             }
         })
