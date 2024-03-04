@@ -40,7 +40,7 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/tbCategory"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_gravity="top"
                 android:background="#FFF"
                 app:contentInsetStart="0dp"
