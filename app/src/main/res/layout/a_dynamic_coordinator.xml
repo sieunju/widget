@@ -22,6 +22,7 @@
         </androidx.appcompat.widget.Toolbar>
 
         <com.hmju.visual.ui.coordinator.CustomCollapsingToolbarLayout
+            android:id="@+id/tbCustomTest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
@@ -46,6 +47,7 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.Toolbar
+                android:id="@+id/tvTest"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@android:color/transparent"
