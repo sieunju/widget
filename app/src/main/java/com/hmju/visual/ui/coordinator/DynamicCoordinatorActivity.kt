@@ -40,7 +40,7 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
     private lateinit var binding: ADynamicCoordinatorBinding
     private var dynamicContentsHeight = -1
     private var headerHeight = -1
-    private var halfHeaderHeight = -1
+    private var scrollTargetEnd = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +48,7 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
         binding.tvContents.post { dynamicContentsHeight = binding.tvContents.height }
         binding.llHeader.post {
             headerHeight = binding.llHeader.height
-            halfHeaderHeight = (headerHeight.toFloat() / 2).toInt()
+            scrollTargetEnd = (headerHeight.toFloat() / 2).toInt()
         }
         binding.abl.addOnOffsetChangedListener(object : AppBarLayout.OnOffsetChangedListener {
 
@@ -68,20 +68,20 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
                     val newOffset = getAdjustRangeValue(
                         standardValue = offset,
                         standardEnd = dynamicContentsHeight,
-                        targetEnd = halfHeaderHeight
+                        targetEnd = scrollTargetEnd
                     )
                     binding.llHeader.translationY = -newOffset
                 } else {
                     if (currentState == State.COLLAPSED &&
-                        offset in totalRange.minus(halfHeaderHeight)..totalRange
+                        offset in totalRange.minus(scrollTargetEnd)..totalRange
                     ) {
                         val newOffset = getAdjustRangeValue(
                             standardValue = offset,
-                            standardStart = totalRange.minus(halfHeaderHeight),
+                            standardStart = totalRange.minus(scrollTargetEnd),
                             standardEnd = totalRange,
-                            targetEnd = -halfHeaderHeight
+                            targetEnd = scrollTargetEnd
                         )
-                        binding.llHeader.translationY = newOffset
+                        binding.llHeader.translationY = -newOffset
                     }
                 }
             }
@@ -104,6 +104,8 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
         targetStart: Int = 0,
         targetEnd: Int
     ): Float {
+        // FaN 이슈 대응
+        if (standardEnd - standardStart == 0) return standardValue.toFloat()
         val standardStartF = standardStart.toFloat()
         val standardEndF = standardEnd.toFloat()
         val targetStartF = targetStart.toFloat()
