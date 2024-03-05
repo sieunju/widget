@@ -10,19 +10,15 @@
             android:id="@+id/abl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="0dp"
             android:background="@color/white"
             app:elevation="0dp"
             app:layout_behavior=".ui.coordinator.AppBarLayoutBehavior">
 
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/tbHeader"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 app:contentInsetStart="0dp"
-                app:layout_scrollFlags="scroll|enterAlways">
-
-            </androidx.appcompat.widget.Toolbar>
+                app:layout_scrollFlags="scroll|enterAlways" />
 
             <com.hmju.visual.ui.coordinator.CustomCollapsingToolbarLayout
                 android:layout_width="match_parent"
@@ -42,15 +38,12 @@
                 <androidx.appcompat.widget.Toolbar
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_gravity="top"
                     android:background="@android:color/transparent"
-                    app:contentInsetStart="0dp"
                     app:layout_collapseMode="pin" />
 
             </com.hmju.visual.ui.coordinator.CustomCollapsingToolbarLayout>
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvFilter"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:gravity="center"
