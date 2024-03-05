@@ -32,7 +32,7 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvContents"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="100dp"
                     android:layout_marginTop="50dp"
                     android:background="#FF0000"
                     android:text="동적 콘텐츠 입니다."
