@@ -38,12 +38,18 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ADynamicCoordinatorBinding
+    private var dynamicContentsHeight = -1
+    private var headerHeight = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.a_dynamic_coordinator)
+        binding.tvContents.post { dynamicContentsHeight = binding.tvContents.height }
+        binding.llHeader.post { headerHeight = binding.llHeader.height }
         binding.abl.addOnOffsetChangedListener(object : AppBarLayout.OnOffsetChangedListener {
+
             var currentState: State? = null
+
             override fun onOffsetChanged(appBarLayout: AppBarLayout, verticalOffset: Int) {
                 val totalRange = appBarLayout.totalScrollRange
                 val offset = abs(verticalOffset)
@@ -52,14 +58,20 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
                 } else if (offset >= totalRange) {
                     currentState = State.COLLAPSED
                 }
+                if (dynamicContentsHeight == -1 || headerHeight == -1) return
 
-                // Timber.d("ScrollOffset $offset")
-                if (offset <= totalRange.minus(100.dp) && currentState == State.EXPANDED) {
-                    val ratioY = getExpandRatioY(offset, 0, totalRange.minus(100.dp), 0, 50.dp)
+                if (offset <= dynamicContentsHeight && currentState == State.EXPANDED) {
+                    val ratioY = getExpandRatioY(
+                        offset,
+                        0,
+                        dynamicContentsHeight,
+                        0,
+                        (headerHeight.toFloat() / 2).toInt()
+                    )
                     binding.llHeader.translationY = -ratioY
                 } else {
-                    if (currentState == State.COLLAPSED && offset in totalRange.minus(50.dp)..totalRange) {
-                        val ratioY = getCollapsedRatioY(offset)
+                    if (currentState == State.COLLAPSED && offset in totalRange.minus(headerHeight / 2)..totalRange) {
+                        val ratioY = getCollapsedRatioY(offset, totalRange)
                         binding.llHeader.translationY = ratioY
                     }
                 }
@@ -67,15 +79,17 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
         })
     }
 
-    fun getCollapsedRatioY(value: Int): Float {
-        if (value !in 200.dp..250.dp) {
-            return (-50F).dp
-        }
+    fun getCollapsedRatioY(
+        value: Int,
+        totalRange: Int
+    ): Float {
         // 비율 계산
         // 접힌 상태에서 펼쳐졌을때와 접힐떄 위치, S:200 E:250
-        val ratio = (value.toFloat() - 200F.dp) / (50F.dp)
+        // 600 ~ 750
+        val ratio =
+            (value.toFloat() - totalRange.minus(headerHeight / 2)) / (headerHeight / 2).toFloat()
         // 헤더 이동 S:0, E: -50
-        return ratio * (-50F).dp
+        return ratio * -(headerHeight / 2)
     }
 
     fun getExpandRatioY(
