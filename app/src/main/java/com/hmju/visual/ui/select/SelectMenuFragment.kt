@@ -32,8 +32,8 @@ import com.hmju.visual.ui.recyclerview.SpecialGridDecorationFragment
 import com.hmju.visual.ui.tablayout.CustomTabLayoutFragment
 import com.hmju.visual.ui.view.CustomViewFragment
 import com.hmju.visual.ui.viewpager.ViewPagerFragment
-import com.http.tracking_interceptor.TrackingHttpInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import hmju.http.tracking_interceptor.TrackingHttpInterceptor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

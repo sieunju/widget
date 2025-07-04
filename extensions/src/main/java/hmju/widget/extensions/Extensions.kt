@@ -11,14 +11,10 @@ import android.graphics.RectF
 import android.os.Build
 import android.util.DisplayMetrics
 import android.util.TypedValue
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.annotation.ColorInt
-import androidx.annotation.LayoutRes
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LifecycleOwner
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object Extensions {
@@ -77,7 +73,7 @@ object Extensions {
      */
     fun Context.actionBarHeight(): Float {
         val attrs: TypedArray = theme.obtainStyledAttributes(
-            intArrayOf(R.attr.actionBarSize)
+            intArrayOf(android.R.attr.actionBarSize)
         )
 
         val actionBarSize: Float = attrs.getDimension(0, 0f)

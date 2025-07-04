@@ -167,7 +167,7 @@ abstract class BasePercentageBehavior<V : View> @JvmOverloads internal construct
      */
     protected fun Context.actionBarHeight(): Float {
         val attrs: TypedArray = theme.obtainStyledAttributes(
-            intArrayOf(R.attr.actionBarSize)
+            intArrayOf(android.R.attr.actionBarSize)
         )
 
         val actionBarSize: Float = attrs.getDimension(0, 0f)

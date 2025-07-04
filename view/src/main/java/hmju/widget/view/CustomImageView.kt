@@ -1,15 +1,12 @@
 package hmju.widget.view
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
-import android.os.Build
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
-import com.hmju.view.R
 
 /**
  * Description : Image Border, Corner ImageView 함수
@@ -17,7 +14,6 @@ import com.hmju.view.R
  * Created by juhongmin on 2022/12/30
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-@TargetApi(Build.VERSION_CODES.M)
 open class CustomImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
