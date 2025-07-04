@@ -14,7 +14,6 @@ import androidx.annotation.Dimension
 import androidx.annotation.StyleRes
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.widget.TextViewCompat
-import com.hmju.view.R
 
 /**
  * Description : Corner, Border, AutoTextSize 비/활성화 상태에 따라서도
