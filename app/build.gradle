@@ -16,7 +16,6 @@ android {
         versionName "1.0"
         archivesBaseName = "widget" + versionName + "_" + versionCode
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
     }
 
     buildTypes {
@@ -75,7 +74,7 @@ dependencies {
     implementation(libs.retrofit.okhttp)
     implementation(libs.retrofit.base)
     implementation libs.retrofit.kotlinx
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
 
     implementation libs.timber
 
