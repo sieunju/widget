@@ -14,7 +14,7 @@ import java.net.URL
 object ImageLoader {
 
     // 이미지 캐시 원본 비트맵을 저장.
-    private val imageCache: HashMap<String, Bitmap> by lazy { HashMap() }
+    private val imageCache: HashMap<String, Bitmap> = HashMap()
 
     @JvmStatic
     suspend fun reqBitmap(url: String?, width: Int = -1, height: Int = -1): Result<Bitmap> {
