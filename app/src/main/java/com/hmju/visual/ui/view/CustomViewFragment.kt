@@ -16,16 +16,21 @@ import hmju.widget.extensions.Extensions.dp
 import hmju.widget.view.CustomImageView
 import hmju.widget.view.CustomLayout
 import hmju.widget.view.CustomTextView
+import hmju.widget.view.FallingAmountView
+import hmju.widget.view.RollingAmountView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.random.Random
 
 internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
 
     private lateinit var tvChangeStatus: CustomTextView
     private lateinit var clImage: CustomLayout
     private lateinit var ivThumb: CustomImageView
+    private lateinit var vRollingAmount: RollingAmountView
+    private lateinit var vFallingAmount: FallingAmountView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -33,6 +38,8 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
             tvChangeStatus = findViewById(R.id.tvChangeStatus)
             clImage = findViewById(R.id.clImage)
             ivThumb = findViewById(R.id.ivThumb)
+            vRollingAmount = findViewById(R.id.vRollingAmount)
+            vFallingAmount = findViewById(R.id.vFallingAmount)
 
             requestTestImage()
             handleTvChangeStatus()
@@ -43,6 +50,14 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
                 view.findViewById(R.id.tvRsMaterialMin),
                 view.findViewById(R.id.tvRsMaterialMax)
             )
+        }
+        lifecycleScope.launch {
+            repeat(20) {
+                val ran = Random.nextInt(99_999_999)
+                vRollingAmount.setAmount(ran)
+                vFallingAmount.setAmount(ran)
+                delay(5000)
+            }
         }
     }
 

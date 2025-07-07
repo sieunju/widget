@@ -166,6 +166,22 @@
 
             </hmju.widget.view.ShadowViewGroup>
 
+            <hmju.widget.view.RollingAmountView
+                android:id="@+id/vRollingAmount"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:clipToPadding="false"
+                android:overScrollMode="never" />
+
+            <hmju.widget.view.FallingAmountView
+                android:id="@+id/vFallingAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"/>
+
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.core.widget.NestedScrollView>
