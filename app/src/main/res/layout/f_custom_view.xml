@@ -173,14 +173,23 @@
                 android:clipToPadding="false"
                 android:overScrollMode="never" />
 
-            <hmju.widget.view.FallingAmountView
-                android:id="@+id/vFallingAmount"
+            <!--            <hmju.widget.view.FallingAmountView-->
+            <!--                android:id="@+id/vFallingAmount"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content" />-->
+
+            <hmju.widget.view.RollingAmountViewV2
+                android:id="@+id/vRollingAmount2"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:paddingLeft="30dp"
+                android:paddingTop="10dp"
+                android:paddingRight="30dp"
+                android:paddingBottom="10dp" />
 
             <Space
                 android:layout_width="wrap_content"
-                android:layout_height="100dp"/>
+                android:layout_height="100dp" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

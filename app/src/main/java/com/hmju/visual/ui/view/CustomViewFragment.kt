@@ -18,6 +18,7 @@ import hmju.widget.view.CustomLayout
 import hmju.widget.view.CustomTextView
 import hmju.widget.view.FallingAmountView
 import hmju.widget.view.RollingAmountView
+import hmju.widget.view.RollingAmountViewV2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,6 +32,7 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
     private lateinit var ivThumb: CustomImageView
     private lateinit var vRollingAmount: RollingAmountView
     private lateinit var vFallingAmount: FallingAmountView
+    private lateinit var vRollingAmountV2: RollingAmountViewV2
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -39,7 +41,8 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
             clImage = findViewById(R.id.clImage)
             ivThumb = findViewById(R.id.ivThumb)
             vRollingAmount = findViewById(R.id.vRollingAmount)
-            vFallingAmount = findViewById(R.id.vFallingAmount)
+            // vFallingAmount = findViewById(R.id.vFallingAmount)
+            vRollingAmountV2 = findViewById(R.id.vRollingAmount2)
 
             requestTestImage()
             handleTvChangeStatus()
@@ -55,8 +58,8 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
             repeat(20) {
                 val ran = Random.nextInt(99_999_999)
                 vRollingAmount.setAmount(ran)
-                vFallingAmount.setAmount(ran)
-                delay(5000)
+                vRollingAmountV2.setAmount(ran.toLong())
+                delay(2000)
             }
         }
     }
