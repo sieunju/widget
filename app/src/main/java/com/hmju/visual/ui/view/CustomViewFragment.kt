@@ -31,7 +31,7 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
     private lateinit var clImage: CustomLayout
     private lateinit var ivThumb: CustomImageView
     private lateinit var vRollingAmountV2: RollingAmountView
-    private lateinit var tvAmount : AppCompatTextView
+    private lateinit var tvAmount: AppCompatTextView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

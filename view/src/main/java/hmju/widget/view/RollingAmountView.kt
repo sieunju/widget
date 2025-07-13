@@ -3,11 +3,14 @@ package hmju.widget.view
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.text.Layout
+import android.text.StaticLayout
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -31,7 +34,7 @@ class RollingAmountView @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "RollingAmountView"
-        private const val DEBUG = true
+        private const val DEBUG = false
         fun LogD(msg: String) {
             if (DEBUG) {
                 Log.d(TAG, msg)
@@ -40,7 +43,7 @@ class RollingAmountView @JvmOverloads constructor(
     }
 
     private var currentAmount = 0L
-    private var amountTextSize: Float = 24f
+    private var amountTextSize: Float = 30f
     private var amountTextSideSpan: Int = 0.dp
 
     private val amountRootView: LinearLayout by lazy {
@@ -59,23 +62,26 @@ class RollingAmountView @JvmOverloads constructor(
         }
     }
 
+    private var tvTemp: TextView? = null
+
     init {
         addView(amountRootView)
-        amountTextSize = 30f
+        tvTemp = initTempTextView()
     }
 
     fun setAmount(amount: Long) {
-        LogD("SetAmount:${amount}")
+        amountTextSize = 30f
+        tvTemp = initTempTextView()
         amountRootView.removeAllViews()
-        val amountArr = NumberFormat.getNumberInstance()
-            .format(amount)
-            .map {
-                when (it) {
-                    ',' -> -1
-                    '-' -> -2
-                    else -> it.digitToInt()
-                }
+        val numberStr = NumberFormat.getNumberInstance().format(amount)
+        calculateTextSize(numberStr)
+        val amountArr = numberStr.map {
+            when (it) {
+                ',' -> -1
+                '-' -> -2
+                else -> it.digitToInt()
             }
+        }
         var delay = 0L
         amountArr.forEach { digits ->
             if (digits == -1 || digits == -2) {
@@ -88,9 +94,9 @@ class RollingAmountView @JvmOverloads constructor(
                 view.animate()
                     .alpha(1f)
                     .translationY(0f)
-                    .setDuration(delay + 70)
+                    .setDuration(delay)
                     .start()
-                delay += 100
+                delay += 50
             } else {
                 val view = SingleItemRecyclerView(context).also {
                     it.adapter = DigitsAdapter()
@@ -104,12 +110,12 @@ class RollingAmountView @JvmOverloads constructor(
                 postDelayed({
                     view.animate()
                         .alpha(1f)
-                        .setDuration(100)
+                        .setDuration(50)
                         .start()
                     scroller.targetPosition = digits
                     view.layoutManager?.startSmoothScroll(scroller)
                 }, delay)
-                delay += 100
+                delay += 50
             }
         }
         currentAmount = amount
@@ -117,6 +123,31 @@ class RollingAmountView @JvmOverloads constructor(
 
     private val Int.dp: Int
         get() = this * (context.resources.displayMetrics.density).toInt()
+
+    private fun calculateTextSize(newText: String) {
+        var isEnd = false
+        val availableWidth = width - (paddingLeft + paddingRight)
+        while (!isEnd) {
+            val tv = tvTemp ?: break
+            val layout = StaticLayout.Builder.obtain(
+                newText,
+                0,
+                newText.length,
+                tv.paint,
+                availableWidth
+            ).setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                .setLineSpacing(0.0f, 1.0f)
+                .setIncludePad(false)
+                .build()
+            if (layout.lineCount > 1) {
+                amountTextSize -= 1F
+            } else {
+                isEnd = true
+            }
+            tvTemp = initTempTextView()
+        }
+
+    }
 
     inner class CustomSmoothScroller(
         private val isUp: Boolean
@@ -159,6 +190,21 @@ class RollingAmountView @JvmOverloads constructor(
         }
     }
 
+    private fun initTempTextView(): TextView {
+        return TextView(context).apply {
+            layoutParams = LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            gravity = Gravity.RIGHT
+            alpha = 0f
+            visibility = View.INVISIBLE
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, amountTextSize)
+            setTypeface(null, Typeface.BOLD)
+            includeFontPadding = false
+        }
+    }
+
     inner class DigitsAdapter : RecyclerView.Adapter<DigitsAdapter.DigitsViewHolder>() {
 
         private val dataList = (0..9).toList()
@@ -175,9 +221,7 @@ class RollingAmountView @JvmOverloads constructor(
             return dataList.size
         }
 
-        inner class DigitsViewHolder(
-            val tv: TextView
-        ) : RecyclerView.ViewHolder(tv)
+        inner class DigitsViewHolder(val tv: TextView) : RecyclerView.ViewHolder(tv)
     }
 
     private class SingleItemRecyclerView @JvmOverloads constructor(
