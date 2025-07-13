@@ -167,39 +167,61 @@
 
             </hmju.widget.view.ShadowViewGroup>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvAmount"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:includeFontPadding="false"
-                android:paddingHorizontal="100dp"
-                android:paddingVertical="10dp"
-                android:textStyle="bold"
-                android:textSize="30dp"
-                app:autoSizeMaxTextSize="30dp"
-                app:autoSizeMinTextSize="1dp"
-                android:maxLines="1"
-                android:textColor="#222222"
-                app:autoSizeTextType="uniform" />
+                android:layout_height="200dp"
+                android:background="#0091EA">
 
-            <hmju.widget.view.RollingAmountView
-                android:id="@+id/vRollingAmount2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="100dp"
-                android:paddingVertical="10dp">
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:background="@drawable/bg_center_transparent_gradient"
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="100dp"
+                    android:background="#fff"
+                    android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent">
 
-            </hmju.widget.view.RollingAmountView>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:textColor="#222222"
+                        android:textSize="30dp"
+                        android:textStyle="bold"
+                        app:autoSizeMaxTextSize="30dp"
+                        app:autoSizeMinTextSize="1dp"
+                        app:autoSizeTextType="uniform" />
+
+                    <hmju.widget.view.RollingAmountView
+                        android:id="@+id/vRollingAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="10dp">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:background="@drawable/bg_center_transparent_gradient"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </hmju.widget.view.RollingAmountView>
+
+                    <hmju.widget.view.RollingAmountView
+                        android:id="@+id/vRollingAmount2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </hmju.widget.view.RollingAmountView>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <Space
                 android:layout_width="wrap_content"

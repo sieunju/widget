@@ -14,7 +14,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.StyleRes
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -42,9 +44,13 @@ class RollingAmountView @JvmOverloads constructor(
         }
     }
 
+    private var defaultTextSize = 30f
+
     private var currentAmount = 0L
-    private var amountTextSize: Float = 30f
+    private var amountTextSize: Float = defaultTextSize
     private var amountTextSideSpan: Int = 0.dp
+    private var amountTextStyle: Int = View.NO_ID
+    private var amountTextColor: Int = Color.BLACK
 
     private val amountRootView: LinearLayout by lazy {
         LinearLayout(context).apply {
@@ -69,8 +75,15 @@ class RollingAmountView @JvmOverloads constructor(
         tvTemp = initTempTextView()
     }
 
+    private val Int.dp: Int
+        get() = this * (context.resources.displayMetrics.density).toInt()
+
+    /**
+     * SetAmount
+     * @param amount 금액
+     */
     fun setAmount(amount: Long) {
-        amountTextSize = 30f
+        amountTextSize = defaultTextSize
         tvTemp = initTempTextView()
         amountRootView.removeAllViews()
         val numberStr = NumberFormat.getNumberInstance().format(amount)
@@ -121,9 +134,32 @@ class RollingAmountView @JvmOverloads constructor(
         currentAmount = amount
     }
 
-    private val Int.dp: Int
-        get() = this * (context.resources.displayMetrics.density).toInt()
+    fun getAmount(): Long = currentAmount
 
+    fun setDefaultTextSize(newTextSize: Float): RollingAmountView {
+        defaultTextSize = newTextSize
+        return this
+    }
+
+    fun setAmountTextSideSpan(newSpan: Int): RollingAmountView {
+        amountTextSideSpan = newSpan
+        return this
+    }
+
+    fun setAmountTextColor(newColor: Int): RollingAmountView {
+        amountTextColor = newColor
+        return this
+    }
+
+    fun setTextStyle(@StyleRes newStyle: Int): RollingAmountView {
+        amountTextStyle = newStyle
+        return this
+    }
+
+
+    /**
+     * AutoTextSize 계산하는 함수
+     */
     private fun calculateTextSize(newText: String) {
         var isEnd = false
         val availableWidth = width - (paddingLeft + paddingRight)
@@ -181,10 +217,14 @@ class RollingAmountView @JvmOverloads constructor(
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
             gravity = Gravity.CENTER
-            setTextColor(Color.BLACK)
+            if (amountTextStyle != View.NO_ID) {
+                TextViewCompat.setTextAppearance(this, amountTextStyle)
+            } else {
+                setTextColor(amountTextColor)
+                setTypeface(null, Typeface.BOLD)
+            }
 
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, amountTextSize)
-            setTypeface(null, Typeface.BOLD)
             setPadding(sidePadding, 0, sidePadding, 0)
             includeFontPadding = false
         }
@@ -197,7 +237,12 @@ class RollingAmountView @JvmOverloads constructor(
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
             gravity = Gravity.RIGHT
-            alpha = 0f
+            if (amountTextStyle != View.NO_ID) {
+                TextViewCompat.setTextAppearance(this, amountTextStyle)
+            } else {
+                setTextColor(amountTextColor)
+                setTypeface(null, Typeface.BOLD)
+            }
             visibility = View.INVISIBLE
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, amountTextSize)
             setTypeface(null, Typeface.BOLD)
