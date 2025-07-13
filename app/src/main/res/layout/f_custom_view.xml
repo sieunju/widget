@@ -169,7 +169,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="300dp"
                 android:background="#0091EA">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
@@ -215,9 +215,14 @@
                     <hmju.widget.view.RollingAmountView
                         android:id="@+id/vRollingAmount2"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="10dp" />
 
-                    </hmju.widget.view.RollingAmountView>
+                    <hmju.widget.view.RollingAmountViewJava
+                        android:id="@+id/vRollingAmount3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="10dp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 

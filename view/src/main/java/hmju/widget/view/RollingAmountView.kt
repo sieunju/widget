@@ -7,7 +7,6 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.util.AttributeSet
 import android.util.DisplayMetrics
-import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -34,21 +33,11 @@ class RollingAmountView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    companion object {
-        private const val TAG = "RollingAmountView"
-        private const val DEBUG = false
-        fun LogD(msg: String) {
-            if (DEBUG) {
-                Log.d(TAG, msg)
-            }
-        }
-    }
-
     private var defaultTextSize = 30f
 
     private var currentAmount = 0L
     private var amountTextSize: Float = defaultTextSize
-    private var amountTextSideSpan: Int = 0.dp
+    private var amountTextSideSpan: Int = 0
     private var amountTextStyle: Int = View.NO_ID
     private var amountTextColor: Int = Color.BLACK
 
@@ -74,9 +63,6 @@ class RollingAmountView @JvmOverloads constructor(
         addView(amountRootView)
         tvTemp = initTempTextView()
     }
-
-    private val Int.dp: Int
-        get() = this * (context.resources.displayMetrics.density).toInt()
 
     /**
      * SetAmount

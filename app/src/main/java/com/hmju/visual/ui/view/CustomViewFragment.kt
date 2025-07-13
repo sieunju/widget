@@ -18,6 +18,7 @@ import hmju.widget.view.CustomImageView
 import hmju.widget.view.CustomLayout
 import hmju.widget.view.CustomTextView
 import hmju.widget.view.RollingAmountView
+import hmju.widget.view.RollingAmountViewJava
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -32,6 +33,7 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
     private lateinit var ivThumb: CustomImageView
     private lateinit var vRollingAmount: RollingAmountView
     private lateinit var vRollingAmount2: RollingAmountView
+    private lateinit var vRollingAmount3: RollingAmountViewJava
     private lateinit var tvAmount: AppCompatTextView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,6 +45,7 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
             tvAmount = findViewById(R.id.tvAmount)
             vRollingAmount = findViewById(R.id.vRollingAmount)
             vRollingAmount2 = findViewById(R.id.vRollingAmount2)
+            vRollingAmount3 = findViewById(R.id.vRollingAmount3)
 
             requestTestImage()
             handleTvChangeStatus()
@@ -62,6 +65,7 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
                 tvAmount.setText(NumberFormat.getNumberInstance().format(ran))
                 vRollingAmount.setAmount(ran.toLong())
                 vRollingAmount2.setAmount(ran.toLong())
+                vRollingAmount3.setAmount(ran.toLong())
                 delay(2000)
             }
         }
