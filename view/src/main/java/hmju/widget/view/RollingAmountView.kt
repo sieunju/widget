@@ -1,223 +1,227 @@
 package hmju.widget.view
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.LinearGradient
-import android.graphics.Paint
-import android.graphics.Shader
 import android.graphics.Typeface
 import android.util.AttributeSet
+import android.util.DisplayMetrics
+import android.util.Log
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import java.text.NumberFormat
+import java.time.format.TextStyle
 
 /**
- * Description :
+ * Description : Rolling Number Animation TextView
  *
- * Created by juhongmin on 2025. 7. 7.
+ * Created by juhongmin on 2025. 7. 9.
  */
 class RollingAmountView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : RecyclerView(context, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private var currentAmount = 0
-    private var targetAmount = 0
-    private val customAdapter = AmountAdapter()
-    private val snapHelper = LinearSnapHelper()
-    private var isAnimating = false
+    companion object {
+        private const val TAG = "RollingAmountViewV2"
+        private const val DEBUG = true
+        fun LogD(msg: String) {
+            if (DEBUG) {
+                Log.d(TAG, msg)
+            }
+        }
+    }
 
-    // 애니메이션 설정
-    private val animationDuration = 3000L
-    private val maxJumpRange = Int.MAX_VALUE // 너무 멀면 시작점 조정
+    private var currentAmount = 0L
+    private var amountTextSize: Float = 20f
+    private var amountTextSideSpan: Int = 6.dp
+
+    private val amountRootView: LinearLayout by lazy {
+        LinearLayout(context).apply {
+            gravity = Gravity.CENTER
+            orientation = LinearLayout.HORIZONTAL
+            layoutParams = LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT
+            ).also {
+                it.topToTop = LayoutParams.PARENT_ID
+                it.endToEnd = LayoutParams.PARENT_ID
+                it.bottomToBottom = LayoutParams.PARENT_ID
+            }
+            clipToPadding = false
+        }
+    }
 
     init {
-        setupRecyclerView()
-        setupGradientEffect()
+        addView(amountRootView)
+        amountTextSize = 14f
     }
 
-    private fun setupRecyclerView() {
-        layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        adapter = customAdapter
-        snapHelper.attachToRecyclerView(this)
-        isNestedScrollingEnabled = false
-
-        post {
-            scrollToPosition(customAdapter.itemCount / 2)
-        }
-    }
-
-    private fun setupGradientEffect() {
-        // 그라데이션을 onDraw에서 직접 그리는 방식으로 변경
-        setWillNotDraw(false)
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-        drawGradientOverlay(canvas)
-    }
-
-    private fun drawGradientOverlay(canvas: Canvas) {
-        val gradientHeight = dpToPx(60)
-
-        // 상단 그라데이션
-        val topGradient = LinearGradient(
-            0f, 0f, 0f, gradientHeight.toFloat(),
-            Color.WHITE, Color.TRANSPARENT,
-            Shader.TileMode.CLAMP
-        )
-        val topPaint = Paint().apply { shader = topGradient }
-        canvas.drawRect(0f, 0f, width.toFloat(), gradientHeight.toFloat(), topPaint)
-
-        // 하단 그라데이션
-        val bottomGradient = LinearGradient(
-            0f, height - gradientHeight.toFloat(), 0f, height.toFloat(),
-            Color.TRANSPARENT, Color.WHITE,
-            Shader.TileMode.CLAMP
-        )
-        val bottomPaint = Paint().apply { shader = bottomGradient }
-        canvas.drawRect(
-            0f,
-            height - gradientHeight.toFloat(),
-            width.toFloat(),
-            height.toFloat(),
-            bottomPaint
-        )
-    }
-
-    fun setAmount(amount: Int) {
-        if (amount == targetAmount) return
-
-        targetAmount = amount
-
-        // 시작점 조정 로직
-        val distance = Math.abs(amount - currentAmount)
-        if (distance > maxJumpRange) {
-            // 너무 멀면 적절한 시작점으로 조정
-            currentAmount = if (amount > currentAmount) {
-                amount - maxJumpRange / 2
-            } else {
-                amount + maxJumpRange / 2
-            }
-        }
-
-        animateToAmount(amount)
-    }
-
-    private fun animateToAmount(targetAmount: Int) {
-        isAnimating = true
-
-        val startAmount = currentAmount
-        val animator = ValueAnimator.ofInt(startAmount, targetAmount).apply {
-            duration = animationDuration
-            interpolator = FastOutSlowInInterpolator()
-
-            addUpdateListener { animation ->
-                val animatedAmount = animation.animatedValue as Int
-                customAdapter.setCurrentAmount(animatedAmount)
-
-                // 현재 아이템 위치로 스크롤
-                val targetPosition = customAdapter.getPositionForAmount(animatedAmount)
-                // smoothScrollToPosition(targetPosition)
-                scrollToPosition(targetPosition)
-            }
-
-            addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    isAnimating = false
-                    currentAmount = targetAmount
+    fun setAmount(amount: Long) {
+        amountRootView.removeAllViews()
+        val amountArr = NumberFormat.getNumberInstance()
+            .format(amount)
+            .map { char ->
+                if (char == ',') {
+                    -1
+                } else {
+                    char.digitToInt()
                 }
-            })
-        }
-
-        animator.start()
-    }
-
-    private fun updateCurrentAmount() {
-        val layoutManager = layoutManager as LinearLayoutManager
-        val centerPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
-        if (centerPosition != NO_POSITION) {
-            currentAmount = customAdapter.getAmountAtPosition(centerPosition)
-        }
-    }
-
-    private fun dpToPx(dp: Int): Int {
-        return (dp * context.resources.displayMetrics.density).toInt()
-    }
-
-    // 커스텀 어댑터
-    private inner class AmountAdapter : Adapter<AmountViewHolder>() {
-
-        private var currentDisplayAmount = 0
-        var totalItems = -1
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AmountViewHolder {
-            val textView = TextView(parent.context).apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    dpToPx(80) // 아이템 높이
-                )
-                gravity = Gravity.CENTER
-                textSize = 28f
-                setTextColor(Color.BLACK)
-                typeface = Typeface.DEFAULT_BOLD
-                setPadding(16, 0, 16, 0)
             }
-            return AmountViewHolder(textView)
+        var delay = 0L
+        amountArr.forEach { digits ->
+            if (digits == -1) {
+                val tvComma = initDigitsTextView(0)
+                tvComma.text = ","
+                tvComma.alpha = 0f
+                tvComma.translationY = 50f
+                amountRootView.addView(tvComma)
+                tvComma.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setDuration(delay + 70)
+                    .start()
+                delay += 70
+                return@forEach
+            }
+            val snapHelper = LinearSnapHelper()
+            val adapter = DigitsAdapter()
+            val scroller = CustomSmoothScroller(currentAmount < amount)
+            val rv = SingleItemRecyclerView(context).also {
+                it.layoutManager = LinearLayoutManager(
+                    context,
+                    LinearLayoutManager.VERTICAL,
+                    false
+                )
+                it.adapter = adapter
+                it.isNestedScrollingEnabled = false
+                it.clipToPadding = false
+                it.alpha = 0F
+                snapHelper.attachToRecyclerView(it)
+            }
+
+            amountRootView.addView(rv)
+            postDelayed({
+                rv.animate().alpha(1f)
+                    .setDuration(100)
+                    .start()
+                scroller.targetPosition = digits
+                rv.layoutManager?.startSmoothScroll(scroller)
+            }, delay)
+            delay += 100
+        }
+        currentAmount = amount
+    }
+
+    private val Int.dp: Int
+        get() = this * (context.resources.displayMetrics.density).toInt()
+
+    inner class CustomSmoothScroller(
+        private val isUp: Boolean
+    ) : LinearSmoothScroller(context) {
+
+        override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics): Float {
+            return 1000f / displayMetrics.densityDpi // 기본값: 25f
         }
 
-        override fun onBindViewHolder(holder: AmountViewHolder, position: Int) {
-            val amount = getAmountAtPosition(position)
-            val formattedAmount = formatAmount(amount)
-            holder.textView.text = formattedAmount
+        override fun calculateTimeForScrolling(dx: Int): Int {
+            val time = super.calculateTimeForScrolling(dx)
+            return minOf(time, 2000) // 최대 2초로 제한
+        }
 
-            // 중앙 아이템 강조 효과 (옵션)
-            holder.textView.alpha = 1.0f
+        // 감속 시간 조정
+        override fun calculateTimeForDeceleration(dx: Int): Int {
+            return (calculateTimeForScrolling(dx) * 0.8f).toInt()
+        }
+
+        // 스크롤 방향 조정
+        override fun getVerticalSnapPreference(): Int {
+            return if (isUp) {
+                SNAP_TO_START
+            } else {
+                SNAP_TO_END
+            }
+        }
+    }
+
+    private fun initDigitsTextView(sidePadding: Int): TextView {
+        return TextView(context).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            gravity = Gravity.CENTER
+            setTextColor(Color.BLACK)
+
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, amountTextSize)
+            setTypeface(null, Typeface.BOLD)
+            setPadding(sidePadding, 0, sidePadding, 0)
+            includeFontPadding = false
+        }
+    }
+
+    inner class DigitsAdapter : RecyclerView.Adapter<DigitsAdapter.DigitsViewHolder>() {
+
+        private val dataList = (0..9).toList()
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DigitsViewHolder {
+            return DigitsViewHolder(initDigitsTextView(amountTextSideSpan))
+        }
+
+        override fun onBindViewHolder(holder: DigitsViewHolder, pos: Int) {
+            holder.tv.text = dataList[pos].toString()
         }
 
         override fun getItemCount(): Int {
-            if (totalItems == -1) {
-                return 0
-            } else {
-                return totalItems
-            }
+            return dataList.size
         }
 
-        @SuppressLint("NotifyDataSetChanged")
-        fun setCurrentAmount(amount: Int) {
-            currentDisplayAmount = amount
-            totalItems = 5
-            notifyDataSetChanged()
-        }
-
-        fun getAmountAtPosition(position: Int): Int {
-            val centerPosition = totalItems / 2
-            val offset = position - centerPosition
-            return maxOf(0, currentDisplayAmount + offset * 1000) // 1000원 단위
-        }
-
-        fun getPositionForAmount(amount: Int): Int {
-            val centerPosition = totalItems / 2
-            val offset = ((amount - currentDisplayAmount) / 1000)
-            return (centerPosition + offset).coerceIn(0, totalItems - 1)
-        }
-
-        private fun formatAmount(amount: Int): String {
-            return "₩${NumberFormat.getNumberInstance().format(amount)}"
-        }
+        inner class DigitsViewHolder(
+            val tv: TextView
+        ) : RecyclerView.ViewHolder(tv)
     }
 
-    // 뷰홀더
-    private class AmountViewHolder(val textView: TextView) : ViewHolder(textView)
+    private class SingleItemRecyclerView @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
+    ) : RecyclerView(context, attrs, defStyleAttr) {
+
+        private var itemHeight = 0
+
+        override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+
+            // 아이템 높이 계산
+            if (itemHeight == 0 && adapter != null && adapter!!.itemCount > 0) {
+                val layoutManager = layoutManager
+                if (layoutManager != null) {
+                    val viewHolder = adapter!!.createViewHolder(this, 0)
+                    adapter!!.onBindViewHolder(viewHolder, 0)
+
+                    // 아이템 뷰 측정
+                    val itemView = viewHolder.itemView
+                    itemView.measure(
+                        MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+                    )
+                    itemHeight = itemView.measuredHeight
+                }
+            }
+
+            // 높이를 아이템 하나의 높이로 제한
+            if (itemHeight > 0) {
+                val newHeight = itemHeight + paddingTop + paddingBottom
+                setMeasuredDimension(measuredWidth, newHeight)
+            }
+        }
+    }
 }

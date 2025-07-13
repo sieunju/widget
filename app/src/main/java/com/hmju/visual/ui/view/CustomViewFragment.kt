@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.slider.RangeSlider
@@ -16,9 +17,7 @@ import hmju.widget.extensions.Extensions.dp
 import hmju.widget.view.CustomImageView
 import hmju.widget.view.CustomLayout
 import hmju.widget.view.CustomTextView
-import hmju.widget.view.FallingAmountView
 import hmju.widget.view.RollingAmountView
-import hmju.widget.view.RollingAmountViewV2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -30,9 +29,7 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
     private lateinit var tvChangeStatus: CustomTextView
     private lateinit var clImage: CustomLayout
     private lateinit var ivThumb: CustomImageView
-    private lateinit var vRollingAmount: RollingAmountView
-    private lateinit var vFallingAmount: FallingAmountView
-    private lateinit var vRollingAmountV2: RollingAmountViewV2
+    private lateinit var vRollingAmountV2: RollingAmountView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,8 +37,6 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
             tvChangeStatus = findViewById(R.id.tvChangeStatus)
             clImage = findViewById(R.id.clImage)
             ivThumb = findViewById(R.id.ivThumb)
-            vRollingAmount = findViewById(R.id.vRollingAmount)
-            // vFallingAmount = findViewById(R.id.vFallingAmount)
             vRollingAmountV2 = findViewById(R.id.vRollingAmount2)
 
             requestTestImage()
@@ -55,9 +50,10 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
             )
         }
         lifecycleScope.launch {
+            delay(500)
+            view.findViewById<NestedScrollView>(R.id.nsContents).smoothScrollTo(0, 500.dp)
             repeat(20) {
                 val ran = Random.nextInt(99_999_999)
-                vRollingAmount.setAmount(ran)
                 vRollingAmountV2.setAmount(ran.toLong())
                 delay(2000)
             }

@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nsContents"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
@@ -167,25 +168,22 @@
             </hmju.widget.view.ShadowViewGroup>
 
             <hmju.widget.view.RollingAmountView
-                android:id="@+id/vRollingAmount"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:clipToPadding="false"
-                android:overScrollMode="never" />
-
-            <!--            <hmju.widget.view.FallingAmountView-->
-            <!--                android:id="@+id/vFallingAmount"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content" />-->
-
-            <hmju.widget.view.RollingAmountViewV2
                 android:id="@+id/vRollingAmount2"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="30dp"
-                android:paddingTop="10dp"
-                android:paddingRight="30dp"
-                android:paddingBottom="10dp" />
+                android:paddingHorizontal="50dp"
+                android:paddingVertical="10dp">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@drawable/bg_center_transparent_gradient"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </hmju.widget.view.RollingAmountView>
 
             <Space
                 android:layout_width="wrap_content"
