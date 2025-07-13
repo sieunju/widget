@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.NumberFormat
 import kotlin.random.Random
 
 internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
@@ -30,6 +31,7 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
     private lateinit var clImage: CustomLayout
     private lateinit var ivThumb: CustomImageView
     private lateinit var vRollingAmountV2: RollingAmountView
+    private lateinit var tvAmount : AppCompatTextView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,6 +39,7 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
             tvChangeStatus = findViewById(R.id.tvChangeStatus)
             clImage = findViewById(R.id.clImage)
             ivThumb = findViewById(R.id.ivThumb)
+            tvAmount = findViewById(R.id.tvAmount)
             vRollingAmountV2 = findViewById(R.id.vRollingAmount2)
 
             requestTestImage()
@@ -53,8 +56,9 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
             delay(500)
             view.findViewById<NestedScrollView>(R.id.nsContents).smoothScrollTo(0, 500.dp)
             repeat(20) {
-                val ran = Random.nextInt(99_999_999)
+                val ran = Random.nextInt()
                 vRollingAmountV2.setAmount(ran.toLong())
+                tvAmount.setText(NumberFormat.getNumberInstance().format(ran))
                 delay(2000)
             }
         }

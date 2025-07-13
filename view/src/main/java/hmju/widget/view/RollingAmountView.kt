@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import java.text.NumberFormat
-import java.time.format.TextStyle
 
 /**
  * Description : Rolling Number Animation TextView
@@ -31,7 +30,7 @@ class RollingAmountView @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     companion object {
-        private const val TAG = "RollingAmountViewV2"
+        private const val TAG = "RollingAmountView"
         private const val DEBUG = true
         fun LogD(msg: String) {
             if (DEBUG) {
@@ -41,8 +40,8 @@ class RollingAmountView @JvmOverloads constructor(
     }
 
     private var currentAmount = 0L
-    private var amountTextSize: Float = 20f
-    private var amountTextSideSpan: Int = 6.dp
+    private var amountTextSize: Float = 24f
+    private var amountTextSideSpan: Int = 0.dp
 
     private val amountRootView: LinearLayout by lazy {
         LinearLayout(context).apply {
@@ -62,61 +61,56 @@ class RollingAmountView @JvmOverloads constructor(
 
     init {
         addView(amountRootView)
-        amountTextSize = 14f
+        amountTextSize = 30f
     }
 
     fun setAmount(amount: Long) {
+        LogD("SetAmount:${amount}")
         amountRootView.removeAllViews()
         val amountArr = NumberFormat.getNumberInstance()
             .format(amount)
-            .map { char ->
-                if (char == ',') {
-                    -1
-                } else {
-                    char.digitToInt()
+            .map {
+                when (it) {
+                    ',' -> -1
+                    '-' -> -2
+                    else -> it.digitToInt()
                 }
             }
         var delay = 0L
         amountArr.forEach { digits ->
-            if (digits == -1) {
-                val tvComma = initDigitsTextView(0)
-                tvComma.text = ","
-                tvComma.alpha = 0f
-                tvComma.translationY = 50f
-                amountRootView.addView(tvComma)
-                tvComma.animate()
+            if (digits == -1 || digits == -2) {
+                val view = initDigitsTextView(0).also {
+                    it.text = if (digits == -1) "," else "-"
+                    it.alpha = 0f
+                    it.translationY = 50f
+                    amountRootView.addView(it)
+                }
+                view.animate()
                     .alpha(1f)
                     .translationY(0f)
                     .setDuration(delay + 70)
                     .start()
-                delay += 70
-                return@forEach
+                delay += 100
+            } else {
+                val view = SingleItemRecyclerView(context).also {
+                    it.adapter = DigitsAdapter()
+                    it.isNestedScrollingEnabled = false
+                    it.clipToPadding = false
+                    it.alpha = 0F
+                    LinearSnapHelper().attachToRecyclerView(it)
+                    amountRootView.addView(it)
+                }
+                val scroller = CustomSmoothScroller(currentAmount < amount)
+                postDelayed({
+                    view.animate()
+                        .alpha(1f)
+                        .setDuration(100)
+                        .start()
+                    scroller.targetPosition = digits
+                    view.layoutManager?.startSmoothScroll(scroller)
+                }, delay)
+                delay += 100
             }
-            val snapHelper = LinearSnapHelper()
-            val adapter = DigitsAdapter()
-            val scroller = CustomSmoothScroller(currentAmount < amount)
-            val rv = SingleItemRecyclerView(context).also {
-                it.layoutManager = LinearLayoutManager(
-                    context,
-                    LinearLayoutManager.VERTICAL,
-                    false
-                )
-                it.adapter = adapter
-                it.isNestedScrollingEnabled = false
-                it.clipToPadding = false
-                it.alpha = 0F
-                snapHelper.attachToRecyclerView(it)
-            }
-
-            amountRootView.addView(rv)
-            postDelayed({
-                rv.animate().alpha(1f)
-                    .setDuration(100)
-                    .start()
-                scroller.targetPosition = digits
-                rv.layoutManager?.startSmoothScroll(scroller)
-            }, delay)
-            delay += 100
         }
         currentAmount = amount
     }
@@ -129,7 +123,7 @@ class RollingAmountView @JvmOverloads constructor(
     ) : LinearSmoothScroller(context) {
 
         override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics): Float {
-            return 1000f / displayMetrics.densityDpi // 기본값: 25f
+            return 1200f / displayMetrics.densityDpi
         }
 
         override fun calculateTimeForScrolling(dx: Int): Int {
@@ -144,11 +138,8 @@ class RollingAmountView @JvmOverloads constructor(
 
         // 스크롤 방향 조정
         override fun getVerticalSnapPreference(): Int {
-            return if (isUp) {
-                SNAP_TO_START
-            } else {
-                SNAP_TO_END
-            }
+            // return SNAP_TO_START
+            return if (isUp) SNAP_TO_START else SNAP_TO_END
         }
     }
 
@@ -196,6 +187,10 @@ class RollingAmountView @JvmOverloads constructor(
     ) : RecyclerView(context, attrs, defStyleAttr) {
 
         private var itemHeight = 0
+
+        init {
+            layoutManager = LinearLayoutManager(context)
+        }
 
         override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec)

@@ -167,11 +167,27 @@
 
             </hmju.widget.view.ShadowViewGroup>
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="100dp"
+                android:paddingVertical="10dp"
+                android:textStyle="bold"
+                android:textSize="30dp"
+                app:autoSizeMaxTextSize="30dp"
+                app:autoSizeMinTextSize="1dp"
+                android:maxLines="1"
+                android:textColor="#222222"
+                app:autoSizeTextType="uniform" />
+
             <hmju.widget.view.RollingAmountView
                 android:id="@+id/vRollingAmount2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="50dp"
+                android:paddingHorizontal="100dp"
                 android:paddingVertical="10dp">
 
                 <View
