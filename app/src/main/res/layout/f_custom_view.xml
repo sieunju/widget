@@ -218,12 +218,6 @@
                         android:layout_height="wrap_content"
                         android:paddingVertical="10dp" />
 
-                    <hmju.widget.view.RollingAmountViewJava
-                        android:id="@+id/vRollingAmount3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="10dp" />
-
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
