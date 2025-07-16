@@ -49,6 +49,11 @@
       "title" : "Coordinator-DynamicCoordi",
       "imageUrl" : "",
       "activityName" : "DynamicCoordinatorActivity"
+    },
+    {
+      "title" : "Coordinator-DynamicCoordi",
+      "imageUrl" : "",
+      "fragmentName" : "StackCardViewFragment"
     }
   ]
 }
