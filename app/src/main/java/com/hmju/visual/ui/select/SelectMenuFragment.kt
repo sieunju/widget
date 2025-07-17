@@ -29,6 +29,7 @@ import com.hmju.visual.ui.progress.ProgressFragment
 import com.hmju.visual.ui.recyclerview.ParallaxViewHolderFragment
 import com.hmju.visual.ui.recyclerview.RecyclerViewScrollerFragment
 import com.hmju.visual.ui.recyclerview.SpecialGridDecorationFragment
+import com.hmju.visual.ui.recyclerview.StackCardViewFragment
 import com.hmju.visual.ui.tablayout.CustomTabLayoutFragment
 import com.hmju.visual.ui.view.CustomViewFragment
 import com.hmju.visual.ui.viewpager.ViewPagerFragment
@@ -74,6 +75,7 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
                 "ParallaxViewHolderFragment" -> ParallaxViewHolderFragment::class
                 "SpecialGridDecorationFragment" -> SpecialGridDecorationFragment::class
                 "RecyclerViewScrollerFragment" -> RecyclerViewScrollerFragment::class
+                "StackCardViewFragment" -> StackCardViewFragment::class
                 else -> null
             },
             targetActivity = when (entity.activityName) {
