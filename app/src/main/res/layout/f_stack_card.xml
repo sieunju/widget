@@ -4,11 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--    <androidx.core.widget.NestedScrollView-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        app:layout_constraintTop_toTopOf="parent">-->
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,8 +24,18 @@
             <hmju.widget.view.WalletStackView
                 android:id="@+id/vWallet"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="300dp"
                 android:paddingTop="100dp" />
+
+            <hmju.widget.recyclerview.FocusingRecyclerView
+                android:id="@+id/rvSelector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:paddingHorizontal="15dp"
+                android:paddingTop="30dp"
+                android:paddingBottom="30dp" />
 
             <View
                 android:layout_width="match_parent"

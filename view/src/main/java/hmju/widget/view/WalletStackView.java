@@ -31,6 +31,8 @@ public class WalletStackView<T> extends ConstraintLayout {
 
     public interface Listener<T> {
         View initView(@NonNull T item, @NonNull ViewGroup parent);
+
+        void onClickEvent(@NonNull T item);
     }
 
     static class WalletData<T> {
@@ -362,4 +364,3 @@ public class WalletStackView<T> extends ConstraintLayout {
         }
     }
 }
-
