@@ -51,7 +51,7 @@
       "activityName" : "DynamicCoordinatorActivity"
     },
     {
-      "title" : "RecyclerView-StackCard",
+      "title" : "StackCard",
       "imageUrl" : "",
       "fragmentName" : "StackCardViewFragment"
     }
