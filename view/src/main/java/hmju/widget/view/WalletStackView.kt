@@ -1,366 +1,362 @@
-package hmju.widget.view;
+package hmju.widget.view
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.res.Resources;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.res.Resources
+import android.util.AttributeSet
+import android.util.TypedValue
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import android.view.animation.Interpolator
+import androidx.constraintlayout.widget.ConstraintLayout
+import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
- * Description : WalletStack View
- * <p>
- * Created by juhongmin on 2025. 7. 17.
+ * Description : Wallet Card Stack
+ *
+ * Created by juhongmin on 2025. 7. 25.
  */
-public class WalletStackView<T> extends ConstraintLayout {
+@Suppress("unused", "MemberVisibilityCanBePrivate")
+class WalletStackView<T> @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = -1
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private static final String TAG = "WalletStackView";
+    interface Listener<T> {
+        fun initView(item: T, parent: ViewGroup): View
 
-    public interface Listener<T> {
-        View initView(@NonNull T item, @NonNull ViewGroup parent);
+        fun onItemClick(item: T)
 
-        void onClickEvent(@NonNull T item);
+        fun onStartAniCompleted()
     }
 
-    static class WalletData<T> {
-        private int index = -1;
-        private final T item;
+    internal open class WalletData<T>(
+        var index: Int,
+        val item: T
+    )
 
-        public WalletData(T item) {
-            this.item = item;
+    internal class ViewWrapperData<T>(
+        val view: View,
+        val data: WalletData<T>
+    )
+
+    private var listener: Listener<T>? = null
+    private var spanStackHeight = 30.dp.toFloat()
+    private var scaleIncrement = 0.1f
+    private var alphaIncrement = 0.1f
+    private var startTranslationY = 0f
+    private var threshold = 200
+    private val originList = mutableListOf<WalletData<T>>()
+    private val virtualList: MutableList<WalletData<T>> = mutableListOf()
+    private val viewList: MutableList<ViewWrapperData<T>> = mutableListOf()
+    private var currentIndex = 0
+    private var stackCount = 3
+    private var centerX = 0
+    private var isAni = false
+
+    private val Int.dp: Int
+        get() = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            this.toFloat(),
+            Resources.getSystem().displayMetrics
+        ).toInt()
+
+    init {
+        clipToPadding = false
+        clipChildren = false
+        setStackCount(3)
+        post { centerX = width / 2 }
+    }
+
+    fun setListener(l: Listener<T>?) {
+        listener = l
+    }
+
+    fun setStackCount(newValue: Int): WalletStackView<T> {
+        stackCount = newValue
+        val ratio = 1.0f / newValue
+        alphaIncrement = ceil(ratio * 10f) / 10f
+        return this
+    }
+
+    fun setThreshold(newValue: Int): WalletStackView<T> {
+        threshold = newValue
+        return this
+    }
+
+    fun setScaleIncrement(newValue: Float): WalletStackView<T> {
+        scaleIncrement = newValue
+        return this
+    }
+
+    fun setSpanStackHeight(newHeight: Float): WalletStackView<T> {
+        spanStackHeight = newHeight
+        return this
+    }
+
+    fun setStartTranslationY(newValue: Float): WalletStackView<T> {
+        startTranslationY = newValue
+        return this
+    }
+
+    fun setItems(list: List<T>): WalletStackView<T> {
+        originList.clear()
+        for (i in list.indices) {
+            originList.add(WalletData(i, list[i]))
         }
+        return this
+    }
 
-        public int getIndex() {
-            return index;
+    fun startAni() {
+        if (listener == null) return
+        removeAllViews()
+        if (viewList.isNotEmpty()) {
+            viewList.clear()
         }
-
-        public T getItem() {
-            return item;
+        // Stack 값 보정
+        val newList = mutableListOf<WalletData<T>>()
+        val originSize = originList.size
+        val needSize = stackCount.plus(1)
+        val adjustSize = if (originSize >= needSize) {
+            needSize
+        } else {
+            ((needSize + originSize - 1) / originSize) * originSize
         }
-    }
-
-    record ViewWrapperData<T>(View view, WalletData<T> data) {
-    }
-
-    private Listener<T> listener = null;
-    private float mSpanStackHeight = dp(30);
-    private float mScaleStep = 0.1f;
-    private int mThreshold = 200;
-    private final List<WalletData<T>> mDataList = new ArrayList<>();
-    private final List<ViewWrapperData<T>> mVirtualList = new ArrayList<>();
-    private int mCurrentIndex = 0;
-    private int mCardHeight = dp(300);
-    private int mStackCount = 3;
-    private int mCenterX = 0;
-    private boolean isAni = false;
-
-    public static void LogD(String msg) {
-        Log.d(TAG, msg);
-    }
-
-    private int dp(int value) {
-        return (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                (float) value,
-                Resources.getSystem().getDisplayMetrics()
-        );
-    }
-
-    public WalletStackView(Context context) {
-        this(context, null);
-    }
-
-    public WalletStackView(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, -1);
-    }
-
-    public WalletStackView(@NotNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
-
-    private void init() {
-        setClipToPadding(false);
-        setClipChildren(false);
-        setStackCount(3);
-        post(() -> mCenterX = getWidth() / 2);
-    }
-
-    public WalletStackView<T> setListener(Listener<T> l) {
-        listener = l;
-        return this;
-    }
-
-    public WalletStackView<T> setStackCount(int newValue) {
-        mStackCount = newValue;
-        return this;
-    }
-
-    public WalletStackView<T> setCardHeight(int newValue) {
-        mCardHeight = newValue;
-        return this;
-    }
-
-    public WalletStackView<T> setThreshold(int newValue) {
-        mThreshold = newValue;
-        return this;
-    }
-
-    public WalletStackView<T> setScaleStep(float newValue) {
-        mScaleStep = newValue;
-        return this;
-    }
-
-    public WalletStackView<T> setSpanStackHeight(float newHeight) {
-        mSpanStackHeight = newHeight;
-        return this;
-    }
-
-    public void setItems(List<T> list) {
-        mDataList.clear();
-        for (int i = 0; i < list.size(); i++) {
-            T data = list.get(i);
-            WalletData<T> item = new WalletData<>(data);
-            item.index = i;
-            mDataList.add(item);
+        for (i in 0 until adjustSize) {
+            val item = originList[i % originSize]
+            newList.add(WalletData(i, item.item))
         }
-        mCurrentIndex = mDataList.get(0).getIndex();
-    }
-
-    private void setScale(View v, float newScale) {
-        v.setScaleX(newScale);
-        v.setScaleY(newScale);
-    }
-
-    public void startAni() {
-        if (listener == null) return;
-        for (int i = 0; i < mStackCount; i++) {
-            WalletData<T> data = mDataList.get(i);
-            View view = listener.initView(data.getItem(), this);
-            setTouchDetector(view, data);
-            float scale = 1.0f - (i * mScaleStep);
-            setScale(view, scale);
-            view.setTranslationY((float) mCardHeight / 2);
-            mVirtualList.add(new ViewWrapperData<>(view, data));
-            addView(view, 0);
-            float targetAlpha = 1.0f - (i * 0.2f);
+        virtualList.clear()
+        virtualList.addAll(newList)
+        val aniCompletedCount = intArrayOf(0)
+        for (i in 0 until stackCount + 1) {
+            val data = virtualList[i]
+            val view = listener!!.initView(data.item, this)
+            view.setTouchDetector(data)
+            val scale = 1.0f - (i * scaleIncrement)
+            view.setScale(scale)
+            view.translationY = startTranslationY
+            viewList.add(ViewWrapperData(view, data))
+            addView(view, 0)
+            val targetAlpha = 1.0f - (i * alphaIncrement)
             view.animate().alpha(targetAlpha)
-                    .translationY(-mSpanStackHeight * i)
-                    .setStartDelay(200L * i) // 0, 200ms, 400ms, ...
-                    .setDuration(i == 0 ? 600 : 500) // 첫 번째는 600ms, 나머지는 500ms
-                    .setInterpolator(new FastOutSlowInInterpolator())
-                    .start();
-        }
-    }
-
-    private void setTouchDetector(@NonNull View v, final WalletData<T> item) {
-        OnTouchListener touchListener = new OnTouchListener() {
-
-            float currentX = 0;
-
-            @SuppressLint("ClickableViewAccessibility")
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                LogD("onTouch Index " + item.getIndex() + " CurrentIndex " + mCurrentIndex);
-                if (item.getIndex() != mCurrentIndex) return false;
-                if (isAni) return false;
-                int action = event.getAction();
-                if (action == MotionEvent.ACTION_DOWN) {
-                    getParent().requestDisallowInterceptTouchEvent(true);
-                    currentX = event.getRawX();
-                } else if (action == MotionEvent.ACTION_MOVE) {
-                    getParent().requestDisallowInterceptTouchEvent(true);
-                    float diffX = event.getRawX() - currentX;
-                    v.setTranslationX(diffX);
-
-                    // Y값과 회전 추가
-                    float progress = Math.abs(diffX) / (mCenterX * 0.5f); // 스와이프 진행도 (0~1)
-                    progress = Math.min(progress, 1.0f); // 최대 1.0으로 제한
-                    if (progress >= 0.5f) {
-                        // 0.5~1.0 구간을 0~1.0으로 정규화
-                        float normalizedProgress = (progress - 0.5f) / 0.5f;
-                        normalizedProgress = Math.min(normalizedProgress, 1.0f);
-
-                        // Y값: 스와이프할수록 아래로 내려감 (최대 20dp)
-                        float translationY = dp(10) * normalizedProgress;
-                        v.setTranslationY(translationY);
-
-                        // 회전: 스와이프 방향에 따라 회전 (최대 3도)
-                        float rotation = (diffX > 0 ? 1 : -1) * 3 * normalizedProgress;
-                        v.setRotation(rotation);
-                    } else {
-                        // progress가 0.5 미만일 때는 원래 위치로 복원
-                        v.setTranslationY(0);
-                        v.setRotation(0);
-                    }
-                    updateBackViewsAnimation(progress);
-                } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-                    getParent().requestDisallowInterceptTouchEvent(false);
-                    float x = v.getTranslationX();
-                    if (isRemove(x, mThreshold)) {
-                        boolean isRightSwipe = x > 0;
-                        removeViewWithAnimation(v, isRightSwipe);
-                    } else {
-                        resetBackViewsAnimation(v);
+                .translationY(-spanStackHeight * i)
+                .setStartDelay(50L * i)
+                .setDuration(500)
+                .setInterpolator(EaseOutInterpolator())
+                .withEndAction {
+                    aniCompletedCount[0]++
+                    if (aniCompletedCount[0] == stackCount) {
+                        listener!!.onStartAniCompleted()
                     }
                 }
-                return true;
-            }
-        };
-        v.setOnTouchListener(touchListener);
+                .start()
+        }
+        currentIndex = virtualList[0].index
     }
 
-    private void updateBackViewsAnimation(float progress) {
-        for (int i = 1; i < mVirtualList.size(); i++) {
-            View backView = mVirtualList.get(i).view();
+    private fun View.setScale(newScale: Float) {
+        scaleX = newScale
+        scaleY = newScale
+    }
+
+    private fun View.setTouchDetector(item: WalletData<T>) {
+        val touchListener: OnTouchListener = object : OnTouchListener {
+            var currentX: Float = 0f
+            var currentY: Float = 0f
+            var touchStartTime: Long = 0
+            var isMoved: Boolean = false
+
+            @SuppressLint("ClickableViewAccessibility")
+            override fun onTouch(v: View, event: MotionEvent): Boolean {
+                if (item.index != currentIndex) return false
+                if (isAni) return false
+                val action = event.action
+                if (action == MotionEvent.ACTION_DOWN) {
+                    parent.requestDisallowInterceptTouchEvent(true)
+                    currentX = event.rawX
+                    currentY = event.rawY
+                    touchStartTime = System.currentTimeMillis()
+                    isMoved = false
+                } else if (action == MotionEvent.ACTION_MOVE) {
+                    parent.requestDisallowInterceptTouchEvent(true)
+                    val diffX = event.rawX - currentX
+                    val diffY = event.rawY - currentY
+
+                    val distance = sqrt((diffX * diffX + diffY * diffY).toDouble()).toFloat()
+                    if (distance > CLICK_THRESHOLD_DP.dp) {
+                        isMoved = true
+                    }
+
+                    v.translationX = diffX
+
+                    // Y값과 회전 추가
+                    var progress =
+                        (abs(diffX.toDouble()) / (centerX * 0.5f)).toFloat() // 스와이프 진행도 (0~1)
+                    progress = min(progress.toDouble(), 1.0).toFloat() // 최대 1.0으로 제한
+                    // Y값: 스와이프할수록 아래로 내려감 (최대 10dp)
+                    val translationY = 10.dp * progress
+                    v.translationY = translationY
+
+                    // 회전: 스와이프 방향에 따라 회전 (최대 8도)
+                    val rotation = (if (diffX > 0) 1 else -1) * 8 * progress
+                    v.rotation = rotation
+                    updateBackViewsAnimation(progress)
+                } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                    parent.requestDisallowInterceptTouchEvent(false)
+
+                    val touchDuration = System.currentTimeMillis() - touchStartTime
+                    val diffX = event.rawX - currentX
+                    val diffY = event.rawY - currentY
+                    val distance = sqrt((diffX * diffX + diffY * diffY).toDouble()).toFloat()
+
+                    // 클릭 조건: 이동 거리가 적고, 시간이 짧고, 실제로 이동하지 않았을 때
+                    if (!isMoved && distance < CLICK_THRESHOLD_DP.dp && touchDuration < CLICK_DURATION_THRESHOLD) {
+                        // 클릭 이벤트 발생
+                        listener!!.onItemClick(item.item)
+                        resetCards()
+                        touchStartTime = 0
+                        isMoved = false
+                        return true
+                    }
+
+                    val x = v.translationX
+                    if (isRemove(x, threshold.toFloat())) {
+                        removeFirstCard(v, x > 0)
+                        rearrangeCards()
+                    } else {
+                        resetCards()
+                    }
+                }
+                return true
+            }
+        }
+        setOnTouchListener(touchListener)
+    }
+
+    private fun updateBackViewsAnimation(progress: Float) {
+        for (i in 1 until viewList.size) {
+            val backView = viewList[i].view
 
             // 현재 인덱스에서의 기본값
-            float fromScale = 1.0f - (i * mScaleStep);
-            float fromTransY = -mSpanStackHeight * i;
-            float fromAlpha = 1.0f - (i * 0.2f);
+            val fromScale = 1.0f - (i * scaleIncrement)
+            val fromTransY = -spanStackHeight * i
+            val fromAlpha = 1.0f - (i * alphaIncrement)
 
             // 한 단계 위로 올라갔을 때의 값 (i-1 위치)
-            float toScale = 1.0f - ((i - 1) * mScaleStep);
-            float toTransY = -mSpanStackHeight * (i - 1);
-            float toAlpha = 1.0f - ((i - 1) * 0.2f);
+            val toScale = 1.0f - ((i - 1) * scaleIncrement)
+            val toTransY = -spanStackHeight * (i - 1)
+            val toAlpha = 1.0f - ((i - 1) * alphaIncrement)
 
             // 보간 계산
-            float interpolatedScale = lerp(fromScale, toScale, progress);
-            float interpolatedTransY = lerp(fromTransY, toTransY, progress);
-            float interpolatedAlpha = lerp(fromAlpha, toAlpha, progress);
-            setScale(backView, interpolatedScale);
-            backView.setTranslationY(interpolatedTransY);
-            backView.setAlpha(interpolatedAlpha);
+            val interpolatedScale = lerp(fromScale, toScale, progress)
+            val interpolatedTransY = lerp(fromTransY, toTransY, progress)
+            val interpolatedAlpha = lerp(fromAlpha, toAlpha, progress)
+            backView.setScale(interpolatedScale)
+            backView.translationY = interpolatedTransY
+            backView.alpha = interpolatedAlpha
         }
     }
 
-    private float lerp(float start, float end, float t) {
-        return start + (end - start) * t;
+    /**
+     * 수치 보정 하는 함수
+     */
+    private fun lerp(start: Float, end: Float, t: Float): Float {
+        return start + (end - start) * t
     }
 
-    private boolean isRemove(float viewX, float centerX) {
-        // 우 -> 좌 마이너스
+    private fun isRemove(viewX: Float, centerX: Float): Boolean {
+        // 우 -> 좌 마이 너스
         // 좌 -> 우 플러스
         // 양수 좌 -> 우
-        if (viewX > 0) {
+        return if (viewX > 0) {
             // 좌에서 우로 스와이프
-            return centerX - viewX <= 0; // centerX - viewX가 0 이하면 제거
+            centerX - viewX <= 0 // centerX - viewX가 0 이하면 제거
         } else {
             // 우에서 좌로 스와이프
-            return centerX + viewX <= 0; // centerX + viewX가 0 이하면 제거
+            centerX + viewX <= 0 // centerX + viewX가 0 이하면 제거
         }
     }
 
-    private void removeViewWithAnimation(View view, boolean isRightSwipe) {
-        // 뷰 날리기
-        float targetTranslationX = isRightSwipe ? getWidth() : -getWidth();
-        float targetTranslationY = dp(20);
-        isAni = true;
+    private fun getIndexAlpha(index: Int): Float {
+        return 1.0f - (index * alphaIncrement)
+    }
 
+    private fun getIndexScale(index: Int): Float {
+        return 1.0f - (index * scaleIncrement)
+    }
+
+    private fun getIndexTranslationY(index: Int): Float {
+        return -spanStackHeight * index
+    }
+
+    private fun removeFirstCard(view: View, isRightSwipe: Boolean) {
+        val targetTranslationX = (if (isRightSwipe) width else -width).toFloat()
+        val targetTranslationY = 30.dp.toFloat()
+        val rotation = ((if (isRightSwipe) 1 else -1) * 8).toFloat()
         view.animate()
-                .setDuration(200)
-                .translationX(targetTranslationX)
-                .translationY(targetTranslationY)
-                .alpha(0f)
-                .setInterpolator(new FastOutSlowInInterpolator())
-                .withEndAction(() -> removeView(view))
-                .start();
-
-        // 다음 아이템 인덱스 계산
-        int lastIndex = mVirtualList.get(mVirtualList.size() - 1).data().getIndex();
-        int findNextIndex = (lastIndex == (mDataList.size() - 1)) ? 0 : lastIndex + 1;
-
-        // 첫 번째 아이템 제거
-        mVirtualList.remove(0);
-        View newFirstItem = mVirtualList.get(0).view();
-        newFirstItem.animate()
-                .scaleX(1.0f)
-                .scaleY(1.0f)
-                .translationY(0)
-                .alpha(1.0f)
-                .setDuration(200)
-                .setInterpolator(new FastOutSlowInInterpolator())
-                .start();
-
-        // 중간 뷰들도 한 단계씩 앞으로 이동
-        for (int i = 1; i < mVirtualList.size(); i++) {
-            View backView = mVirtualList.get(i).view();
-
-            // startAni의 i번째 뷰 설정과 동일하게
-            float targetScale = 1.0f - (i * mScaleStep);
-            float targetTransY = -mSpanStackHeight * i;
-            float targetAlpha = 1.0f - (i * 0.2f);
-
-            backView.animate()
-                    .scaleX(targetScale)
-                    .scaleY(targetScale)
-                    .translationY(targetTransY)
-                    .alpha(targetAlpha)
-                    .setDuration(200)
-                    .setInterpolator(new FastOutSlowInInterpolator())
-                    .start();
-        }
-
-        // 새로운 마지막 뷰 생성
-        WalletData<T> item = mDataList.get(findNextIndex);
-        View newLastView = listener.initView(item.getItem(), this);
-        setTouchDetector(newLastView, item);
-
-        // startAni의 마지막 뷰 설정과 동일하게 (i = mStackCount - 1)
-        int lastPosition = mStackCount - 1;
-        float lastScale = 1.0f - (lastPosition * mScaleStep);
-        float lastTransY = -mSpanStackHeight * lastPosition;
-        float lastAlpha = 1.0f - (lastPosition * 0.2f);
-
-        // 초기 상태 설정 (startAni와 동일)
-        newLastView.setAlpha(0f);
-        newLastView.setTranslationY((float) mCardHeight / 2);
-        setScale(newLastView, lastScale);
-
-        addView(newLastView, 0);
-
-        // 최종 위치로 애니메이션 (startAni와 동일)
-        newLastView.animate()
-                .alpha(lastAlpha)
-                .translationY(lastTransY)
-                .setDuration(200)
-                .setInterpolator(new FastOutSlowInInterpolator())
-                .withEndAction(() -> isAni = false)
-                .start();
-        mVirtualList.add(new ViewWrapperData<>(newLastView, item));
-        mCurrentIndex = mVirtualList.get(0).data().getIndex();
+            .setDuration(300)
+            .translationX(targetTranslationX)
+            .translationY(targetTranslationY)
+            .rotation(rotation)
+            .alpha(0.5f)
+            .setInterpolator(EaseOutInterpolator())
+            .withEndAction { removeView(view) }
+            .start()
+        viewList.removeAt(0)
     }
 
-    private void resetBackViewsAnimation(View firstView) {
-        firstView.animate()
-                .setDuration(100)
-                .translationX(0)
-                .rotation(0)
-                .translationY(0)
-                .setInterpolator(new FastOutSlowInInterpolator())
-                .start();
-        // 뒤의 뷰들을 원래 위치로 복원
-        for (int i = 1; i < mVirtualList.size(); i++) {
-            View backView = mVirtualList.get(i).view();
+    private fun rearrangeCards() {
+        val totalSize = virtualList.size
+        val lastIndex = viewList[viewList.size - 1].data.index
+        val findNextIndex = if (lastIndex == (totalSize - 1)) 0 else lastIndex + 1
+        val newItem = virtualList[findNextIndex]
+        val newView = listener!!.initView(newItem.item, this)
+        newView.setTouchDetector(newItem)
+        newView.alpha = 0f
+        viewList.add(ViewWrapperData(newView, newItem))
+        addView(newView, 0)
+        resetCards()
+        currentIndex = viewList[0].data.index
+    }
 
-            float originalScale = 1.0f - (i * mScaleStep);
-            float originalTransY = -mSpanStackHeight * i;
-            backView.setScaleX(originalScale);
-            backView.setScaleY(originalScale);
-            backView.setTranslationY(originalTransY);
+    private fun resetCards() {
+        isAni = true
+        val aniCount = intArrayOf(0)
+        val aniTotalSize = viewList.size
+        for (i in viewList.indices) {
+            val view = viewList[i].view
+            view.animate()
+                .setDuration(100)
+                .alpha(getIndexAlpha(i))
+                .translationX(0f)
+                .translationY(getIndexTranslationY(i))
+                .scaleX(getIndexScale(i))
+                .scaleY(getIndexScale(i))
+                .rotation(0f)
+                .setInterpolator(EaseOutInterpolator())
+                .withEndAction {
+                    aniCount[0]++
+                    isAni = aniCount[0] != aniTotalSize
+                }
+                .start()
         }
+    }
+
+    private class EaseOutInterpolator : Interpolator {
+        override fun getInterpolation(input: Float): Float {
+            return 1f - (1f - input).toDouble().pow(2.0).toFloat()
+        }
+    }
+
+    companion object {
+        const val CLICK_THRESHOLD_DP: Int = 10
+        const val CLICK_DURATION_THRESHOLD: Long = 200
     }
 }

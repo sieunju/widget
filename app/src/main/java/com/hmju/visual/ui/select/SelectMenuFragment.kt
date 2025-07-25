@@ -29,7 +29,7 @@ import com.hmju.visual.ui.progress.ProgressFragment
 import com.hmju.visual.ui.recyclerview.ParallaxViewHolderFragment
 import com.hmju.visual.ui.recyclerview.RecyclerViewScrollerFragment
 import com.hmju.visual.ui.recyclerview.SpecialGridDecorationFragment
-import com.hmju.visual.ui.recyclerview.StackCardViewFragment
+import com.hmju.visual.ui.view.StackCardViewFragment
 import com.hmju.visual.ui.tablayout.CustomTabLayoutFragment
 import com.hmju.visual.ui.view.CustomViewFragment
 import com.hmju.visual.ui.viewpager.ViewPagerFragment
