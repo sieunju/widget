@@ -45,7 +45,7 @@ jobs:
           echo "=== Gradle task로 버전 정보 가져오기 ==="
           
           # Gradle task로 버전 출력
-          version=$(./gradlew -q getVersionName 2>/dev/null || echo "1.0.0")
+          version=$(./gradlew -q printVersionName 2>/dev/null || echo "1.0.0")
           
           # 출력값 정리 (공백, 개행 제거)
           version=$(echo "$version" | tr -d ' \n\r')
@@ -91,10 +91,10 @@ jobs:
           # widget_{versionName}_{timestamp} 형식으로 파일명 변경
           cd apk
           version_name="${{ steps.get_version.outputs.version }}"
-          timestamp=$(date +"%Y%m%d_%H%M")
+          timestamp=$(TZ=Asia/Seoul date +"%y%m%d_%H%M")
           
           echo "사용할 버전: '$version_name'"
-          echo "사용할 타임스탬프: '$timestamp'"
+          echo "사용할 타임 스탬프: '$timestamp' (한국시간)"
           
           for file in *.apk; do
             if [ -f "$file" ] && [ "$file" != "*.apk" ]; then
@@ -122,7 +122,7 @@ jobs:
             echo "커밋할 변경사항이 없습니다."
           else
             # 커밋 및 푸시
-            commit_message="Add widget APK v${{ steps.get_version.outputs.version }} - $(date '+%Y-%m-%d %H:%M')"
+            commit_message="Add widget APK v${{ steps.get_version.outputs.version }} - $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M') KST"
             git commit -m "$commit_message"
             git push
             echo "APK 파일이 성공적으로 업로드되었습니다!"
