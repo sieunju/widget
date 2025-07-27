@@ -7,7 +7,6 @@ import android.util.AttributeSet
 import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.hmju.view.R
 
 /**
  * Description : Corner, Border 비/활성화 상태에 따라서도

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.slider.RangeSlider
@@ -16,16 +17,22 @@ import hmju.widget.extensions.Extensions.dp
 import hmju.widget.view.CustomImageView
 import hmju.widget.view.CustomLayout
 import hmju.widget.view.CustomTextView
+import hmju.widget.view.RollingAmountView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.NumberFormat
+import kotlin.random.Random
 
 internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
 
     private lateinit var tvChangeStatus: CustomTextView
     private lateinit var clImage: CustomLayout
     private lateinit var ivThumb: CustomImageView
+    private lateinit var vRollingAmount: RollingAmountView
+    private lateinit var vRollingAmount2: RollingAmountView
+    private lateinit var tvAmount: AppCompatTextView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -33,6 +40,9 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
             tvChangeStatus = findViewById(R.id.tvChangeStatus)
             clImage = findViewById(R.id.clImage)
             ivThumb = findViewById(R.id.ivThumb)
+            tvAmount = findViewById(R.id.tvAmount)
+            vRollingAmount = findViewById(R.id.vRollingAmount)
+            vRollingAmount2 = findViewById(R.id.vRollingAmount2)
 
             requestTestImage()
             handleTvChangeStatus()
@@ -43,6 +53,17 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
                 view.findViewById(R.id.tvRsMaterialMin),
                 view.findViewById(R.id.tvRsMaterialMax)
             )
+        }
+        lifecycleScope.launch {
+            delay(500)
+            view.findViewById<NestedScrollView>(R.id.nsContents).smoothScrollTo(0, 500.dp)
+            repeat(20) {
+                val ran = Random.nextInt()
+                tvAmount.text = NumberFormat.getNumberInstance().format(ran)
+                vRollingAmount.setAmount(ran.toLong())
+                vRollingAmount2.setAmount(ran.toLong())
+                delay(2000)
+            }
         }
     }
 

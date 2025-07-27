@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.URL
+import androidx.core.graphics.scale
 
 /**
  * Description : 간단한 ImageLoader Class
@@ -14,7 +15,7 @@ import java.net.URL
 object ImageLoader {
 
     // 이미지 캐시 원본 비트맵을 저장.
-    private val imageCache: HashMap<String, Bitmap> by lazy { HashMap() }
+    private val imageCache: HashMap<String, Bitmap> = HashMap()
 
     @JvmStatic
     suspend fun reqBitmap(url: String?, width: Int = -1, height: Int = -1): Result<Bitmap> {
@@ -44,12 +45,7 @@ object ImageLoader {
                     if (cacheBitmap.width == width && cacheBitmap.height == height) {
                         return@withContext cacheBitmap
                     } else {
-                        return@withContext Bitmap.createScaledBitmap(
-                            cacheBitmap,
-                            width,
-                            height,
-                            true
-                        )
+                        return@withContext cacheBitmap.scale(width, height)
                     }
                 } else {
                     return@withContext cacheBitmap
@@ -61,7 +57,7 @@ object ImageLoader {
                 } else {
                     imageCache[url] = bitmap
                     if (width != -1 && height != -1) {
-                        return@withContext Bitmap.createScaledBitmap(bitmap, width, height, true)
+                        return@withContext bitmap.scale(width, height)
                     } else {
                         return@withContext bitmap
                     }
@@ -85,7 +81,7 @@ object ImageLoader {
                 if (cacheBitmap.width == width && cacheBitmap.height == height) {
                     cacheBitmap
                 } else {
-                    Bitmap.createScaledBitmap(cacheBitmap, width, height, true)
+                    cacheBitmap.scale(width, height)
                 }
             } else {
                 cacheBitmap
@@ -95,7 +91,7 @@ object ImageLoader {
             if (tempBitmap != null) {
                 imageCache[url] = tempBitmap
                 if (width != -1 && height != -1) {
-                    Bitmap.createScaledBitmap(tempBitmap, width, height, true)
+                    tempBitmap.scale(width, height)
                 } else {
                     tempBitmap
                 }
