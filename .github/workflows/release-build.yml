@@ -19,6 +19,25 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
+      # Android SDK 설정
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      # Gradle 캐시 설정 (빌드 속도 향상)
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # gradlew 실행 권한 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
       # Release Note 정보 가져오기
       - name: Get Release Info
         id: release
@@ -46,6 +65,96 @@ jobs:
           RELEASE_BODY="${RELEASE_BODY//$'\r'/'%0D'}"
           echo ::set-output name=val::${RELEASE_BODY}
 
+      # APK용 버전 정보 가져오기 (Gradle task 사용)
+      - name: Get APK Version Name
+        id: get_apk_version
+        run: |
+          echo "=== Gradle task로 버전 정보 가져오기 ==="
+          
+          # Gradle task로 버전 출력
+          version=$(./gradlew -q getVersionName 2>/dev/null || echo "1.0.0")
+          
+          # 출력값 정리 (공백, 개행 제거)
+          version=$(echo "$version" | tr -d ' \n\r')
+          
+          # 비어있으면 기본값
+          if [ -z "$version" ]; then
+            version="1.0.0"
+          fi
+          
+          echo "추출된 버전: '$version'"
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      # APK 빌드
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+
+      # 빌드된 APK 파일 확인
+      - name: List built APK files
+        run: |
+          echo "=== 빌드된 APK 파일 목록 ==="
+          find . -name "*.apk" -type f
+          echo "=========================="
+
+      # apk 디렉토리 생성
+      - name: Create APK directory
+        run: mkdir -p apk
+
+      # APK 파일을 apk 디렉토리로 복사
+      - name: Copy APK to apk directory
+        run: |
+          echo "APK 파일을 apk/ 디렉토리로 복사 중..."
+          
+          # 기존 APK 파일 정리
+          rm -f apk/*.apk 2>/dev/null || true
+          
+          # APK 파일 찾기 및 복사
+          find . -name "*.apk" -path "*/build/outputs/apk/release/*" -exec cp {} apk/ \;
+          
+          # 복사된 파일 확인
+          echo "=== 복사 후 apk/ 디렉토리 내용 ==="
+          ls -la apk/
+          
+          # widget_{versionName}_{timestamp} 형식으로 파일명 변경
+          cd apk
+          version_name="${{ steps.get_apk_version.outputs.version }}"
+          timestamp=$(TZ=Asia/Seoul date +"%y%m%d_%H%M")
+          
+          echo "사용할 버전: '$version_name'"
+          echo "사용할 타임스탬프: '$timestamp' (한국시간)"
+          
+          for file in *.apk; do
+            if [ -f "$file" ] && [ "$file" != "*.apk" ]; then
+              new_name="widget_${version_name}_${timestamp}.apk"
+              mv "$file" "$new_name"
+              echo "파일명 변경: $file -> $new_name"
+            fi
+          done
+          
+          echo "=== 파일명 변경 후 내용 ==="
+          ls -la
+
+      # Git 설정 및 APK 파일 커밋
+      - name: Commit and push APK
+        run: |
+          # Git 사용자 정보 설정
+          git config --local user.email "upload-bot@github.com"
+          git config --local user.name "upload-bot"
+          
+          # APK 파일 추가
+          git add apk/*.apk
+          
+          # 변경사항이 있는지 확인
+          if git diff --staged --quiet; then
+            echo "커밋할 변경사항이 없습니다."
+          else
+            # 커밋 및 푸시
+            commit_message="Add widget APK v${{ steps.get_apk_version.outputs.version }} - $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M') KST"
+            git commit -m "$commit_message"
+            git push
+            echo "APK 파일이 성공적으로 업로드되었습니다!"
+          fi
+
       # 릴리즈 생성
       # release_name: 릴리즈 제목
       # tag_name: 버전 이름
@@ -61,3 +170,10 @@ jobs:
             ${{steps.releaseMessage.outputs.val}}
           draft: false
           prerelease: false
+
+      # 결과 확인
+      - name: Verify upload
+        run: |
+          echo "=== 최종 apk/ 디렉토리 내용 ==="
+          ls -la apk/
+          echo "================================"
