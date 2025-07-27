@@ -1,0 +1,105 @@
+name: Upload APK
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-upload-apk:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # JDK 설정
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      # Android SDK 설정
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
+      # Gradle 캐시 설정 (빌드 속도 향상)
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # gradlew 실행 권한 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # APK 빌드
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --stacktrace
+
+      # 빌드된 APK 파일 확인
+      - name: List built APK files
+        run: |
+          echo "=== 빌드된 APK 파일 목록 ==="
+          find . -name "*.apk" -type f
+          echo "=========================="
+
+      # apk 디렉토리 생성
+      - name: Create APK directory
+        run: mkdir -p apk
+
+      # APK 파일을 apk 디렉토리로 복사
+      - name: Copy APK to apk directory
+        run: |
+          echo "APK 파일을 apk/ 디렉토리로 복사 중..."
+          
+          # APK 파일 찾기 및 복사
+          find . -name "*.apk" -path "*/build/outputs/apk/release/*" -exec cp {} apk/ \;
+          
+          # 복사된 파일 확인
+          echo "=== apk/ 디렉토리 내용 ==="
+          ls -la apk/
+          
+          # 파일명에 타임스탬프 추가 (중복 방지)
+          cd apk
+          timestamp=$(date +"%Y%m%d_%H%M%S")
+          for file in *.apk; do
+            if [ -f "$file" ]; then
+              new_name="app-release-${timestamp}.apk"
+              mv "$file" "$new_name"
+              echo "파일명 변경: $file -> $new_name"
+            fi
+          done
+
+      # Git 설정 및 APK 파일 커밋
+      - name: Commit and push APK
+        run: |
+          # Git 사용자 정보 설정
+          git config --local user.email "sieunju@github.com"
+          git config --local user.name "sieunju"
+          
+          # APK 파일 추가
+          git add apk/*.apk
+          
+          # 변경사항이 있는지 확인
+          if git diff --staged --quiet; then
+            echo "커밋할 변경사항이 없습니다."
+          else
+            # 커밋 및 푸시
+            commit_message="Add release APK - $(date '+%Y-%m-%d %H:%M:%S')"
+            git commit -m "$commit_message"
+            git push
+            echo "APK 파일이 성공적으로 업로드되었습니다!"
+          fi
+
+      # 결과 확인
+      - name: Verify upload
+        run: |
+          echo "=== 최종 apk/ 디렉토리 내용 ==="
+          ls -la apk/
+          echo "================================"

@@ -13,8 +13,8 @@ android {
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk libs.versions.targetSdk.get().toInteger()
         versionCode 1
-        versionName "1.0"
-        archivesBaseName = "widget" + versionName + "_" + versionCode
+        versionName libs.versions.release.get().toString()
+        archivesBaseName = "widget_" + versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

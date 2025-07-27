@@ -1,4 +1,4 @@
-name: Libraray Generate Release
+name: Library Generate Release
 
 on:
   push:
@@ -7,18 +7,17 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v2
 
       # JDK 설정
-      - name: set up JDK 11
-        uses: actions/setup-java@v2
+      - name: set up JDK 17
+        uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'adopt'
-          check-latest: true
 
       # Release Note 정보 가져오기
       - name: Get Release Info
@@ -62,16 +61,3 @@ jobs:
             ${{steps.releaseMessage.outputs.val}}
           draft: false
           prerelease: false
-
-      # Android SDK 설정
-      # - name: SetUp Android SDK
-      #  uses: android-actions/setup-android@v2
-
-      # gradlew 권한 획득
-      # - name: Grant execute permission for gradlew
-      #  run: chmod +x gradlew
-
-      # 릴리즈 노트 작성
-      # - name: Generate Release Note
-      #   run: |
-      #    ./gradlew generateReleaseNote --stacktrace
