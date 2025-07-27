@@ -45,7 +45,7 @@ jobs:
           echo "=== Gradle task로 버전 정보 가져오기 ==="
           
           # Gradle task로 버전 출력
-          version=$(./gradlew -q printVersionName 2>/dev/null || echo "1.0.0")
+          version=$(./gradlew -q getVersionName 2>/dev/null || echo "1.0.0")
           
           # 출력값 정리 (공백, 개행 제거)
           version=$(echo "$version" | tr -d ' \n\r')
