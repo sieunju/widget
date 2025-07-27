@@ -1,14 +1,26 @@
 package com.hmju.visual.ui.coordinator
 
-import android.content.res.Resources
 import android.os.Bundle
-import android.util.TypedValue
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.google.android.material.appbar.AppBarLayout
+import com.hmju.visual.Constants
+import com.hmju.visual.Constants.ExampleThumb
+import com.hmju.visual.LogoThumb
 import com.hmju.visual.R
 import com.hmju.visual.databinding.ADynamicCoordinatorBinding
+import com.hmju.visual.databinding.VhChildDynamicCoordinatorBinding
+import kotlinx.coroutines.launch
 import kotlin.math.abs
+import kotlin.random.Random
 
 
 /**
@@ -17,20 +29,6 @@ import kotlin.math.abs
  * Created by juhongmin on 3/3/24
  */
 internal class DynamicCoordinatorActivity : AppCompatActivity() {
-
-    val Int.dp: Int
-        get() = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            this.toFloat(),
-            Resources.getSystem().displayMetrics
-        ).toInt()
-
-    val Float.dp: Float
-        get() = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            this,
-            Resources.getSystem().displayMetrics
-        )
 
     enum class State {
         EXPANDED,
@@ -41,6 +39,7 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
     private var dynamicContentsHeight = -1
     private var headerHeight = -1
     private var scrollTargetEnd = -1
+    private val reqManager: RequestManager by lazy { Glide.with(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +85,7 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
                 }
             }
         })
+        initAdapter()
     }
 
     /**
@@ -97,7 +97,7 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
      * @param targetStart 새로운 범위의 시작
      * @param targetEnd 새로운 범위의 끝
      */
-    fun getAdjustRangeValue(
+    private fun getAdjustRangeValue(
         standardValue: Int,
         standardStart: Int = 0,
         standardEnd: Int,
@@ -112,5 +112,67 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
         val targetEndF = targetEnd.toFloat()
         val ratio = (standardValue.minus(standardStartF)) / standardEndF.minus(standardStartF)
         return ratio * (targetEndF.minus(targetStartF)) + targetStartF
+    }
+
+    data class Card(
+        val title: String,
+        val imageUrl: String
+    )
+
+    private fun initAdapter() {
+        val dummyImages = listOf(
+            LogoThumb.LOGO,
+            LogoThumb.LOGO_PURPLE,
+            ExampleThumb.GALAXY,
+            ExampleThumb.PARALLAX_HEADER,
+            ExampleThumb.DEEP_LINK_WALLPAPER
+        )
+        val adapter = Adapter()
+        binding.rvContents.adapter = adapter
+        lifecycleScope.launch {
+            val dataList = (0..10).toList()
+                .map { Card("Index $it", dummyImages[Random.nextInt(dummyImages.size)]) }
+            adapter.submitList(dataList)
+        }
+    }
+
+    private class SimpleDiffUtil : DiffUtil.ItemCallback<Card>() {
+        override fun areItemsTheSame(oldItem: Card, newItem: Card): Boolean {
+            return oldItem.title == newItem.title
+        }
+
+        override fun areContentsTheSame(oldItem: Card, newItem: Card): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    inner class Adapter : ListAdapter<Card, Adapter.ViewHolder>(SimpleDiffUtil()) {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Adapter.ViewHolder {
+            return ViewHolder(parent)
+        }
+
+        override fun onBindViewHolder(holder: Adapter.ViewHolder, position: Int) {
+            holder.onBindView(getItem(position))
+        }
+
+        inner class ViewHolder(
+            parent: ViewGroup
+        ) : RecyclerView.ViewHolder(
+            LayoutInflater.from(
+                parent.context
+            ).inflate(R.layout.vh_child_dynamic_coordinator, parent, false)
+        ) {
+            private val binding: VhChildDynamicCoordinatorBinding by lazy {
+                VhChildDynamicCoordinatorBinding.bind(
+                    itemView
+                )
+            }
+
+            fun onBindView(item: Card) {
+                reqManager.load(item.imageUrl)
+                    .into(binding.ivThumb)
+                binding.tvTitle.text = item.title
+            }
+        }
     }
 }

@@ -12,7 +12,7 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             app:elevation="0dp"
-            app:layout_behavior=".ui.coordinator.AppBarLayoutBehavior">
+            app:layout_behavior="hmju.widget.coordinatorlayout.AppBarLayoutBehavior">
 
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
@@ -20,7 +20,7 @@
                 app:contentInsetStart="0dp"
                 app:layout_scrollFlags="scroll|enterAlways" />
 
-            <com.hmju.visual.ui.coordinator.CustomCollapsingToolbarLayout
+            <hmju.widget.coordinatorlayout.CustomCollapsingToolbarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
@@ -30,9 +30,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:layout_marginTop="50dp"
-                    android:background="#FF0000"
-                    android:text="동적 콘텐츠 입니다."
-                    android:textSize="50sp"
+                    android:background="#2962FF"
+                    android:text="Dynamic Contents"
+                    android:gravity="center"
+                    android:textSize="30dp"
                     app:layout_collapseMode="none" />
 
                 <androidx.appcompat.widget.Toolbar
@@ -41,172 +42,29 @@
                     android:background="@android:color/transparent"
                     app:layout_collapseMode="pin" />
 
-            </com.hmju.visual.ui.coordinator.CustomCollapsingToolbarLayout>
+            </hmju.widget.coordinatorlayout.CustomCollapsingToolbarLayout>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:gravity="center"
-                android:text="필터 영역"
+                android:text="Second Content Area"
                 android:textSize="16sp" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.core.widget.NestedScrollView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvContents"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:focusable="false"
+            android:orientation="vertical"
+            android:splitMotionEvents="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="11111111"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="2222222"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="33333333"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="44444444"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="5555555555"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="6666666666"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="7777777777"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="7777777777"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="7777777777"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="7777777777"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="7777777777"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="7777777777"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="7777777777"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="7777777777"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="7777777777"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="7777777777"
-                    android:textColor="@color/black"
-                    android:textSize="100sp" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-        </androidx.core.widget.NestedScrollView>
+        </androidx.recyclerview.widget.RecyclerView>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/llHeader"
@@ -220,13 +78,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:gravity="center"
-                android:text="헤더입니다." />
+                android:text="Header Area" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:gravity="center"
-                android:text="카테고리 입니다.." />
+                android:text="Second Header Area" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

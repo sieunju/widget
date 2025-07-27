@@ -38,6 +38,7 @@ android {
         jvmTarget = JavaVersion.VERSION_17
     }
     buildFeatures {
+        viewBinding = true
         dataBinding = true
     }
 }
@@ -57,7 +58,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.material)
-    implementation(libs.androidx.multidex)
 
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)

@@ -23,7 +23,7 @@ object Constants {
     }
 
     object LogoThumb {
-        const val LOGO = IMG_BASE_URL.plus("/widget_log.png")
+        const val LOGO = IMG_BASE_URL.plus("/widget_logo.png")
         const val LOGO_PURPLE = IMG_BASE_URL.plus("/widget_logo_purple.png")
     }
 }

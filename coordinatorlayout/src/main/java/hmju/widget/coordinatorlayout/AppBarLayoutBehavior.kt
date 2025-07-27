@@ -1,4 +1,4 @@
-package com.hmju.visual.ui.coordinator
+package hmju.widget.coordinatorlayout
 
 import android.content.Context
 import android.util.AttributeSet
