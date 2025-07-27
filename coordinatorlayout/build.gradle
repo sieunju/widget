@@ -42,7 +42,7 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
                 groupId = 'com.github.sieunju.widget'
-                artifactId = 'tablayout'
+                artifactId = 'coordinatorlayout'
                 version = libs.versions.release.get()
             }
         }
