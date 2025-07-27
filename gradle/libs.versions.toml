@@ -7,7 +7,7 @@ agp = "8.2.2"
 kotlin = "1.8.22"
 
 # App
-release = "1.0.8"
+release = "1.0.9"
 
 # AndroidX
 core-ktx = "1.7.0"
