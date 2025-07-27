@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion buildVersions.compileSdk
+    namespace 'hmju.widget.glide'
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdkVersion buildVersions.minSdk
-        targetSdkVersion buildVersions.targetSdk
+        minSdk libs.versions.minSdk.get().toInteger()
 
         consumerProguardFiles "consumer-rules.pro"
     }
