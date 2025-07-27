@@ -21,7 +21,7 @@ jobs:
 
       # Android SDK 설정
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v2
 
       # Gradle 캐시 설정 (빌드 속도 향상)
       - name: Cache Gradle packages
@@ -44,26 +44,26 @@ jobs:
         run: |
           # 먼저 gradle.properties에서 찾기
           if [ -f "gradle.properties" ] && grep -q "release=" gradle.properties; then
-            version=$(grep "release=" gradle.properties | cut -d'=' -f2)
+            version=$(grep "release=" gradle.properties | cut -d'=' -f2 | tr -d ' ')
             echo "gradle.properties에서 버전 추출: $version"
           # libs.versions.toml에서 찾기 (version catalog)
           elif [ -f "gradle/libs.versions.toml" ]; then
-            version=$(grep -E "^release\s*=" gradle/libs.versions.toml | sed -E 's/.*=\s*"([^"]+)".*/\1/')
+            version=$(grep -E "^release\s*=" gradle/libs.versions.toml | sed -E 's/^release\s*=\s*"([^"]+)".*/\1/' | tr -d ' ')
             echo "libs.versions.toml에서 버전 추출: $version"
           # build.gradle에서 libs.versions.release 패턴 찾기
           elif [ -f "app/build.gradle" ] && grep -q "libs.versions.release" app/build.gradle; then
             # gradle.properties나 libs.versions.toml에서 실제 값 추출
             if [ -f "gradle.properties" ]; then
-              version=$(grep "release=" gradle.properties | cut -d'=' -f2 2>/dev/null || echo "1.0.0")
+              version=$(grep "release=" gradle.properties | cut -d'=' -f2 | tr -d ' ' 2>/dev/null || echo "1.0.0")
             elif [ -f "gradle/libs.versions.toml" ]; then
-              version=$(grep -E "^release\s*=" gradle/libs.versions.toml | sed -E 's/.*=\s*"([^"]+)".*/\1/' 2>/dev/null || echo "1.0.0")
+              version=$(grep -E "^release\s*=" gradle/libs.versions.toml | sed -E 's/^release\s*=\s*"([^"]+)".*/\1/' | tr -d ' ' 2>/dev/null || echo "1.0.0")
             else
               version="1.0.0"
             fi
             echo "version catalog 참조에서 버전 추출: $version"
           # 일반적인 build.gradle에서 찾기
           elif [ -f "app/build.gradle" ]; then
-            version=$(grep -E "versionName\s+" app/build.gradle | sed -E "s/.*versionName\s+[\"']([^\"']+)[\"'].*/\1/" 2>/dev/null || echo "1.0.0")
+            version=$(grep -E "versionName\s+" app/build.gradle | sed -E "s/.*versionName\s+[\"']([^\"']+)[\"'].*/\1/" | tr -d ' ' 2>/dev/null || echo "1.0.0")
             echo "build.gradle에서 버전 추출: $version"
           else
             version="1.0.0"  # 기본값
@@ -80,7 +80,7 @@ jobs:
 
       # APK 빌드
       - name: Build Release APK
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleRelease --stacktrace
 
       # 빌드된 APK 파일 확인
       - name: List built APK files
@@ -108,7 +108,7 @@ jobs:
           # widget_{versionName}_{timestamp} 형식으로 파일명 변경
           cd apk
           version_name="${{ steps.get_version.outputs.version }}"
-          timestamp=$(date +"%Y%m%d_%H%M%S")
+          timestamp=$(date +"%Y%m%d_%H%M")
           
           for file in *.apk; do
             if [ -f "$file" ]; then
