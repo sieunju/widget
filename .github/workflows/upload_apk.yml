@@ -38,45 +38,43 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # 버전 정보 가져오기 (gradle.properties 또는 version catalog에서)
+      # 버전 정보 가져오기 (app/build.gradle에서 versionName 추출)
       - name: Get Version Name
         id: get_version
         run: |
-          # 먼저 gradle.properties에서 찾기
-          if [ -f "gradle.properties" ] && grep -q "release=" gradle.properties; then
-            version=$(grep "release=" gradle.properties | cut -d'=' -f2 | tr -d ' ')
-            echo "gradle.properties에서 버전 추출: $version"
-          # libs.versions.toml에서 찾기 (version catalog)
-          elif [ -f "gradle/libs.versions.toml" ]; then
-            version=$(grep -E "^release\s*=" gradle/libs.versions.toml | sed -E 's/^release\s*=\s*"([^"]+)".*/\1/' | tr -d ' ')
-            echo "libs.versions.toml에서 버전 추출: $version"
-          # build.gradle에서 libs.versions.release 패턴 찾기
-          elif [ -f "app/build.gradle" ] && grep -q "libs.versions.release" app/build.gradle; then
-            # gradle.properties나 libs.versions.toml에서 실제 값 추출
-            if [ -f "gradle.properties" ]; then
-              version=$(grep "release=" gradle.properties | cut -d'=' -f2 | tr -d ' ' 2>/dev/null || echo "1.0.0")
-            elif [ -f "gradle/libs.versions.toml" ]; then
-              version=$(grep -E "^release\s*=" gradle/libs.versions.toml | sed -E 's/^release\s*=\s*"([^"]+)".*/\1/' | tr -d ' ' 2>/dev/null || echo "1.0.0")
+          version="1.0.0"  # 기본값
+          
+          if [ -f "app/build.gradle" ]; then
+            echo "=== app/build.gradle에서 versionName 찾기 ==="
+          
+            # versionName 라인 찾기
+            version_line=$(grep "versionName" app/build.gradle)
+            echo "versionName 라인: $version_line"
+          
+            # 여러 패턴으로 추출 시도
+            if [[ "$version_line" =~ versionName[[:space:]]*[\"\']*([0-9]+\.[0-9]+\.[0-9]+)[\"\']*$ ]]; then
+              version="${BASH_REMATCH[1]}"
+              echo "직접 버전 패턴으로 추출: $version"
+            elif [[ "$version_line" =~ versionName[[:space:]]*[\"\']([^\"\']+)[\"\'] ]]; then
+              version="${BASH_REMATCH[1]}"
+              echo "따옴표 패턴으로 추출: $version"
             else
-              version="1.0.0"
+              # sed로 추출
+              version=$(echo "$version_line" | sed -E 's/.*versionName[[:space:]]*["\']([^"\']+)["\'].*/\1/')
+              echo "sed로 추출: $version"
             fi
-            echo "version catalog 참조에서 버전 추출: $version"
-          # 일반적인 build.gradle에서 찾기
-          elif [ -f "app/build.gradle" ]; then
-            version=$(grep -E "versionName\s+" app/build.gradle | sed -E "s/.*versionName\s+[\"']([^\"']+)[\"'].*/\1/" | tr -d ' ' 2>/dev/null || echo "1.0.0")
-            echo "build.gradle에서 버전 추출: $version"
           else
-            version="1.0.0"  # 기본값
-            echo "기본 버전 사용: $version"
+            echo "app/build.gradle 파일을 찾을 수 없습니다."
           fi
           
-          # 버전이 비어있으면 기본값 사용
-          if [ -z "$version" ]; then
+          # 버전이 비어있거나 잘못된 경우 기본값 사용
+          if [ -z "$version" ] || [ "$version" = "$version_line" ]; then
             version="1.0.0"
+            echo "추출 실패, 기본값 사용: $version"
           fi
           
           echo "version=$version" >> $GITHUB_OUTPUT
-          echo "최종 추출된 버전: $version"
+          echo "최종 추출된 버전: '$version'"
 
       # APK 빌드
       - name: Build Release APK
@@ -98,11 +96,14 @@ jobs:
         run: |
           echo "APK 파일을 apk/ 디렉토리로 복사 중..."
           
+          # 기존 APK 파일 정리
+          rm -f apk/*.apk 2>/dev/null || true
+          
           # APK 파일 찾기 및 복사
           find . -name "*.apk" -path "*/build/outputs/apk/release/*" -exec cp {} apk/ \;
           
           # 복사된 파일 확인
-          echo "=== apk/ 디렉토리 내용 ==="
+          echo "=== 복사 후 apk/ 디렉토리 내용 ==="
           ls -la apk/
           
           # widget_{versionName}_{timestamp} 형식으로 파일명 변경
@@ -110,13 +111,19 @@ jobs:
           version_name="${{ steps.get_version.outputs.version }}"
           timestamp=$(date +"%Y%m%d_%H%M")
           
+          echo "사용할 버전: '$version_name'"
+          echo "사용할 타임스탬프: '$timestamp'"
+          
           for file in *.apk; do
-            if [ -f "$file" ]; then
+            if [ -f "$file" ] && [ "$file" != "*.apk" ]; then
               new_name="widget_${version_name}_${timestamp}.apk"
               mv "$file" "$new_name"
               echo "파일명 변경: $file -> $new_name"
             fi
           done
+          
+          echo "=== 파일명 변경 후 내용 ==="
+          ls -la
 
       # Git 설정 및 APK 파일 커밋
       - name: Commit and push APK
@@ -133,7 +140,7 @@ jobs:
             echo "커밋할 변경사항이 없습니다."
           else
             # 커밋 및 푸시
-            commit_message="Add widget APK v${{ steps.get_version.outputs.version }} - $(date '+%Y-%m-%d %H:%M:%S')"
+            commit_message="Add widget APK v${{ steps.get_version.outputs.version }} - $(date '+%Y-%m-%d %H:%M')"
             git commit -m "$commit_message"
             git push
             echo "APK 파일이 성공적으로 업로드되었습니다!"
