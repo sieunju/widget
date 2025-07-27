@@ -38,6 +38,21 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      # 버전 정보 가져오기 (build.gradle에서)
+      - name: Get Version Name
+        id: get_version
+        run: |
+          # build.gradle 또는 build.gradle.kts에서 versionName 추출
+          if [ -f "app/build.gradle" ]; then
+            version=$(grep -E "versionName\s+" app/build.gradle | sed -E "s/.*versionName\s+[\"']([^\"']+)[\"'].*/\1/")
+          elif [ -f "app/build.gradle.kts" ]; then
+            version=$(grep -E "versionName\s*=" app/build.gradle.kts | sed -E "s/.*versionName\s*=\s*[\"']([^\"']+)[\"'].*/\1/")
+          else
+            version="1.0.0"  # 기본값
+          fi
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "추출된 버전: $version"
+
       # APK 빌드
       - name: Build Release APK
         run: ./gradlew assembleRelease --stacktrace
@@ -65,12 +80,14 @@ jobs:
           echo "=== apk/ 디렉토리 내용 ==="
           ls -la apk/
           
-          # 파일명에 타임스탬프 추가 (중복 방지)
+          # widget_{versionName}_{timestamp} 형식으로 파일명 변경
           cd apk
+          version_name="${{ steps.get_version.outputs.version }}"
           timestamp=$(date +"%Y%m%d_%H%M%S")
+          
           for file in *.apk; do
             if [ -f "$file" ]; then
-              new_name="app-release-${timestamp}.apk"
+              new_name="widget_${version_name}_${timestamp}.apk"
               mv "$file" "$new_name"
               echo "파일명 변경: $file -> $new_name"
             fi
@@ -80,8 +97,8 @@ jobs:
       - name: Commit and push APK
         run: |
           # Git 사용자 정보 설정
-          git config --local user.email "sieunju@github.com"
-          git config --local user.name "sieunju"
+          git config --local user.email "upload-bot@github.com"
+          git config --local user.name "upload-bot"
           
           # APK 파일 추가
           git add apk/*.apk
@@ -91,7 +108,7 @@ jobs:
             echo "커밋할 변경사항이 없습니다."
           else
             # 커밋 및 푸시
-            commit_message="Add release APK - $(date '+%Y-%m-%d %H:%M:%S')"
+            commit_message="Add widget APK v${{ steps.get_version.outputs.version }} - $(date '+%Y-%m-%d %H:%M:%S')"
             git commit -m "$commit_message"
             git push
             echo "APK 파일이 성공적으로 업로드되었습니다!"
