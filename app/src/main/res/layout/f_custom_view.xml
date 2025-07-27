@@ -5,84 +5,229 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nsContents"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <hmju.widget.view.CustomTextView
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:elevation="6dp"
-            android:padding="10dp"
-            android:text="CustomTextView TextStyle Type :)"
-            app:textViewBgColor="#95989A"
-            app:textViewCorner="5dp"
-            app:textViewDisableTextStyle="@style/TextAppearance.AppCompat.Body2"
-            app:textViewTextStyle="@style/TextAppearance.AppCompat.Body1" />
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <hmju.widget.view.CustomTextView
-            android:id="@+id/tvChangeStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="15dp"
-            android:elevation="6dp"
-            android:padding="10dp"
-            android:text="CustomTextView Change Status Type :)"
-            android:textSize="16sp"
-            app:textViewBgColor="#F2762C"
-            app:textViewBorder="2dp"
-            app:textViewBorderColor="#958F8F"
-            app:textViewCorner="40dp"
-            app:textViewDefState="false"
-            app:textViewDisableBgColor="#BC3F06"
-            app:textViewDisableBorder="3dp"
-            app:textViewDisableBorderColor="#454445"
-            app:textViewDisableCorner="40dp"
-            app:textViewDisableTxtColor="@color/white"
-            app:textViewTxtColor="@color/white" />
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="50dp" />
 
-        <hmju.widget.view.CustomLayout
-            android:id="@+id/clImage"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_margin="15dp"
-            app:layoutBgColor="#3A416F"
-            app:layoutBorder="2dp"
-            app:layoutBorderColor="#999999"
-            app:layoutCorner="20dp">
+            <hmju.widget.view.CustomTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:elevation="6dp"
+                android:padding="10dp"
+                android:text="CustomTextView TextStyle Type :)"
+                app:textViewBgColor="#95989A"
+                app:textViewCorner="5dp"
+                app:textViewDisableTextStyle="@style/TextAppearance.AppCompat.Body2"
+                app:textViewTextStyle="@style/TextAppearance.AppCompat.Body1" />
 
-            <hmju.widget.view.CustomImageView
-                android:id="@+id/ivThumb"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="20dp"
-                android:scaleType="centerCrop"
-                app:imgViewCorner="50dp"
-                app:imgViewBorder="2dp"
-                app:imgViewBorderColor="#FFFFFF"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:src="@tools:sample/avatars" />
-
-            <androidx.appcompat.widget.AppCompatTextView
+            <hmju.widget.view.CustomTextView
+                android:id="@+id/tvChangeStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
-                android:text="CustomLayout"
-                android:textColor="@color/white"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ivThumb" />
+                android:layout_marginRight="15dp"
+                android:elevation="6dp"
+                android:padding="10dp"
+                android:text="CustomTextView Change Status Type :)"
+                android:textSize="16sp"
+                app:textViewBgColor="#F2762C"
+                app:textViewBorder="2dp"
+                app:textViewBorderColor="#958F8F"
+                app:textViewCorner="40dp"
+                app:textViewDefState="false"
+                app:textViewDisableBgColor="#BC3F06"
+                app:textViewDisableBorder="3dp"
+                app:textViewDisableBorderColor="#454445"
+                app:textViewDisableCorner="40dp"
+                app:textViewDisableTxtColor="@color/white"
+                app:textViewTxtColor="@color/white" />
 
-        </hmju.widget.view.CustomLayout>
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            <hmju.widget.view.CustomLayout
+                android:id="@+id/clImage"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_margin="15dp"
+                app:layoutBgColor="#3A416F"
+                app:layoutBorder="2dp"
+                app:layoutBorderColor="#999999"
+                app:layoutCorner="20dp">
+
+                <hmju.widget.view.CustomImageView
+                    android:id="@+id/ivThumb"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="20dp"
+                    android:scaleType="centerCrop"
+                    app:imgViewBorder="2dp"
+                    app:imgViewBorderColor="#FFFFFF"
+                    app:imgViewCorner="50dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@tools:sample/avatars" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="CustomLayout"
+                    android:textColor="@color/white"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ivThumb" />
+
+            </hmju.widget.view.CustomLayout>
+
+            <com.google.android.material.slider.RangeSlider
+                android:id="@+id/rsMaterial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+                app:haloColor="#00FFFFFF"
+                app:labelBehavior="gone"
+                app:rippleColor="@android:color/transparent"
+                app:thumbColor="#FFF"
+                app:thumbRadius="12dp"
+                app:thumbStrokeColor="#222"
+                app:thumbStrokeWidth="3dp"
+                app:trackColorActive="#222"
+                app:trackColorInactive="#F0F0F0"
+                app:trackHeight="4dp"
+                tools:valueFrom="0.0"
+                tools:valueTo="100.0"
+                tools:values="@array/initial_slider_values" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:weightSum="2">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvRsMaterialMin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#222"
+                    tools:text="95" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvRsMaterialMax"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:textColor="#222"
+                    tools:text="108" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <hmju.widget.view.CustomRangeSlider
+                android:id="@+id/sb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="20dp" />
+
+            <hmju.widget.view.ShadowViewGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cornerRadius="6dp"
+                app:shadowBlur="6dp"
+                app:shadowColor="#60000000"
+                app:shadowOffsetX="0dp"
+                app:shadowOffsetY="8dp">
+
+                <hmju.widget.view.CustomLayout
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:layoutBgColor="#070707"
+                    app:layoutCorner="6dp" />
+
+            </hmju.widget.view.ShadowViewGroup>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="#0091EA">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="100dp"
+                    android:background="#fff"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:textColor="#222222"
+                        android:textSize="30dp"
+                        android:textStyle="bold"
+                        app:autoSizeMaxTextSize="30dp"
+                        app:autoSizeMinTextSize="1dp"
+                        app:autoSizeTextType="uniform" />
+
+                    <hmju.widget.view.RollingAmountView
+                        android:id="@+id/vRollingAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="10dp">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:background="@drawable/bg_center_transparent_gradient"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </hmju.widget.view.RollingAmountView>
+
+                    <hmju.widget.view.RollingAmountView
+                        android:id="@+id/vRollingAmount2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="10dp" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="100dp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.core.widget.NestedScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,22 +1,21 @@
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
-    id 'kotlin-kapt'
-    id 'kotlinx-serialization'
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
-    compileSdkVersion buildVersions.compileSdk
-    buildToolsVersion buildVersions.buildTools
+    namespace 'com.hmju.visual'
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdkVersion buildVersions.minSdk
-        targetSdkVersion buildVersions.targetSdk
+        minSdk libs.versions.minSdk.get().toInteger()
+        targetSdk libs.versions.targetSdk.get().toInteger()
         versionCode 1
         versionName "1.0"
         archivesBaseName = "widget" + versionName + "_" + versionCode
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
     }
 
     buildTypes {
@@ -32,58 +31,56 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11
+        jvmTarget = JavaVersion.VERSION_17
     }
     buildFeatures {
+        viewBinding = true
         dataBinding = true
     }
 }
 
 dependencies {
-    implementation(project(":view"))
-    implementation(project(":gesture"))
-    implementation(project(":recyclerview"))
-    implementation(project(":viewpager"))
-    implementation(project(":progress"))
-    implementation(project(":tablayout"))
-    implementation(project(":extensions"))
-    implementation(project(":coordinatorlayout"))
+    implementation project(':view')
+    implementation project(":gesture")
+    implementation project(":recyclerview")
+    implementation project(":viewpager")
+    implementation project(":progress")
+    implementation project(":tablayout")
+    implementation project(":extensions")
+    implementation project(":coordinatorlayout")
 
-    implementation(deps.kotlin.stdlib)
-    implementation(deps.kotlin.core)
-    implementation(deps.androidx.appCompat)
-    implementation(deps.androidx.constraintLayout)
-    implementation(deps.androidx.material)
-    implementation(deps.androidx.multidex)
+    implementation libs.kotlin.core
 
-    implementation(deps.coroutines.base)
-    implementation(deps.coroutines.android)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.material)
 
-    implementation(deps.glide.base)
-    implementation(deps.glide.okhttp)
-    implementation(deps.glide.webp)
-    kapt(deps.glide.compiler)
+    implementation(libs.coroutines.core)
+    implementation(libs.coroutines.android)
 
-    implementation(deps.lifecycle.base)
-    implementation(deps.lifecycle.viewmodel)
-    implementation(deps.lifecycle.livedata)
+    implementation(libs.glide.base)
+    implementation(libs.glide.okhttp)
+    implementation(libs.glide.webp)
+    kapt(libs.glide.compiler)
 
-    implementation(deps.retrofit.okhttp)
-    implementation(deps.retrofit.base)
-    implementation(deps.retrofit.kotlinx)
-    implementation(deps.retrofit.coroutines)
+    implementation(libs.lifecycle.runtime)
+    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.lifecycle.livedata)
+
+    implementation(libs.retrofit.okhttp)
+    implementation(libs.retrofit.base)
+    implementation libs.retrofit.kotlinx
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
 
-    implementation(deps.timber)
+    implementation libs.timber
 
     // UI
-    implementation("com.github.sieunju.httptracking:ui:1.1.1")
-    // Interceptor Java Module
-    implementation("com.github.sieunju.httptracking:interceptor:1.1.1")
+    implementation libs.httptracking.ui
+    implementation libs.httptracking.interceptor
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

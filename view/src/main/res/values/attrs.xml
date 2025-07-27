@@ -47,4 +47,11 @@
     </declare-styleable>
     <!-- [e] CustomImageView Attr -->
 
+    <declare-styleable name="ShadowViewGroup">
+        <attr name="shadowOffsetX" format="dimension" />
+        <attr name="shadowOffsetY" format="dimension" />
+        <attr name="shadowBlur" format="dimension" />
+        <attr name="shadowColor" format="color" />
+        <attr name="cornerRadius" format="dimension" />
+    </declare-styleable>
 </resources>

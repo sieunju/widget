@@ -11,5 +11,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SelectionResponse(
     @SerialName("payload")
-    val list : List<SelectionModel>
+    val list : List<SelectionEntity>
 )

@@ -1,7 +1,7 @@
 package com.hmju.visual
 
-import androidx.multidex.MultiDexApplication
-import com.http.tracking.TrackingManager
+import android.app.Application
+import hmju.http.tracking.HttpTracking
 import timber.log.Timber
 
 /**
@@ -9,7 +9,7 @@ import timber.log.Timber
  *
  * Created by juhongmin on 2022/12/30
  */
-class MyApplication : MultiDexApplication() {
+class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
@@ -30,6 +30,7 @@ class MyApplication : MultiDexApplication() {
                     str.append(":")
                     str.append(element.methodName.substringAfterLast("."))
                 } catch (ex: Exception) {
+                    // ignore
                 }
                 return str.toString()
             }
@@ -37,9 +38,8 @@ class MyApplication : MultiDexApplication() {
     }
 
     private fun initTracking() {
-        TrackingManager.getInstance()
+        HttpTracking.Builder()
             .setBuildType(true)
-            .setLogMaxSize(10)
             .build(this)
     }
 }

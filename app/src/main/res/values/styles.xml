@@ -30,4 +30,13 @@
         <item name="android:textColor">@android:color/darker_gray</item>
         <item name="android:textStyle">normal</item>
     </style>
+
+    <style name="ShapeAppearanceOverlay.CornerSize20" parent="">
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.corner50Percent" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
 </resources>

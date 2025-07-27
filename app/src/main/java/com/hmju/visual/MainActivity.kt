@@ -33,7 +33,7 @@ internal class MainActivity : AppCompatActivity() {
                     R.anim.slide_in_left,
                     R.anim.slide_out_right
                 )
-                replace(R.id.fragment, targetFragment.java.newInstance())
+                replace(R.id.fragment, targetFragment.java.getDeclaredConstructor().newInstance())
                 addToBackStack(null)
                 commit()
             }

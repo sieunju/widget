@@ -234,11 +234,10 @@ class LinePagerTabLayout @JvmOverloads constructor(
 //        currentPosition.observe(this) { updateTab(it) }
 //    }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         if (tabCount == 0 || indicatorHeight == -1F) return
-        if (canvas == null) return
 
         drawBottomLine(canvas)
         drawLine(canvas, currentPos, posScrollOffset)
