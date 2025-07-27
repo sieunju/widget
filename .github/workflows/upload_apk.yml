@@ -38,24 +38,49 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # 버전 정보 가져오기 (build.gradle에서)
+      # 버전 정보 가져오기 (gradle.properties 또는 version catalog에서)
       - name: Get Version Name
         id: get_version
         run: |
-          # build.gradle 또는 build.gradle.kts에서 versionName 추출
-          if [ -f "app/build.gradle" ]; then
-            version=$(grep -E "versionName\s+" app/build.gradle | sed -E "s/.*versionName\s+[\"']([^\"']+)[\"'].*/\1/")
-          elif [ -f "app/build.gradle.kts" ]; then
-            version=$(grep -E "versionName\s*=" app/build.gradle.kts | sed -E "s/.*versionName\s*=\s*[\"']([^\"']+)[\"'].*/\1/")
+          # 먼저 gradle.properties에서 찾기
+          if [ -f "gradle.properties" ] && grep -q "release=" gradle.properties; then
+            version=$(grep "release=" gradle.properties | cut -d'=' -f2)
+            echo "gradle.properties에서 버전 추출: $version"
+          # libs.versions.toml에서 찾기 (version catalog)
+          elif [ -f "gradle/libs.versions.toml" ]; then
+            version=$(grep -E "^release\s*=" gradle/libs.versions.toml | sed -E 's/.*=\s*"([^"]+)".*/\1/')
+            echo "libs.versions.toml에서 버전 추출: $version"
+          # build.gradle에서 libs.versions.release 패턴 찾기
+          elif [ -f "app/build.gradle" ] && grep -q "libs.versions.release" app/build.gradle; then
+            # gradle.properties나 libs.versions.toml에서 실제 값 추출
+            if [ -f "gradle.properties" ]; then
+              version=$(grep "release=" gradle.properties | cut -d'=' -f2 2>/dev/null || echo "1.0.0")
+            elif [ -f "gradle/libs.versions.toml" ]; then
+              version=$(grep -E "^release\s*=" gradle/libs.versions.toml | sed -E 's/.*=\s*"([^"]+)".*/\1/' 2>/dev/null || echo "1.0.0")
+            else
+              version="1.0.0"
+            fi
+            echo "version catalog 참조에서 버전 추출: $version"
+          # 일반적인 build.gradle에서 찾기
+          elif [ -f "app/build.gradle" ]; then
+            version=$(grep -E "versionName\s+" app/build.gradle | sed -E "s/.*versionName\s+[\"']([^\"']+)[\"'].*/\1/" 2>/dev/null || echo "1.0.0")
+            echo "build.gradle에서 버전 추출: $version"
           else
             version="1.0.0"  # 기본값
+            echo "기본 버전 사용: $version"
           fi
+          
+          # 버전이 비어있으면 기본값 사용
+          if [ -z "$version" ]; then
+            version="1.0.0"
+          fi
+          
           echo "version=$version" >> $GITHUB_OUTPUT
-          echo "추출된 버전: $version"
+          echo "최종 추출된 버전: $version"
 
       # APK 빌드
       - name: Build Release APK
-        run: ./gradlew assembleRelease --stacktrace
+        run: ./gradlew assembleRelease
 
       # 빌드된 APK 파일 확인
       - name: List built APK files
