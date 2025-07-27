@@ -48,27 +48,26 @@ jobs:
             echo "=== app/build.gradle에서 versionName 찾기 ==="
           
             # versionName 라인 찾기
-            version_line=$(grep "versionName" app/build.gradle)
+            version_line=$(grep "versionName" app/build.gradle || echo "")
             echo "versionName 라인: $version_line"
           
-            # 여러 패턴으로 추출 시도
-            if [[ "$version_line" =~ versionName[[:space:]]*[\"\']*([0-9]+\.[0-9]+\.[0-9]+)[\"\']*$ ]]; then
-              version="${BASH_REMATCH[1]}"
-              echo "직접 버전 패턴으로 추출: $version"
-            elif [[ "$version_line" =~ versionName[[:space:]]*[\"\']([^\"\']+)[\"\'] ]]; then
-              version="${BASH_REMATCH[1]}"
-              echo "따옴표 패턴으로 추출: $version"
-            else
-              # sed로 추출
-              version=$(echo "$version_line" | sed -E 's/.*versionName[[:space:]]*["\']([^"\']+)["\'].*/\1/')
-              echo "sed로 추출: $version"
+            if [ ! -z "$version_line" ]; then
+              # sed로 따옴표 안의 내용 추출
+              version=$(echo "$version_line" | sed -n 's/.*versionName[[:space:]]*["'\'']\([^"'\'']*\)["'\''].*/\1/p')
+          
+              if [ -z "$version" ]; then
+                # 따옴표 없는 경우 (숫자만)
+                version=$(echo "$version_line" | sed -n 's/.*versionName[[:space:]]*\([0-9][0-9.]*\).*/\1/p')
+              fi
+          
+              echo "추출된 버전: $version"
             fi
           else
             echo "app/build.gradle 파일을 찾을 수 없습니다."
           fi
           
-          # 버전이 비어있거나 잘못된 경우 기본값 사용
-          if [ -z "$version" ] || [ "$version" = "$version_line" ]; then
+          # 버전이 비어있으면 기본값 사용
+          if [ -z "$version" ]; then
             version="1.0.0"
             echo "추출 실패, 기본값 사용: $version"
           fi
