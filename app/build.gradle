@@ -53,6 +53,14 @@ dependencies {
     implementation project(":extensions")
     implementation project(":coordinatorlayout")
 
+//    implementation 'com.github.sieunju.widget:view:1.0.9'
+//    implementation 'com.github.sieunju.widget:gesture:1.0.9'
+//    implementation 'com.github.sieunju.widget:recyclerview:1.0.9'
+//    implementation 'com.github.sieunju.widget:viewpager:1.0.9'
+//    implementation 'com.github.sieunju.widget:progress:1.0.9'
+//    implementation 'com.github.sieunju.widget:tablayout:1.0.9'
+//    implementation 'com.github.sieunju.widget:coordinatorlayout:1.0.9'
+
     implementation libs.kotlin.core
 
     implementation(libs.androidx.appcompat)
@@ -85,4 +93,10 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+
+tasks.register('getVersionName') {
+    doLast {
+        println android.defaultConfig.versionName
+    }
 }
