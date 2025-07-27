@@ -95,9 +95,9 @@ class LineIndicator @JvmOverloads constructor(
         clipToOutline = true
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (canvas == null || getRealItemCount() == 0) return
+        if (getRealItemCount() == 0) return
 
         if (indicatorRectF.top == 0F && height > 0) {
             indicatorRectF.top = 0F
@@ -184,10 +184,12 @@ class LineIndicator @JvmOverloads constructor(
                     // Fake LastIndex
                     getRealItemCount()
                 }
+
                 getRealItemCount() + 1 -> {
                     // Fake FirstIndex
                     0
                 }
+
                 else -> {
                     pos.minus(1)
                 }

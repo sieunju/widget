@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/abl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:elevation="0dp"
+            app:layout_behavior="hmju.widget.coordinatorlayout.AppBarLayoutBehavior">
+
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                app:contentInsetStart="0dp"
+                app:layout_scrollFlags="scroll|enterAlways" />
+
+            <hmju.widget.coordinatorlayout.CustomCollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvContents"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="50dp"
+                    android:background="#2962FF"
+                    android:text="Dynamic Contents"
+                    android:gravity="center"
+                    android:textSize="30dp"
+                    app:layout_collapseMode="none" />
+
+                <androidx.appcompat.widget.Toolbar
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@android:color/transparent"
+                    app:layout_collapseMode="pin" />
+
+            </hmju.widget.coordinatorlayout.CustomCollapsingToolbarLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="Second Content Area"
+                android:textSize="16sp" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvContents"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:focusable="false"
+            android:orientation="vertical"
+            android:splitMotionEvents="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/llHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="Header Area" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="Second Header Area" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

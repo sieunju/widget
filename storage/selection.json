@@ -44,6 +44,16 @@
       "title" : "Coordinator-TranslationBehavior",
       "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_translation_behavior.webp",
       "activityName" : "TranslationBehaviorActivity"
+    },
+    {
+      "title" : "Coordinator-DynamicCoordi",
+      "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_dynamic_coordinator.webp",
+      "activityName" : "DynamicCoordinatorActivity"
+    },
+    {
+      "title" : "StackCard",
+      "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_stack_card.webp",
+      "fragmentName" : "StackCardViewFragment"
     }
   ]
 }

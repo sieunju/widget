@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hmju.visual">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <application
         android:name=".MyApplication"
@@ -16,6 +16,12 @@
 
         <activity
             android:name=".ui.coordinator.TranslationBehaviorActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false"
+            android:launchMode="singleTop" />
+
+        <activity
+            android:name=".ui.coordinator.DynamicCoordinatorActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false"
             android:launchMode="singleTop" />

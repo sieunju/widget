@@ -5,8 +5,11 @@ import android.animation.ValueAnimator.REVERSE
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.slider.RangeSlider
 import com.hmju.visual.ExampleThumb
 import com.hmju.visual.ImageLoader
 import com.hmju.visual.R
@@ -14,16 +17,22 @@ import hmju.widget.extensions.Extensions.dp
 import hmju.widget.view.CustomImageView
 import hmju.widget.view.CustomLayout
 import hmju.widget.view.CustomTextView
+import hmju.widget.view.RollingAmountView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.NumberFormat
+import kotlin.random.Random
 
 internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
 
     private lateinit var tvChangeStatus: CustomTextView
     private lateinit var clImage: CustomLayout
     private lateinit var ivThumb: CustomImageView
+    private lateinit var vRollingAmount: RollingAmountView
+    private lateinit var vRollingAmount2: RollingAmountView
+    private lateinit var tvAmount: AppCompatTextView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -31,10 +40,30 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
             tvChangeStatus = findViewById(R.id.tvChangeStatus)
             clImage = findViewById(R.id.clImage)
             ivThumb = findViewById(R.id.ivThumb)
+            tvAmount = findViewById(R.id.tvAmount)
+            vRollingAmount = findViewById(R.id.vRollingAmount)
+            vRollingAmount2 = findViewById(R.id.vRollingAmount2)
 
             requestTestImage()
             handleTvChangeStatus()
             handleImageCornerAni(ivThumb)
+
+            setMaterialSlider(
+                view.findViewById(R.id.rsMaterial),
+                view.findViewById(R.id.tvRsMaterialMin),
+                view.findViewById(R.id.tvRsMaterialMax)
+            )
+        }
+        lifecycleScope.launch {
+            delay(500)
+            view.findViewById<NestedScrollView>(R.id.nsContents).smoothScrollTo(0, 500.dp)
+            repeat(20) {
+                val ran = Random.nextInt()
+                tvAmount.text = NumberFormat.getNumberInstance().format(ran)
+                vRollingAmount.setAmount(ran.toLong())
+                vRollingAmount2.setAmount(ran.toLong())
+                delay(2000)
+            }
         }
     }
 
@@ -68,5 +97,40 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
             repeatMode = REVERSE
             start()
         }
+    }
+
+    private fun setMaterialSlider(
+        slider: RangeSlider,
+        tvMin: AppCompatTextView,
+        tvMax: AppCompatTextView
+    ) {
+        try {
+            val supperClass: Class<in RangeSlider>? = slider.javaClass.superclass
+            supperClass?.getDeclaredField("widgetHeight")?.let {
+                it.isAccessible = true
+                it.set(slider, 25.dp)
+            }
+            supperClass?.getDeclaredField("labelPadding")?.let {
+                it.isAccessible = true
+                it.set(slider, 0)
+            }
+            supperClass?.getDeclaredField("trackTop")?.let {
+                it.isAccessible = true
+                it.set(slider, 12.dp)
+            }
+        } catch (ex: Exception) {
+            // ignore
+        }
+        slider.setValues(95F, 95F)
+        slider.valueFrom = 95F
+        slider.valueTo = 108F
+        slider.addOnChangeListener(RangeSlider.OnChangeListener { _, value, fromUser ->
+            if (slider.values.size > 1) {
+                tvMin.text = "${slider.values[0].toInt()}"
+                tvMax.text = "${slider.values[1].toInt()}"
+            }
+        })
+        tvMin.text = "${slider.values[0].toInt()}"
+        tvMax.text = "${slider.values[1].toInt()}"
     }
 }

@@ -22,18 +22,19 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.hmju.visual.Constants
 import com.hmju.visual.MainActivity.Companion.moveToFragment
 import com.hmju.visual.R
+import com.hmju.visual.ui.coordinator.DynamicCoordinatorActivity
 import com.hmju.visual.ui.coordinator.TranslationBehaviorActivity
 import com.hmju.visual.ui.gesture.FlexibleImageViewFragment
 import com.hmju.visual.ui.progress.ProgressFragment
 import com.hmju.visual.ui.recyclerview.ParallaxViewHolderFragment
 import com.hmju.visual.ui.recyclerview.RecyclerViewScrollerFragment
 import com.hmju.visual.ui.recyclerview.SpecialGridDecorationFragment
+import com.hmju.visual.ui.view.StackCardViewFragment
 import com.hmju.visual.ui.tablayout.CustomTabLayoutFragment
 import com.hmju.visual.ui.view.CustomViewFragment
 import com.hmju.visual.ui.viewpager.ViewPagerFragment
-import com.http.tracking_interceptor.TrackingHttpInterceptor
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import hmju.http.tracking_interceptor.TrackingHttpInterceptor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -61,7 +62,29 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
         val imageThumb: String? = null,
         val targetFragment: KClass<out Fragment>? = null,
         val targetActivity: KClass<out FragmentActivity>? = null
-    )
+    ) {
+        constructor(entity: SelectionEntity) : this(
+            title = entity.title,
+            imageThumb = entity.imageUrl,
+            targetFragment = when (entity.fragmentName) {
+                "CustomViewFragment" -> CustomViewFragment::class
+                "FlexibleImageViewFragment" -> FlexibleImageViewFragment::class
+                "ProgressFragment" -> ProgressFragment::class
+                "ViewPagerFragment" -> ViewPagerFragment::class
+                "CustomTabLayoutFragment" -> CustomTabLayoutFragment::class
+                "ParallaxViewHolderFragment" -> ParallaxViewHolderFragment::class
+                "SpecialGridDecorationFragment" -> SpecialGridDecorationFragment::class
+                "RecyclerViewScrollerFragment" -> RecyclerViewScrollerFragment::class
+                "StackCardViewFragment" -> StackCardViewFragment::class
+                else -> null
+            },
+            targetActivity = when (entity.activityName) {
+                "TranslationBehaviorActivity" -> TranslationBehaviorActivity::class
+                "DynamicCoordinatorActivity" -> DynamicCoordinatorActivity::class
+                else -> null
+            }
+        )
+    }
 
     private lateinit var rvContents: RecyclerView
 
@@ -87,7 +110,6 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
         }
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .client(httpClient)
             .build()
@@ -95,46 +117,16 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
 
     private fun reqSelectionList() {
         lifecycleScope.launch(Dispatchers.Main) {
-            val uiList = withContext(Dispatchers.IO) {
+            val list = withContext(Dispatchers.IO) {
                 try {
-                    val result = apiService.fetchSelectionAsync().await()
-                    Result.success(result.list.map { it.toUiModel() })
+                    val res = apiService.fetchSelection()
+                    return@withContext res.list.map { MenuUiModel(it) }
                 } catch (ex: Exception) {
-                    Result.failure(ex)
+                    return@withContext listOf()
                 }
             }
-            adapter.setDataList(uiList.getOrNull())
+            adapter.setDataList(list)
         }
-    }
-
-    private fun strToFragment(str: String): KClass<out Fragment>? {
-        return when (str) {
-            "CustomViewFragment" -> CustomViewFragment::class
-            "FlexibleImageViewFragment" -> FlexibleImageViewFragment::class
-            "ProgressFragment" -> ProgressFragment::class
-            "ViewPagerFragment" -> ViewPagerFragment::class
-            "CustomTabLayoutFragment" -> CustomTabLayoutFragment::class
-            "ParallaxViewHolderFragment" -> ParallaxViewHolderFragment::class
-            "SpecialGridDecorationFragment" -> SpecialGridDecorationFragment::class
-            "RecyclerViewScrollerFragment" -> RecyclerViewScrollerFragment::class
-            else -> null
-        }
-    }
-
-    private fun strToActivity(str: String): KClass<out FragmentActivity>? {
-        return when (str) {
-            "TranslationBehaviorActivity" -> TranslationBehaviorActivity::class
-            else -> null
-        }
-    }
-
-    private fun SelectionModel.toUiModel(): MenuUiModel {
-        return MenuUiModel(
-            title,
-            imageUrl,
-            strToFragment(fragmentName),
-            strToActivity(activityName)
-        )
     }
 
     inner class Adapter : RecyclerView.Adapter<ViewHolder>() {
