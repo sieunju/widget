@@ -27,6 +27,7 @@ internal class MainActivity : AppCompatActivity() {
 
         supportFragmentManager.moveToFragment(SelectMenuFragment::class)
         onBackPressedDispatcher.addCallback(this, onBackPressCallback)
+        //
     }
 
     companion object {
