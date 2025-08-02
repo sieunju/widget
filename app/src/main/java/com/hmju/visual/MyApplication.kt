@@ -20,7 +20,7 @@ class MyApplication : Application() {
     private fun initTimber() {
         Timber.plant(object : Timber.DebugTree() {
             override fun createStackElementTag(element: StackTraceElement): String {
-                val str = StringBuilder("JLOGGER_")
+                val str = StringBuilder("Widget_")
                 try {
                     str.append(
                         element.className
