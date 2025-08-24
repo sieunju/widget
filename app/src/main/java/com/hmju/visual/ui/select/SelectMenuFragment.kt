@@ -32,6 +32,7 @@ import com.hmju.visual.ui.recyclerview.SpecialGridDecorationFragment
 import com.hmju.visual.ui.view.StackCardViewFragment
 import com.hmju.visual.ui.tablayout.CustomTabLayoutFragment
 import com.hmju.visual.ui.view.CustomViewFragment
+import com.hmju.visual.ui.view.PullToRefreshFragment
 import com.hmju.visual.ui.viewpager.ViewPagerFragment
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import hmju.http.tracking_interceptor.TrackingHttpInterceptor
@@ -76,6 +77,7 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
                 "SpecialGridDecorationFragment" -> SpecialGridDecorationFragment::class
                 "RecyclerViewScrollerFragment" -> RecyclerViewScrollerFragment::class
                 "StackCardViewFragment" -> StackCardViewFragment::class
+                "PullToRefresh" -> PullToRefreshFragment::class
                 else -> null
             },
             targetActivity = when (entity.activityName) {

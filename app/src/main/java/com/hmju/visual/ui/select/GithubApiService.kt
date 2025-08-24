@@ -10,6 +10,6 @@ import retrofit2.http.GET
 interface GithubApiService {
 
     // https://api.github.com/repos/sieunju/widget/contents/storage?ref=develop
-    @GET("/sieunju/widget/develop/storage/selection.json")
+    @GET("/sieunju/widget/main/storage/selection.json")
     suspend fun fetchSelection(): SelectionResponse
 }
