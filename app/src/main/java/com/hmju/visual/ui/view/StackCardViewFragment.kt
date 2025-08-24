@@ -1,31 +1,22 @@
 package com.hmju.visual.ui.view
 
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.snackbar.Snackbar
 import com.hmju.visual.Constants
-import com.hmju.visual.ImageLoader
 import com.hmju.visual.R
 import hmju.widget.extensions.Extensions.dp
 import hmju.widget.view.WalletStackView
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import timber.log.Timber
 
 /**
  * Description :
@@ -52,15 +43,14 @@ internal class StackCardViewFragment : Fragment(R.layout.f_stack_card) {
         super.onViewCreated(view, savedInstanceState)
         requestManager = Glide.with(this)
         val wallet = view.findViewById<WalletStackView<Card>>(R.id.vWallet)
+            .setStackCount(3)
             .setSpanStackHeight(20f.dp)
             .setStartTranslationY(150f.dp)
-            .setStackCount(3)
         val dataList = mutableListOf<Card>()
         dataList.add(Card("Index 0"))
         dataList.add(Card("Index 1"))
         dataList.add(Card("Index 2"))
-        wallet.setListener(object : WalletStackView.Listener<Card> {
-
+        wallet.setListener(object : WalletStackView.SimpleListener<Card>() {
             override fun initView(item: Card, parent: ViewGroup): View {
                 val childView = LayoutInflater.from(parent.context)
                     .inflate(R.layout.v_wallet_card, parent, false)

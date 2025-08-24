@@ -222,11 +222,11 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
                             WebpDrawable::class.java,
                             WebpDrawableTransformation(FitCenter())
                         )
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                         .into(ivThumb)
                 } else {
                     requestManager.load(imageThumb)
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                         .into(ivThumb)
                 }
 

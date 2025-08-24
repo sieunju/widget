@@ -28,6 +28,20 @@ class WalletStackView<T> @JvmOverloads constructor(
     defStyleAttr: Int = -1
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
+    open class SimpleListener<T> : Listener<T> {
+        override fun initView(item: T, parent: ViewGroup): View {
+            throw IllegalStateException("Required Method")
+        }
+
+        override fun onItemClick(item: T) {
+
+        }
+
+        override fun onStartAniCompleted() {
+
+        }
+    }
+
     interface Listener<T> {
         fun initView(item: T, parent: ViewGroup): View
 
@@ -144,8 +158,7 @@ class WalletStackView<T> @JvmOverloads constructor(
             view.translationY = startTranslationY
             viewList.add(ViewWrapperData(view, data))
             addView(view, 0)
-            val targetAlpha = 1.0f - (i * alphaIncrement)
-            view.animate().alpha(targetAlpha)
+            view.animate().alpha(getIndexAlpha(i))
                 .translationY(-spanStackHeight * i)
                 .setStartDelay(50L * i)
                 .setDuration(500)
