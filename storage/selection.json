@@ -54,6 +54,11 @@
       "title" : "StackCard",
       "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_stack_card.webp",
       "fragmentName" : "StackCardViewFragment"
+    },
+    {
+      "title" : "PullToRefresh",
+      "imageUrl" : "https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_stack_card.webp",
+      "fragmentName" : "PullToRefresh"
     }
   ]
 }
