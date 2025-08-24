@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
@@ -81,6 +82,13 @@ class WalletStackView<T> @JvmOverloads constructor(
             Resources.getSystem().displayMetrics
         ).toInt()
 
+    private val Float.dp: Float
+        get() = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            this,
+            Resources.getSystem().displayMetrics
+        )
+
     init {
         clipToPadding = false
         clipChildren = false
@@ -153,8 +161,11 @@ class WalletStackView<T> @JvmOverloads constructor(
             val data = virtualList[i]
             val view = listener!!.initView(data.item, this)
             view.setTouchDetector(data)
-            val scale = 1.0f - (i * scaleIncrement)
-            view.setScale(scale)
+            // val scale = 1.0f - (i * scaleIncrement)
+            val margin = getIndexMargin(i)
+            view.setMargin(margin)
+            LogD("Margin Index:${i} Margin:${margin}")
+            // view.setScale(scale)
             view.translationY = startTranslationY
             viewList.add(ViewWrapperData(view, data))
             addView(view, 0)
@@ -177,6 +188,18 @@ class WalletStackView<T> @JvmOverloads constructor(
     private fun View.setScale(newScale: Float) {
         scaleX = newScale
         scaleY = newScale
+    }
+
+    private fun View.setMargin(horizontalMargin: Int) {
+        val layoutParams = this.layoutParams as? LayoutParams ?: LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.WRAP_CONTENT
+            )
+        layoutParams.marginStart = horizontalMargin
+        layoutParams.marginEnd = horizontalMargin
+        layoutParams.startToStart = LayoutParams.PARENT_ID
+        layoutParams.endToEnd = LayoutParams.PARENT_ID
+        this.layoutParams = layoutParams
     }
 
     private fun View.setTouchDetector(item: WalletData<T>) {
@@ -258,20 +281,21 @@ class WalletStackView<T> @JvmOverloads constructor(
             val backView = viewList[i].view
 
             // 현재 인덱스에서의 기본값
-            val fromScale = 1.0f - (i * scaleIncrement)
+            val fromMargin = getIndexMargin(i)
             val fromTransY = -spanStackHeight * i
             val fromAlpha = 1.0f - (i * alphaIncrement)
 
             // 한 단계 위로 올라갔을 때의 값 (i-1 위치)
-            val toScale = 1.0f - ((i - 1) * scaleIncrement)
+            val toMargin = getIndexMargin(i - 1)
             val toTransY = -spanStackHeight * (i - 1)
             val toAlpha = 1.0f - ((i - 1) * alphaIncrement)
 
             // 보간 계산
-            val interpolatedScale = lerp(fromScale, toScale, progress)
+            val interpolatedMargin = lerp(fromMargin.toFloat(), toMargin.toFloat(), progress).toInt()
             val interpolatedTransY = lerp(fromTransY, toTransY, progress)
             val interpolatedAlpha = lerp(fromAlpha, toAlpha, progress)
-            backView.setScale(interpolatedScale)
+
+            backView.setMargin(interpolatedMargin)
             backView.translationY = interpolatedTransY
             backView.alpha = interpolatedAlpha
         }
@@ -305,6 +329,11 @@ class WalletStackView<T> @JvmOverloads constructor(
         return 1.0f - (index * scaleIncrement)
     }
 
+    private fun getIndexMargin(index: Int): Int {
+        // index에 따라 margin 값 증가 (dp 단위)
+        return (index * scaleIncrement * 100).dp.toInt()
+    }
+
     private fun getIndexTranslationY(index: Int): Float {
         return -spanStackHeight * index
     }
@@ -333,6 +362,11 @@ class WalletStackView<T> @JvmOverloads constructor(
         val newView = listener!!.initView(newItem.item, this)
         newView.setTouchDetector(newItem)
         newView.alpha = 0f
+
+        // 새 카드에 마진 설정 (맨 뒤 위치)
+        val newCardMargin = getIndexMargin(viewList.size)
+        newView.setMargin(newCardMargin)
+
         viewList.add(ViewWrapperData(newView, newItem))
         addView(newView, 0)
         resetCards()
@@ -345,13 +379,16 @@ class WalletStackView<T> @JvmOverloads constructor(
         val aniTotalSize = viewList.size
         for (i in viewList.indices) {
             val view = viewList[i].view
+            val margin = getIndexMargin(i)
+
+            // 마진 변경은 즉시 적용
+            view.setMargin(margin)
+
             view.animate()
                 .setDuration(100)
                 .alpha(getIndexAlpha(i))
                 .translationX(0f)
                 .translationY(getIndexTranslationY(i))
-                .scaleX(getIndexScale(i))
-                .scaleY(getIndexScale(i))
                 .rotation(0f)
                 .setInterpolator(EaseOutInterpolator())
                 .withEndAction {
@@ -371,5 +408,12 @@ class WalletStackView<T> @JvmOverloads constructor(
     companion object {
         const val CLICK_THRESHOLD_DP: Int = 10
         const val CLICK_DURATION_THRESHOLD: Long = 200
+        private const val TAG = "WalletStackView"
+        private const val DEBUG = true
+        fun LogD(msg: String) {
+            if (DEBUG) {
+                Log.d(TAG, msg)
+            }
+        }
     }
 }
