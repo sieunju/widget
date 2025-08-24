@@ -77,7 +77,7 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
                 "SpecialGridDecorationFragment" -> SpecialGridDecorationFragment::class
                 "RecyclerViewScrollerFragment" -> RecyclerViewScrollerFragment::class
                 "StackCardViewFragment" -> StackCardViewFragment::class
-                "PullToRefresh" -> PullToRefreshFragment::class
+                "PullToRefreshFragment" -> PullToRefreshFragment::class
                 else -> null
             },
             targetActivity = when (entity.activityName) {
