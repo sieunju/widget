@@ -3,6 +3,7 @@ package hmju.widget.view
 import android.content.Context
 import android.content.res.Resources
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
@@ -16,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 /**
- * Description :
+ * Description : PullToRefreshView..
  *
  * Created by juhongmin on 2025. 8. 24.
  */
@@ -25,12 +26,23 @@ class PullToRefreshView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
-    interface OnRefreshListener {
+
+    companion object {
+        private const val TAG = "PullToRefreshView"
+        private const val DEBUG = true
+        fun LogD(msg: String) {
+            if (DEBUG) {
+                Log.d(TAG, msg)
+            }
+        }
+    }
+
+    interface Listener {
         fun onRefresh()
         fun onPullProgress(progress: Float) // 0.0f ~ 1.0f
     }
 
-    private var onRefreshListener: OnRefreshListener? = null
+    private var onRefreshListener: Listener? = null
     private var scrollableView: View? = null
     private var refreshHeaderView: View? = null
 
@@ -108,12 +120,15 @@ class PullToRefreshView @JvmOverloads constructor(
         }
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        LogD("dispatchTouchEvent ${ev.action} ${ev.y} ${isDragging}")
+
         when (ev.action) {
             MotionEvent.ACTION_DOWN -> {
                 startY = ev.y
                 lastY = ev.y
                 isDragging = false
+                isPulling = false
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -122,37 +137,27 @@ class PullToRefreshView @JvmOverloads constructor(
                 // 아래로 당기는 제스처이고, 스크롤뷰가 맨 위에 있을 때
                 if (deltaY > 0 && isScrollViewAtTop() && !isRefreshing) {
                     isDragging = true
-                    return true // 터치 이벤트를 가로챔
-                }
-            }
-        }
-        return super.onInterceptTouchEvent(ev)
-    }
+                    isPulling = true
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        when (event.action) {
-            MotionEvent.ACTION_MOVE -> {
-                val deltaY = event.y - startY
-
-                if (isDragging && deltaY > 0) {
                     // 당기는 거리 계산 (감쇠 효과 적용)
                     currentPullDistance = calculatePullDistance(deltaY)
 
-                    // 헤더 뷰 위치 업데이트
+                    // 헤더 뷰와 스크롤 뷰 위치 업데이트
                     updateRefreshHeader(currentPullDistance)
 
                     // 진행률 콜백
                     val progress = (currentPullDistance / refreshTriggerDistance).coerceAtMost(1f)
                     onRefreshListener?.onPullProgress(progress)
 
-                    isPulling = true
+                    // 터치 이벤트를 소비하여 하위 뷰로 전달하지 않음
                     return true
                 }
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                if (isDragging) {
+                if (isDragging && isPulling) {
                     isDragging = false
+                    isPulling = false
 
                     if (currentPullDistance >= refreshTriggerDistance && !isRefreshing) {
                         // 새로고침 트리거
@@ -161,12 +166,13 @@ class PullToRefreshView @JvmOverloads constructor(
                         // 원래 위치로 복귀
                         resetPull()
                     }
-                    isPulling = false
+
+                    // 터치 이벤트를 소비
                     return true
                 }
             }
         }
-        return super.onTouchEvent(event)
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun isScrollViewAtTop(): Boolean {
@@ -200,14 +206,17 @@ class PullToRefreshView @JvmOverloads constructor(
     private fun updateRefreshHeader(pullDistance: Float) {
         refreshHeaderView?.let { header ->
             // 헤더를 점진적으로 나타냄
-            val translationY = -refreshHeaderHeight + pullDistance
-            header.translationY = translationY.coerceAtMost(0f)
+            val headerTranslationY = -refreshHeaderHeight + pullDistance
+            header.translationY = headerTranslationY.coerceAtMost(0f)
 
             // 추가 효과: 회전, 스케일 등
             val progress = (pullDistance / refreshTriggerDistance).coerceAtMost(1f)
             header.alpha = progress
-            header.scaleX = 0.8f + (0.2f * progress)
-            header.scaleY = 0.8f + (0.2f * progress)
+        }
+
+        // ScrollView도 함께 아래로 이동
+        scrollableView?.let { scrollView ->
+            scrollView.translationY = pullDistance
         }
     }
 
@@ -215,14 +224,23 @@ class PullToRefreshView @JvmOverloads constructor(
         isRefreshing = true
 
         // 헤더를 완전히 보이게 애니메이션
-        refreshHeaderView?.animate()
-            ?.translationY(0f)
-            ?.alpha(1f)
-            ?.scaleX(1f)
-            ?.scaleY(1f)
-            ?.setDuration(200)
-            ?.setInterpolator(DecelerateInterpolator())
-            ?.start()
+        refreshHeaderView?.also {
+            it.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setDuration(200)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+        }
+
+        // ScrollView를 헤더 높이만큼 아래로 이동
+        scrollableView?.also {
+            it.animate()
+                .translationY(refreshHeaderHeight.toFloat())
+                .setDuration(200)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+        }
 
         // 새로고침 콜백 호출
         onRefreshListener?.onRefresh()
@@ -230,21 +248,30 @@ class PullToRefreshView @JvmOverloads constructor(
 
     private fun resetPull() {
         // 원래 상태로 복귀 애니메이션
-        refreshHeaderView?.animate()
-            ?.translationY(-refreshHeaderHeight.toFloat())
-            ?.alpha(0f)
-            ?.scaleX(0.8f)
-            ?.scaleY(0.8f)
-            ?.setDuration(200)
-            ?.setInterpolator(DecelerateInterpolator())
-            ?.start()
+        refreshHeaderView?.also {
+            it.animate()
+                .translationY(-refreshHeaderHeight.toFloat())
+                .alpha(0f)
+                .setDuration(200)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+        }
+
+        // ScrollView도 원래 위치로 복귀
+        scrollableView?.also {
+            it.animate()
+                .translationY(0f)
+                .setDuration(200)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+        }
 
         currentPullDistance = 0f
         onRefreshListener?.onPullProgress(0f)
     }
 
     // Public methods
-    fun setOnRefreshListener(listener: OnRefreshListener?) {
+    fun setOnRefreshListener(listener: Listener) {
         onRefreshListener = listener
     }
 
@@ -254,15 +281,17 @@ class PullToRefreshView @JvmOverloads constructor(
         isRefreshing = refreshing
 
         if (refreshing) {
-            // 새로고침 시작
-            refreshHeaderView?.let { header ->
-                header.translationY = 0f
-                header.alpha = 1f
-                header.scaleX = 1f
-                header.scaleY = 1f
+            // 새로고침 시작 - 헤더와 ScrollView 위치 설정
+            refreshHeaderView?.also {
+                it.translationY = 0f
+                it.alpha = 1f
+            }
+
+            scrollableView?.also {
+                it.translationY = refreshHeaderHeight.toFloat()
             }
         } else {
-            // 새로고침 완료
+            // 새로고침 완료 - 원래 위치로 복귀
             resetPull()
         }
     }

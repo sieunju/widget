@@ -17,7 +17,8 @@
             android:background="#F0F0F0"
             android:gravity="center"
             android:orientation="horizontal"
-            android:tag="refresh_header">
+            android:tag="refresh_header"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ProgressBar
                 android:layout_width="24dp"
@@ -34,7 +35,8 @@
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
