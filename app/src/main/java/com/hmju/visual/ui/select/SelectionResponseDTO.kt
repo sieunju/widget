@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  * Created by juhongmin on 2023/01/01
  */
 @Serializable
-data class SelectionResponse(
+data class SelectionResponseDTO(
     @SerialName("payload")
-    val list : List<SelectionEntity>
+    val list : List<SelectionDTO>
 )

@@ -63,7 +63,7 @@ dependencies {
     implementation(libs.coroutines.android)
 
     implementation(libs.glide.base)
-    implementation(libs.glide.okhttp)
+    // implementation(libs.glide.okhttp)
     implementation(libs.glide.webp)
     kapt(libs.glide.compiler)
 

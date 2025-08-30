@@ -64,7 +64,7 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
         val targetFragment: KClass<out Fragment>? = null,
         val targetActivity: KClass<out FragmentActivity>? = null
     ) {
-        constructor(entity: SelectionEntity) : this(
+        constructor(entity: SelectionDTO) : this(
             title = entity.title,
             imageThumb = entity.imageUrl,
             targetFragment = when (entity.fragmentName) {

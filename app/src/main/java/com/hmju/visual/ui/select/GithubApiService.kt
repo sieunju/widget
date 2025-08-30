@@ -11,5 +11,5 @@ interface GithubApiService {
 
     // https://api.github.com/repos/sieunju/widget/contents/storage?ref=develop
     @GET("/sieunju/widget/main/storage/selection.json")
-    suspend fun fetchSelection(): SelectionResponse
+    suspend fun fetchSelection(): SelectionResponseDTO
 }
