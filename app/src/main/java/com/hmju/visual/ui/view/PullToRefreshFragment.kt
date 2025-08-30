@@ -2,6 +2,7 @@ package com.hmju.visual.ui.view
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -24,24 +25,32 @@ internal class PullToRefreshFragment : Fragment(R.layout.f_pull_to_refresh) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requestManager = Glide.with(this)
+        val llRefresh = view.findViewById<LinearLayoutCompat>(R.id.llRefresh)
         val refresh = view.findViewById<PullToRefreshView>(R.id.vRefresh)
-        refresh.setRefreshTriggerDistance(100)
-            .setMaxPullDistance(250)
+
+        refresh
+            .setMaxPullDistance(240)
             .setRefreshHeaderHeight(80)
-            .setOnRefreshListener(object : PullToRefreshView.Listener {
+            .setListener(object : PullToRefreshView.Listener {
                 override fun onRefresh() {
                     Timber.d("onRefresh!")
                     lifecycleScope.launch {
                         delay(1500)
                         refresh.setRefreshing(false)
+                        refresh.addView(View(context))
                     }
                 }
 
                 override fun onPullProgress(progress: Float) {
-                    // Timber.d("onPullProgress! ${progress}")
+                    Timber.d("onPullProgress! ${progress}")
+                    llRefresh.alpha = progress
                 }
             })
 
+        lifecycleScope.launch {
+            delay(2000)
+            refresh.setRefreshing(true)
+        }
     }
 
 }
