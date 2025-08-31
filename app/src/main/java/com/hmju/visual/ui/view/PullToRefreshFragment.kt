@@ -33,7 +33,7 @@ internal class PullToRefreshFragment : Fragment(R.layout.f_pull_to_refresh) {
         val tvTitle = view.findViewById<AppCompatTextView>(R.id.tvTitle)
         tvTitle.text = refreshText.random()
         refresh
-            .setTriggerDistance((100 + 10).toInt())
+            // .setTriggerDistance((100 + 10).toInt())
             .setRefreshHeaderHeight(100)
             .setListener(object : PullToRefreshView.Listener {
                 override fun onRefresh() {
@@ -41,6 +41,7 @@ internal class PullToRefreshFragment : Fragment(R.layout.f_pull_to_refresh) {
                     lifecycleScope.launch {
                         delay(500)
                         refresh.setRefresh(false)
+                        delay(500)
                         tvTitle.text = refreshText.random()
                     }
                 }

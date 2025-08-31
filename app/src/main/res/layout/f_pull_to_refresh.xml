@@ -8,7 +8,6 @@
         android:id="@+id/vRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#eeeeee"
         app:layout_constraintTop_toTopOf="parent">
 
         <!-- 새로고침 헤더 뷰 (숨겨져 있다가 당길 때 나타남) -->
