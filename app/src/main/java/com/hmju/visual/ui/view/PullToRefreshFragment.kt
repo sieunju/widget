@@ -2,6 +2,7 @@ package com.hmju.visual.ui.view
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -22,22 +23,25 @@ internal class PullToRefreshFragment : Fragment(R.layout.f_pull_to_refresh) {
 
     private lateinit var requestManager: RequestManager
 
+    private val refreshText = listOf("당겨서 새로고침", "당신의 맞춤추첨", "이번에 갱신?")
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requestManager = Glide.with(this)
         val llRefresh = view.findViewById<LinearLayoutCompat>(R.id.llRefresh)
         val refresh = view.findViewById<PullToRefreshView>(R.id.vRefresh)
-
+        val tvTitle = view.findViewById<AppCompatTextView>(R.id.tvTitle)
+        tvTitle.text = refreshText.random()
         refresh
-            .setMaxPullDistance(240)
-            .setRefreshHeaderHeight(80)
+            .setTriggerDistance((100 + 10).toInt())
+            .setRefreshHeaderHeight(100)
             .setListener(object : PullToRefreshView.Listener {
                 override fun onRefresh() {
                     Timber.d("onRefresh!")
                     lifecycleScope.launch {
-                        delay(1500)
-                        refresh.setRefreshing(false)
-                        refresh.addView(View(context))
+                        delay(500)
+                        refresh.setRefresh(false)
+                        tvTitle.text = refreshText.random()
                     }
                 }
 
@@ -46,11 +50,6 @@ internal class PullToRefreshFragment : Fragment(R.layout.f_pull_to_refresh) {
                     llRefresh.alpha = progress
                 }
             })
-
-        lifecycleScope.launch {
-            delay(2000)
-            refresh.setRefreshing(true)
-        }
     }
 
 }

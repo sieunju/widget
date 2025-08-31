@@ -8,14 +8,15 @@
         android:id="@+id/vRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#eeeeee"
         app:layout_constraintTop_toTopOf="parent">
 
         <!-- 새로고침 헤더 뷰 (숨겨져 있다가 당길 때 나타남) -->
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/llRefresh"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:background="#F0F0F0"
+            android:layout_height="100dp"
+            android:background="#eeeeee"
             android:gravity="center"
             android:orientation="horizontal"
             android:tag="refresh_header"
@@ -27,9 +28,9 @@
                 android:layout_marginEnd="8dp" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="당겨서 새로고침"
                 android:textSize="14sp" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -37,6 +38,7 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.LinearLayoutCompat

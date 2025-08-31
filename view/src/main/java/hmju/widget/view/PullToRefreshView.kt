@@ -36,7 +36,14 @@ class PullToRefreshView @JvmOverloads constructor(
         }
     }
 
+    enum class ScrollType {
+        NONE, TRANSLATION
+    }
+
     interface Listener {
+        /**
+         * Call Refresh
+         */
         fun onRefresh()
 
         /**
@@ -45,19 +52,29 @@ class PullToRefreshView @JvmOverloads constructor(
         fun onPullProgress(progress: Float) // 0.0f ~ 1.0f
     }
 
+    /**
+     * Scroll 할때 상태에 대한 데이터 모델
+     */
+    private class State {
+        var hasRefresh: Boolean = false
+        var hasPulling: Boolean = false
+        var pullDistance: Float = 0.0f
+        var startY: Float = 0f
+        var hasDragging: Boolean = false
+    }
+
+    // [Variable]
     private var listener: Listener? = null
+    private var scrollType: ScrollType = ScrollType.NONE
     private var vScroll: View? = null
     private var vRefresh: View? = null
-    private var triggerDistance = 150.dp
-    private var maxPullDistance = 300.dp
-    private var refreshHeaderHeight = 80.dp // RefreshHeader 고정이어야 한다.
+    private var refreshHeaderHeight = 0
+    private var triggerDistance = 0
+    private var maxPullDistance = 0
+    private var scrollResistance = 0.3f
+    // [Variable]
 
-    private var isRefreshing = false
-    private var isPulling = false
-    private var currentPullDistance = 0f
-
-    private var startY = 0f
-    private var isDragging = false
+    private val state: State by lazy { State() }
 
     private val Int.dp: Int
         get() = TypedValue.applyDimension(
@@ -66,26 +83,40 @@ class PullToRefreshView @JvmOverloads constructor(
             Resources.getSystem().displayMetrics
         ).toInt()
 
-    fun setListener(listener: Listener) {
-        this.listener = listener
+    init {
+        setRefreshHeaderHeight(100)
+        setTriggerDistance((100 * 1.2f).toInt())
+        setMaxPullDistance((100 * 1.2f).toInt())
+
     }
 
-    fun setRefreshing(refreshing: Boolean) {
-        if (isRefreshing == refreshing) return
-        isRefreshing = refreshing
-        if (refreshing) {
+    fun setRefresh(hasRefresh: Boolean) {
+        if (state.hasRefresh == hasRefresh) return
+        state.hasRefresh = hasRefresh
+        if (hasRefresh) {
             handleStartRefreshWithAni()
         } else {
             handleResetViewWithAni()
         }
     }
 
-    private fun setRefreshTriggerDistance(distance: Int): PullToRefreshView {
+    fun setScrollType(type: ScrollType): PullToRefreshView {
+        scrollType = type
+        return this
+    }
+
+    fun setListener(listener: Listener): PullToRefreshView {
+        this.listener = listener
+        return this
+    }
+
+    fun setTriggerDistance(distance: Int): PullToRefreshView {
         triggerDistance = distance.dp
         return this
     }
 
     /**
+     * Refresh 가능한 Scroll Distance
      *
      */
     fun setMaxPullDistance(distance: Int): PullToRefreshView {
@@ -95,7 +126,6 @@ class PullToRefreshView @JvmOverloads constructor(
 
     fun setRefreshHeaderHeight(height: Int): PullToRefreshView {
         refreshHeaderHeight = height.dp
-        setRefreshTriggerDistance((height * 1.5).toInt())
         setupRefreshHeader()
         return this
     }
@@ -122,15 +152,16 @@ class PullToRefreshView @JvmOverloads constructor(
     }
 
     private fun setupRefreshHeader() {
-        vRefresh?.also { header ->
-            header.translationY = -refreshHeaderHeight.toFloat()
-            header.visibility = View.VISIBLE
+        if (scrollType == ScrollType.TRANSLATION) {
+            vRefresh?.also {
+                it.translationY = -refreshHeaderHeight.toFloat()
+                it.visibility = View.VISIBLE
+            }
         }
     }
 
     override fun onViewAdded(view: View?) {
         super.onViewAdded(view)
-        LogD("onViewAdded ${view}")
         findScrollView(view)
         findRefreshView(view)
     }
@@ -146,39 +177,38 @@ class PullToRefreshView @JvmOverloads constructor(
         // LogD("dispatchTouchEvent $actionText ${ev.y.toInt()} ${isDragging}")
         when (ev.action) {
             MotionEvent.ACTION_DOWN -> {
-                startY = ev.y
-                isDragging = false
-                isPulling = false
+                state.startY = ev.y
+                state.hasDragging = false
+                state.hasPulling = false
             }
 
             MotionEvent.ACTION_MOVE -> {
-                val deltaY = ev.y - startY
-                // Scroll Down
-                if (deltaY > 0 && isScrollViewAtTop() && !isRefreshing) {
-                    isDragging = true
-                    isPulling = true
-
-                    currentPullDistance = calculatePullDistance(deltaY)
-                    updateUi(currentPullDistance)
-                    val progress = (currentPullDistance / triggerDistance).coerceAtMost(1f)
+                val deltaY = ev.y - state.startY
+                if (deltaY > 0 && isScrollViewAtTop() && !state.hasRefresh) {
+                    state.hasDragging = true
+                    state.hasPulling = true
+                    state.pullDistance = calculatePullDistance(deltaY)
+                    if (scrollType == ScrollType.TRANSLATION) {
+                        vRefresh?.translationY = 0f.coerceAtMost(-refreshHeaderHeight + state.pullDistance)
+                    }
+                    vScroll?.translationY = Math.min(state.pullDistance,-refreshHeaderHeight * 1.5f)
+                    val progress = (state.pullDistance / triggerDistance).coerceAtMost(1f)
                     listener?.onPullProgress(progress)
                     return true
                 }
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                startY = ev.y
-                if (isDragging && isPulling) {
-                    isDragging = false
-                    isPulling = false
-
-                    if (currentPullDistance >= triggerDistance && !isRefreshing) {
+                state.startY = ev.y
+                if (state.hasDragging && state.hasPulling) {
+                    state.hasDragging = false
+                    state.hasPulling = false
+                    LogD("PullDistance ${state.pullDistance} ${triggerDistance}")
+                    if (state.pullDistance >= triggerDistance && !state.hasRefresh) {
                         handleStartRefreshWithAni()
                     } else {
                         handleResetViewWithAni()
                     }
-
-                    // 터치 이벤트를 소비
                     return true
                 }
             }
@@ -193,7 +223,7 @@ class PullToRefreshView @JvmOverloads constructor(
             is RecyclerView -> {
                 when (val layoutManager = view.layoutManager) {
                     is LinearLayoutManager -> layoutManager.findFirstVisibleItemPosition() == 0
-                    else -> !view.canScrollVertically(-1) // 위로 스크롤 불가능한 상태
+                    else -> !view.canScrollVertically(-1)
                 }
             }
 
@@ -201,31 +231,23 @@ class PullToRefreshView @JvmOverloads constructor(
         }
     }
 
-    /**
-     * 당길때 스크롤 저항
-     */
     private fun calculatePullDistance(rawDelta: Float): Float {
-        val resistance = 0.4f
-        return (rawDelta * resistance).coerceAtMost(maxPullDistance.toFloat())
-    }
-
-    private fun updateUi(pullDistance: Float) {
-        // Math.min
-        vRefresh?.translationY = 0f.coerceAtMost(-refreshHeaderHeight + pullDistance)
-        // 최대 Refresh
-        vScroll?.translationY = pullDistance.coerceAtMost(refreshHeaderHeight * 1.5f)
+        return (rawDelta * scrollResistance).coerceAtMost(maxPullDistance.toFloat())
     }
 
     private fun handleStartRefreshWithAni() {
-        isRefreshing = true
-        vRefresh?.also {
-            it.animate()
-                .translationY(0f)
-                .alpha(1f)
-                .setDuration(200)
-                .setInterpolator(FastOutSlowInInterpolator())
-                .start()
+        state.hasRefresh = true
+        if (scrollType == ScrollType.TRANSLATION) {
+            vRefresh?.also {
+                it.animate()
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(200)
+                    .setInterpolator(FastOutSlowInInterpolator())
+                    .start()
+            }
         }
+
         vScroll?.also {
             it.animate()
                 .translationY(refreshHeaderHeight.toFloat())
@@ -240,14 +262,17 @@ class PullToRefreshView @JvmOverloads constructor(
      * 뷰 초기화 처리 함수 자연스러운 애니메이션으로 처리
      */
     private fun handleResetViewWithAni() {
-        vRefresh?.also {
-            it.animate()
-                .translationY(-refreshHeaderHeight.toFloat())
-                .alpha(0f)
-                .setDuration(200)
-                .setInterpolator(FastOutSlowInInterpolator())
-                .start()
+        if (scrollType == ScrollType.TRANSLATION) {
+            vRefresh?.also {
+                it.animate()
+                    .translationY(-refreshHeaderHeight.toFloat())
+                    .alpha(0f)
+                    .setDuration(200)
+                    .setInterpolator(FastOutSlowInInterpolator())
+                    .start()
+            }
         }
+
         vScroll?.also {
             it.animate()
                 .translationY(0f)
@@ -255,7 +280,7 @@ class PullToRefreshView @JvmOverloads constructor(
                 .setInterpolator(FastOutSlowInInterpolator())
                 .start()
         }
-        currentPullDistance = 0f
+        state.pullDistance = 0f
         listener?.onPullProgress(0f)
     }
 }
