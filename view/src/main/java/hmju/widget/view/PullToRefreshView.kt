@@ -282,10 +282,8 @@ class PullToRefreshView @JvmOverloads constructor(
                     PropertyValuesHolder.ofFloat(View.ALPHA, 0f)
                 )
             } else {
-                ObjectAnimator.ofPropertyValuesHolder(
-                    it,
-                    PropertyValuesHolder.ofFloat(View.ALPHA, 0f)
-                )
+                // ScrollType None은 사용자에게 비즈니스 로직을 처리합니다.
+                null
             }
         }?.let { animators.add(it) }
 

@@ -10,34 +10,31 @@
         android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- 새로고침 헤더 뷰 (숨겨져 있다가 당길 때 나타남) -->
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/llRefresh"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:background="#eeeeee"
-            android:gravity="center"
-            android:orientation="horizontal"
+            android:layout_height="140dp"
             android:tag="refresh_header"
+            android:id="@+id/clRefreshHeader"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ProgressBar
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="8dp" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/vBgRefresh"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp" />
+                android:alpha="0"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_asyncUpdates="automatic"
+                app:lottie_cacheComposition="true"
+                app:lottie_repeatCount="-1"
+                app:lottie_repeatMode="restart" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@android:color/transparent"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.LinearLayoutCompat

@@ -74,7 +74,8 @@ dependencies {
     implementation(libs.retrofit.okhttp)
     implementation(libs.retrofit.base)
     implementation libs.retrofit.kotlinx
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
+    implementation(libs.kotlinx.serialization)
+    implementation(libs.lottie)
 
     implementation libs.timber
 
