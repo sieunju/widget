@@ -1,0 +1,74 @@
+[
+  {
+    "type": "fragment",
+    "title": "CustomView",
+    "contentsUrl": "storage/example_view.webp",
+    "routerName": "CustomViewFragment"
+  },
+  {
+    "type": "fragment",
+    "title": "Gesture-FlexibleImageEditView",
+    "contentsUrl": "storage/example_flexible.webp",
+    "routerName": "FlexibleImageViewFragment"
+  },
+  {
+    "type": "fragment",
+    "title": "ProgressView",
+    "contentsUrl": "storage/example_progress.webp",
+    "routerName": "ProgressFragment"
+  },
+  {
+    "type": "fragment",
+    "title": "ViewPager-LineIndicator",
+    "contentsUrl": "storage/example_viewpager.webp",
+    "routerName": "ViewPagerFragment"
+  },
+  {
+    "type": "fragment",
+    "title": "ViewPager-TabLayout",
+    "contentsUrl": "storage/example_tab_layout.webp",
+    "routerName": "CustomTabLayoutFragment"
+  },
+  {
+    "type": "fragment",
+    "title": "RecyclerView-ParallaxViewHolder",
+    "contentsUrl": "storage/example_parallax.webp",
+    "routerName": "ParallaxViewHolderFragment"
+  },
+  {
+    "type": "fragment",
+    "title": "RecyclerView-SpecialGrid",
+    "contentsUrl": "storage/example_special_grid_decoration.webp",
+    "routerName": "SpecialGridDecorationFragment"
+  },
+  {
+    "type": "fragment",
+    "title": "RecyclerView-Scroller",
+    "contentsUrl": "storage/example_recyclerview_scroller.webp",
+    "routerName": "RecyclerViewScrollerFragment"
+  },
+  {
+    "type": "activity",
+    "title": "Coordinator-TranslationBehavior",
+    "contentsUrl": "storage/example_translation_behavior.webp",
+    "routerName": "TranslationBehaviorActivity"
+  },
+  {
+    "type": "activity",
+    "title": "CoordinatorDynamicCoordi",
+    "contentsUrl": "storage/example_dynamic_coordinator.webp",
+    "routerName": "DynamicCoordinatorActivity"
+  },
+  {
+    "type": "fragment",
+    "title": "StackCard",
+    "contentsUrl": "storage/example_stack_card.webp",
+    "routerName": "StackCardViewFragment"
+  },
+  {
+    "type": "fragment",
+    "title": "PullToRefresh",
+    "contentsUrl": "storage/example_stack_card.webp",
+    "routerName": "PullToRefreshFragment"
+  }
+]
