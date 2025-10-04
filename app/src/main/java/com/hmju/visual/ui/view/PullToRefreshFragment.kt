@@ -2,6 +2,7 @@ package com.hmju.visual.ui.view
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -23,7 +24,7 @@ internal class PullToRefreshFragment : Fragment(R.layout.f_pull_to_refresh) {
 
     private lateinit var requestManager: RequestManager
 
-    private val lottieList = listOf(
+    private val lottieList = arrayListOf(
         R.raw.lottie_example_1,
         R.raw.lottie_example_2,
         R.raw.lottie_example_3,
@@ -37,7 +38,6 @@ internal class PullToRefreshFragment : Fragment(R.layout.f_pull_to_refresh) {
         val clRefreshHeader = view.findViewById<ConstraintLayout>(R.id.clRefreshHeader)
         val vBgRefresh = view.findViewById<LottieAnimationView>(R.id.vBgRefresh)
         refresh
-            .setScrollType(PullToRefreshView.ScrollType.TRANSLATION)
             .setRefreshHeaderHeight(140)
             .setTriggerDistance(140)
             .setMaxPullDistance(160)
@@ -45,7 +45,7 @@ internal class PullToRefreshFragment : Fragment(R.layout.f_pull_to_refresh) {
                 override fun onRefresh() {
                     Timber.d("onRefresh!")
                     lifecycleScope.launch {
-                        delay(500)
+                        // delay(500)
                         handleRandomLottie(vBgRefresh)
                         refresh.setRefresh(false)
                         delay(500)
@@ -53,7 +53,6 @@ internal class PullToRefreshFragment : Fragment(R.layout.f_pull_to_refresh) {
                 }
 
                 override fun onPullProgress(progress: Float) {
-                    Timber.d("onPullProgress! ${progress}")
                     if (progress == 0f) {
                         vBgRefresh.pauseAnimation()
                     } else if (!vBgRefresh.isAnimating) {
@@ -68,14 +67,14 @@ internal class PullToRefreshFragment : Fragment(R.layout.f_pull_to_refresh) {
                 }
             })
         handleRandomLottie(vBgRefresh)
-        vBgRefresh.addLottieOnCompositionLoadedListener {
-            Timber.d("BG Lottie ${it}")
-        }
     }
 
     private fun handleRandomLottie(bg: LottieAnimationView) {
         bg.cancelAnimation()
-        bg.setAnimation(lottieList.random())
+        val lottieRes = lottieList.first()
+        lottieList.removeAt(0)
+        bg.setAnimation(lottieRes)
+        lottieList.add(lottieRes)
         bg.alpha = 0f
         bg.scaleX = 0.8f
         bg.scaleY = 0.8f

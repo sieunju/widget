@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.util.AttributeSet
@@ -11,6 +12,7 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.ScrollView
@@ -34,7 +36,7 @@ class PullToRefreshView @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "PullToRefreshView"
-        private const val DEBUG = true
+        private const val DEBUG = false
         private fun LogD(msg: String) {
             if (DEBUG) {
                 Log.d(TAG, msg)
@@ -176,20 +178,93 @@ class PullToRefreshView @JvmOverloads constructor(
         findRefreshView(view)
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+//    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+//        when (ev.action) {
+//            MotionEvent.ACTION_DOWN -> {
+//                state.startY = ev.y
+//                state.hasDragging = false
+//                state.hasPulling = false
+//            }
+//
+//            MotionEvent.ACTION_MOVE -> {
+//                val deltaY = ev.y - state.startY
+//                if (deltaY > 0 && isScrollViewAtTop() && !state.hasRefresh) {
+//                    state.hasDragging = true
+//                    state.hasPulling = true
+//                    state.pullDistance = calculatePullDistance(deltaY)
+//                    if (scrollType == ScrollType.TRANSLATION) {
+//                        vRefresh?.translationY =
+//                            0f.coerceAtMost(-refreshHeaderHeight + state.pullDistance)
+//                    }
+//                    vScroll?.translationY = Math.min(state.pullDistance, maxPullDistance.toFloat())
+//                    val progress = (state.pullDistance / triggerDistance).coerceAtMost(1f)
+//                    listener?.onPullProgress(progress)
+//                    return true
+//                }
+//            }
+//
+//            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+//                state.startY = ev.y
+//                if (state.hasDragging && state.hasPulling) {
+//                    state.hasDragging = false
+//                    state.hasPulling = false
+//                    if (state.pullDistance >= triggerDistance && !state.hasRefresh) {
+//                        handleStartRefreshWithAni()
+//                    } else {
+//                        handleResetViewWithAni()
+//                    }
+//                    return true
+//                }
+//            }
+//        }
+//        return super.dispatchTouchEvent(ev)
+//    }
+
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         when (ev.action) {
             MotionEvent.ACTION_DOWN -> {
                 state.startY = ev.y
                 state.hasDragging = false
                 state.hasPulling = false
+                return false
             }
 
             MotionEvent.ACTION_MOVE -> {
                 val deltaY = ev.y - state.startY
+                // Pull-to-Refresh 조건이 충족되고, 일정 거리 이상 움직였을 때만 가로챔
                 if (deltaY > 0 && isScrollViewAtTop() && !state.hasRefresh) {
-                    state.hasDragging = true
-                    state.hasPulling = true
+                    val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
+                    if (deltaY > touchSlop) {
+                        // 이제부터 Pull-to-Refresh가 터치 이벤트를 처리
+                        state.hasDragging = true
+                        state.hasPulling = true
+                        return true
+                    }
+                }
+            }
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                return false
+            }
+        }
+        return false
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        // Consumed Not false
+        // Consumed Enable true
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                state.startY = event.y
+                return true
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                val deltaY = event.y - state.startY
+                if (state.hasPulling) {
                     state.pullDistance = calculatePullDistance(deltaY)
+
                     if (scrollType == ScrollType.TRANSLATION) {
                         vRefresh?.translationY =
                             0f.coerceAtMost(-refreshHeaderHeight + state.pullDistance)
@@ -202,7 +277,6 @@ class PullToRefreshView @JvmOverloads constructor(
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                state.startY = ev.y
                 if (state.hasDragging && state.hasPulling) {
                     state.hasDragging = false
                     state.hasPulling = false
@@ -215,7 +289,7 @@ class PullToRefreshView @JvmOverloads constructor(
                 }
             }
         }
-        return super.dispatchTouchEvent(ev)
+        return false
     }
 
     private fun isScrollViewAtTop(): Boolean {
