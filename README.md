@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/sieunju/widget/develop/storage/widget_logo.png" alt="widgetLogo" width="300" />
+  <img src="https://raw.githubusercontent.com/sieunju/widget/develop/assets/widget_logo.png" alt="widgetLogo" width="300" />
 </p>
 
 > [![](https://jitpack.io/v/sieunju/widget.svg)](https://jitpack.io/#sieunju/widget)   
@@ -40,11 +40,11 @@ dependencies {
 ## Example Screen
 |CustomView|FlexibleImageEidtView|ProgressView|
 |:--:|:--:|:--:|
-|![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_view.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_flexible.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_progress.webp)
+|![](https://raw.githubusercontent.com/sieunju/widget/develop/assets/example_view.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/assets/example_flexible.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/assets/example_progress.webp)
 |LineIndicator|TabLayout|ParallaxViewHolder|
-|![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_viewpager.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_tab_layout.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_parallax.webp)|
+|![](https://raw.githubusercontent.com/sieunju/widget/develop/assets/example_viewpager.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/assets/example_tab_layout.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/assets/example_parallax.webp)|
 |SpecialGrid|Scroller|TranslationBehavior|
-|![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_special_grid_decoration.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_recyclerview_scroller.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/storage/example_translation_behavior.webp)|
+|![](https://raw.githubusercontent.com/sieunju/widget/develop/assets/example_special_grid_decoration.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/assets/example_recyclerview_scroller.webp)|![](https://raw.githubusercontent.com/sieunju/widget/develop/assets/example_translation_behavior.webp)|
 
 
 ## 이슈 사항 (Material Libraries Conflict??)
