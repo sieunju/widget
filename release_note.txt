@@ -1,16 +1,14 @@
-Version: 1.0.9
-Title: v1.0.9 릴리즈 정식 배포
+Version: 1.0.10
+Title: v1.0.10 릴리즈 정식 배포
 Message:
-## Release v1.0.9 History
+## Release v1.0.10 History
 KO-KR
 ## 소개
 > Custom Component 관련 라이브러리 입니다. 🥰
 > 많은 애용 바랍니다. 그리고 추가 하고 싶은 기능이 있으면 이슈로 남겨주시기 바랍니다.
 
 ## 추가 기능
-- WalletStackView를 추가 했어요. (카드앱을 참고해서 만들었어요.)
-- AppBarLayoutBehavior
-- CustomCollapsingToolbarLayout
+- PullToRefresh 만들었어요.
 
 ## 핫픽스
 -
@@ -21,9 +19,7 @@ EN-US
 > Please use it a lot. And if there is a function you want to add, please leave it as an issue.
 
 ## Feature
-- I added WalletStackView. (I made it by referring to the card app.)
-- AppBarLayoutBehavior
-- CustomCollapsingToolbarLayout
+- I added PullToRefresh
 
 ## HotFix
 -

@@ -68,7 +68,7 @@
   {
     "type": "fragment",
     "title": "PullToRefresh",
-    "contentsName": "example_stack_card.webp",
+    "contentsName": "example_pull_to_refresh.webp",
     "routerName": "PullToRefreshFragment"
   }
 ]
