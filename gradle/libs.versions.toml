@@ -2,12 +2,13 @@
 # Build Config
 minSdk = "23"
 compileSdk = "34"
+shimmer = "0.5.0"
 targetSdk = "34"
 agp = "8.2.2"
 kotlin = "1.8.22"
 
 # App
-release = "1.0.9"
+release = "1.0.10"
 
 # AndroidX
 core-ktx = "1.7.0"
@@ -53,6 +54,9 @@ rxkotlin = "3.0.1"
 # maven
 maven = "2.1"
 
+# Lottie
+lottie = "6.6.6"
+
 [libraries]
 # Kotlin
 httptracking-interceptor = { module = "com.github.sieunju.httptracking:interceptor", version.ref = "httptracking" }
@@ -91,18 +95,22 @@ retrofit-kotlinx = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serial
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
 # Timber
+shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 # Glide
 glide-base = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-okhttp = { module = "com.github.bumptech.glide:okhttp3-integration", version.ref = "glide" }
 glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
-glide-webp = { module = "com.github.zjupure:webpdecoder", version = "2.3.4.13.2" }
+glide-webp = { module = "com.github.zjupure:webpdecoder", version = "2.7.4.16.0" }
 
 # RxJava
 rxjava-base = { module = "io.reactivex.rxjava3:rxjava", version.ref = "rxjava" }
 rxjava-android = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxandroid" }
 rxjava-kotlin = { module = "io.reactivex.rxjava3:rxkotlin", version.ref = "rxkotlin" }
+
+# Lottie
+lottie = {group = "com.airbnb.android", name = "lottie", version.ref = "lottie"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
