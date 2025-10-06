@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
-import timber.log.Timber
 
 /**
  * Description :
@@ -30,7 +29,6 @@ internal class SelectionUseCase(
             val selection = repository.fetchAssets()
                 .find { it.name == "selection.json" }
                 ?.let { repository.downloadSelectionJson(it.downloadUrl) }
-            Timber.d("CurrentThread ${Thread.currentThread()}")
             if (selection == null) {
                 emit(SelectState.Error(NullPointerException("Selection json is Null")))
                 return@flow
@@ -63,7 +61,7 @@ internal class SelectionUseCase(
                 downloadImage(downloadUrl)
             }
             if (contents == null) return@withContext null
-            return@withContext when(this@toCard) {
+            return@withContext when (this@toCard) {
                 is CardDTO.FragmentCardDTO -> Card.FragmentCard(
                     title = title,
                     contents = contents,

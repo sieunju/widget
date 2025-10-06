@@ -1,5 +1,6 @@
 package com.hmju.visual.ui.select
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +9,12 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -22,8 +28,11 @@ import com.hmju.visual.ui.select.models.Card
 import com.hmju.visual.ui.select.models.Card.Companion.getThumbContents
 import com.hmju.visual.ui.select.models.SelectState
 import com.hmju.visual.ui.select.repository.GithubRepository
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
 
 /**
@@ -58,29 +67,35 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
 
     private val adapter: Adapter by lazy { Adapter() }
 
+    private val state: LiveData<SelectState> by lazy {
+        useCase().asLiveData(lifecycleScope.coroutineContext)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        useCase = SelectionUseCase(GithubRepository(context.applicationContext))
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        useCase = SelectionUseCase(GithubRepository(view.context.applicationContext))
         rvContents = view.findViewById(R.id.rvContents)
         rvContents.layoutManager = GridLayoutManager(view.context, 2)
         rvContents.adapter = adapter
 
-        useCase().onEach {
-            Timber.d("State:${Thread.currentThread()}")
-            when (it) {
+        state.observe(viewLifecycleOwner) {
+            when(it) {
+                is SelectState.Loading -> bindLoading()
                 is SelectState.Contents -> bindContents(it)
                 is SelectState.Error -> bindError(it)
-                is SelectState.Loading -> bindLoading(it)
             }
         }
-            .launchIn(lifecycleScope)
     }
 
     private fun bindContents(state: SelectState.Contents) {
         adapter.submitList(state.list.map { UiModel.ContentsUiModel(it) })
     }
 
-    private fun bindLoading(state: SelectState.Loading) {
+    private fun bindLoading() {
         adapter.submitList((0..5).map { UiModel.ShimmerUiModel() })
     }
 
