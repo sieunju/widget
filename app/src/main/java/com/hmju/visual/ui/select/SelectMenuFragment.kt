@@ -35,17 +35,23 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
 
     private lateinit var useCase: SelectionUseCase
 
-    data class MenuUiModel(
-        val title: String,
-        val data: Card
-    ) {
-        constructor(data: Card) : this(
-            title = when (data) {
-                is Card.FragmentCard -> data.title
-                is Card.ActivityCard -> data.title
-            },
-            data = data
-        )
+    sealed interface UiModel {
+        data class ContentsUiModel(
+            val title: String,
+            val data: Card
+        ) : UiModel {
+            constructor(data: Card) : this(
+                title = when (data) {
+                    is Card.FragmentCard -> data.title
+                    is Card.ActivityCard -> data.title
+                },
+                data = data
+            )
+        }
+
+        data class ShimmerUiModel(
+            val uid: Long = System.currentTimeMillis()
+        ) : UiModel
     }
 
     private lateinit var rvContents: RecyclerView
@@ -71,54 +77,92 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
     }
 
     private fun bindContents(state: SelectState.Contents) {
-        adapter.submitList(state.list.map { MenuUiModel(it) })
+        adapter.submitList(state.list.map { UiModel.ContentsUiModel(it) })
     }
 
     private fun bindLoading(state: SelectState.Loading) {
-
+        adapter.submitList((0..5).map { UiModel.ShimmerUiModel() })
     }
 
     private fun bindError(state: SelectState.Error) {
         Timber.d("Error ${state}")
     }
 
-    class DiffUtilCallback : DiffUtil.ItemCallback<MenuUiModel>() {
+    class DiffUtilCallback : DiffUtil.ItemCallback<UiModel>() {
 
-        override fun areItemsTheSame(oldItem: MenuUiModel, newItem: MenuUiModel): Boolean {
-            return oldItem.title == newItem.title
+        override fun areItemsTheSame(oldItem: UiModel, newItem: UiModel): Boolean {
+            return if (oldItem is UiModel.ContentsUiModel && newItem is UiModel.ContentsUiModel) {
+                oldItem.title == newItem.title
+            } else if (oldItem is UiModel.ShimmerUiModel && newItem is UiModel.ShimmerUiModel) {
+                oldItem.uid == newItem.uid
+            } else {
+                false
+            }
         }
 
-        override fun areContentsTheSame(oldItem: MenuUiModel, newItem: MenuUiModel): Boolean {
-            return oldItem == newItem
-        }
-    }
-
-    inner class Adapter : ListAdapter<MenuUiModel, ViewHolder>(DiffUtilCallback()) {
-
-        override fun submitList(list: List<MenuUiModel>?) {
-            super.submitList(list?.toMutableList())
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            return ViewHolder(parent, this@SelectMenuFragment)
-        }
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            try {
-                holder.onBindView(getItem(position))
-            } catch (ex: Exception) {
-                ex.printStackTrace()
+        override fun areContentsTheSame(oldItem: UiModel, newItem: UiModel): Boolean {
+            return if (oldItem is UiModel.ContentsUiModel && newItem is UiModel.ContentsUiModel) {
+                oldItem == newItem
+            } else if (oldItem is UiModel.ShimmerUiModel && newItem is UiModel.ShimmerUiModel) {
+                oldItem == newItem
+            } else {
+                false
             }
         }
     }
 
-    inner class ViewHolder(parent: ViewGroup, fragment: Fragment) : RecyclerView.ViewHolder(
+    inner class Adapter : ListAdapter<UiModel, RecyclerView.ViewHolder>(DiffUtilCallback()) {
+
+        override fun submitList(list: List<UiModel>?) {
+            super.submitList(list?.toMutableList())
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            return when (viewType) {
+                R.layout.vh_child_select_menu -> ContentsViewHolder(parent, this@SelectMenuFragment)
+                R.layout.vh_child_select_menu_shimmer -> ShimmerViewHolder(parent)
+                else -> throw IllegalArgumentException("Invalid View Type")
+            }
+        }
+
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            try {
+                if (holder is ContentsViewHolder) {
+                    holder.onBindView(getItem(position))
+                } else if (holder is ShimmerViewHolder) {
+
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+
+        override fun getItemViewType(position: Int): Int {
+            val item = getItem(position)
+            return when (item) {
+                is UiModel.ContentsUiModel -> R.layout.vh_child_select_menu
+                else -> R.layout.vh_child_select_menu_shimmer
+            }
+        }
+    }
+
+    inner class ShimmerViewHolder(
+        parent: ViewGroup
+    ) : RecyclerView.ViewHolder(
+        LayoutInflater.from(parent.context)
+            .inflate(R.layout.vh_child_select_menu_shimmer, parent, false)
+    )
+
+    inner class ContentsViewHolder(
+        parent: ViewGroup,
+        fragment: Fragment
+    ) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context)
             .inflate(R.layout.vh_child_select_menu, parent, false)
     ) {
         private val tvTitle: AppCompatTextView by lazy { itemView.findViewById(R.id.tvTitle) }
         private val ivThumb: AppCompatImageView by lazy { itemView.findViewById(R.id.ivThumb) }
-        private var model: MenuUiModel? = null
+        private var model: UiModel.ContentsUiModel? = null
         private val requestManager: RequestManager by lazy { Glide.with(fragment) }
 
         init {
@@ -141,7 +185,8 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
             }
         }
 
-        fun onBindView(model: MenuUiModel) {
+        fun onBindView(model: UiModel) {
+            if (model !is UiModel.ContentsUiModel) return
             this.model = model
             tvTitle.text = model.title
             when (val thumbContents = model.data.getThumbContents()) {

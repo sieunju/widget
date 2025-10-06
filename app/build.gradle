@@ -91,6 +91,7 @@ dependencies {
     // UI
     implementation libs.httptracking.ui
     implementation libs.httptracking.interceptor
+    implementation(libs.shimmer)
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
