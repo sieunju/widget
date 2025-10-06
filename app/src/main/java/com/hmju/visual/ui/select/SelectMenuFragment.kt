@@ -8,43 +8,23 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
-import com.bumptech.glide.integration.webp.decoder.WebpDrawable
-import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.FitCenter
-import com.hmju.visual.Constants
 import com.hmju.visual.MainActivity.Companion.moveToFragment
 import com.hmju.visual.R
-import com.hmju.visual.ui.coordinator.DynamicCoordinatorActivity
-import com.hmju.visual.ui.coordinator.TranslationBehaviorActivity
-import com.hmju.visual.ui.gesture.FlexibleImageViewFragment
-import com.hmju.visual.ui.progress.ProgressFragment
-import com.hmju.visual.ui.recyclerview.ParallaxViewHolderFragment
-import com.hmju.visual.ui.recyclerview.RecyclerViewScrollerFragment
-import com.hmju.visual.ui.recyclerview.SpecialGridDecorationFragment
-import com.hmju.visual.ui.view.StackCardViewFragment
-import com.hmju.visual.ui.tablayout.CustomTabLayoutFragment
-import com.hmju.visual.ui.view.CustomViewFragment
-import com.hmju.visual.ui.view.PullToRefreshFragment
-import com.hmju.visual.ui.viewpager.ViewPagerFragment
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import hmju.http.tracking_interceptor.TrackingHttpInterceptor
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import kotlin.reflect.KClass
+import com.hmju.visual.ui.select.models.Card
+import com.hmju.visual.ui.select.models.Card.Companion.getThumbContents
+import com.hmju.visual.ui.select.models.SelectState
+import com.hmju.visual.ui.select.repository.GithubRepository
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 
 /**
  * Description : Visual Ui Selection Menu Fragment
@@ -53,39 +33,25 @@ import kotlin.reflect.KClass
  */
 internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
 
-    @OptIn(ExperimentalSerializationApi::class)
-    private val apiService: GithubApiService by lazy {
-        createRetrofit().create(GithubApiService::class.java)
-    }
+    private lateinit var useCase: SelectionUseCase
 
-    data class MenuUiModel(
-        val title: String,
-        val imageThumb: String? = null,
-        val targetFragment: KClass<out Fragment>? = null,
-        val targetActivity: KClass<out FragmentActivity>? = null
-    ) {
-        constructor(entity: SelectionDTO) : this(
-            title = entity.title,
-            imageThumb = entity.imageUrl,
-            targetFragment = when (entity.fragmentName) {
-                "CustomViewFragment" -> CustomViewFragment::class
-                "FlexibleImageViewFragment" -> FlexibleImageViewFragment::class
-                "ProgressFragment" -> ProgressFragment::class
-                "ViewPagerFragment" -> ViewPagerFragment::class
-                "CustomTabLayoutFragment" -> CustomTabLayoutFragment::class
-                "ParallaxViewHolderFragment" -> ParallaxViewHolderFragment::class
-                "SpecialGridDecorationFragment" -> SpecialGridDecorationFragment::class
-                "RecyclerViewScrollerFragment" -> RecyclerViewScrollerFragment::class
-                "StackCardViewFragment" -> StackCardViewFragment::class
-                "PullToRefreshFragment" -> PullToRefreshFragment::class
-                else -> null
-            },
-            targetActivity = when (entity.activityName) {
-                "TranslationBehaviorActivity" -> TranslationBehaviorActivity::class
-                "DynamicCoordinatorActivity" -> DynamicCoordinatorActivity::class
-                else -> null
-            }
-        )
+    sealed interface UiModel {
+        data class ContentsUiModel(
+            val title: String,
+            val data: Card
+        ) : UiModel {
+            constructor(data: Card) : this(
+                title = when (data) {
+                    is Card.FragmentCard -> data.title
+                    is Card.ActivityCard -> data.title
+                },
+                data = data
+            )
+        }
+
+        data class ShimmerUiModel(
+            val uid: Long = System.currentTimeMillis()
+        ) : UiModel
     }
 
     private lateinit var rvContents: RecyclerView
@@ -94,146 +60,147 @@ internal class SelectMenuFragment : Fragment(R.layout.f_select_menu) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        useCase = SelectionUseCase(GithubRepository(view.context.applicationContext))
         rvContents = view.findViewById(R.id.rvContents)
         rvContents.layoutManager = GridLayoutManager(view.context, 2)
         rvContents.adapter = adapter
-        reqSelectionList()
+
+        useCase().onEach {
+            Timber.d("State:${Thread.currentThread()}")
+            when (it) {
+                is SelectState.Contents -> bindContents(it)
+                is SelectState.Error -> bindError(it)
+                is SelectState.Loading -> bindLoading(it)
+            }
+        }
+            .launchIn(lifecycleScope)
     }
 
-    @ExperimentalSerializationApi
-    private fun createRetrofit(): Retrofit {
-        val httpClient = OkHttpClient.Builder()
-            .addInterceptor(TrackingHttpInterceptor())
-            .build()
-        val json = Json {
-            isLenient = true // Json 큰따옴표 느슨하게 체크.
-            ignoreUnknownKeys = true // Field 값이 없는 경우 무시
-            coerceInputValues = true // "null" 이 들어간경우 default Argument 값으로 대체
-        }
-        return Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .client(httpClient)
-            .build()
+    private fun bindContents(state: SelectState.Contents) {
+        adapter.submitList(state.list.map { UiModel.ContentsUiModel(it) })
     }
 
-    private fun reqSelectionList() {
-        lifecycleScope.launch(Dispatchers.Main) {
-            val list = withContext(Dispatchers.IO) {
-                try {
-                    val res = apiService.fetchSelection()
-                    return@withContext res.list.map { MenuUiModel(it) }
-                } catch (ex: Exception) {
-                    return@withContext listOf()
-                }
+    private fun bindLoading(state: SelectState.Loading) {
+        adapter.submitList((0..5).map { UiModel.ShimmerUiModel() })
+    }
+
+    private fun bindError(state: SelectState.Error) {
+        Timber.d("Error ${state}")
+    }
+
+    class DiffUtilCallback : DiffUtil.ItemCallback<UiModel>() {
+
+        override fun areItemsTheSame(oldItem: UiModel, newItem: UiModel): Boolean {
+            return if (oldItem is UiModel.ContentsUiModel && newItem is UiModel.ContentsUiModel) {
+                oldItem.title == newItem.title
+            } else if (oldItem is UiModel.ShimmerUiModel && newItem is UiModel.ShimmerUiModel) {
+                oldItem.uid == newItem.uid
+            } else {
+                false
             }
-            adapter.setDataList(list)
+        }
+
+        override fun areContentsTheSame(oldItem: UiModel, newItem: UiModel): Boolean {
+            return if (oldItem is UiModel.ContentsUiModel && newItem is UiModel.ContentsUiModel) {
+                oldItem == newItem
+            } else if (oldItem is UiModel.ShimmerUiModel && newItem is UiModel.ShimmerUiModel) {
+                oldItem == newItem
+            } else {
+                false
+            }
         }
     }
 
-    inner class Adapter : RecyclerView.Adapter<ViewHolder>() {
+    inner class Adapter : ListAdapter<UiModel, RecyclerView.ViewHolder>(DiffUtilCallback()) {
 
-        private val dataList: MutableList<MenuUiModel> by lazy { mutableListOf() }
+        override fun submitList(list: List<UiModel>?) {
+            super.submitList(list?.toMutableList())
+        }
 
-        inner class DiffUtilCallback(
-            private val oldList: List<MenuUiModel>,
-            private val newList: List<MenuUiModel>
-        ) : DiffUtil.Callback() {
-            override fun getOldListSize(): Int {
-                return oldList.size
-            }
-
-            override fun getNewListSize(): Int {
-                return newList.size
-            }
-
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                val oldItem = oldList[oldItemPosition]
-                val newItem = newList[newItemPosition]
-                return oldItem.title == newItem.title
-            }
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                val oldItem = oldList[oldItemPosition]
-                val newItem = newList[newItemPosition]
-                return oldItem == newItem
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            return when (viewType) {
+                R.layout.vh_child_select_menu -> ContentsViewHolder(parent, this@SelectMenuFragment)
+                R.layout.vh_child_select_menu_shimmer -> ShimmerViewHolder(parent)
+                else -> throw IllegalArgumentException("Invalid View Type")
             }
         }
 
-        fun setDataList(newList: List<MenuUiModel>? = null) {
-            if (newList == null) return
-            val diffUtil = DiffUtil.calculateDiff(DiffUtilCallback(dataList, newList))
-            dataList.clear()
-            dataList.addAll(newList)
-            diffUtil.dispatchUpdatesTo(this)
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            return ViewHolder(parent, this@SelectMenuFragment)
-        }
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             try {
-                if (dataList.size > position) {
-                    holder.onBindView(dataList[position])
+                if (holder is ContentsViewHolder) {
+                    holder.onBindView(getItem(position))
+                } else if (holder is ShimmerViewHolder) {
+
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
 
-        override fun getItemCount(): Int {
-            return dataList.size
+        override fun getItemViewType(position: Int): Int {
+            val item = getItem(position)
+            return when (item) {
+                is UiModel.ContentsUiModel -> R.layout.vh_child_select_menu
+                else -> R.layout.vh_child_select_menu_shimmer
+            }
         }
     }
 
-    inner class ViewHolder(parent: ViewGroup, fragment: Fragment) : RecyclerView.ViewHolder(
+    inner class ShimmerViewHolder(
+        parent: ViewGroup
+    ) : RecyclerView.ViewHolder(
+        LayoutInflater.from(parent.context)
+            .inflate(R.layout.vh_child_select_menu_shimmer, parent, false)
+    )
+
+    inner class ContentsViewHolder(
+        parent: ViewGroup,
+        fragment: Fragment
+    ) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context)
             .inflate(R.layout.vh_child_select_menu, parent, false)
     ) {
         private val tvTitle: AppCompatTextView by lazy { itemView.findViewById(R.id.tvTitle) }
         private val ivThumb: AppCompatImageView by lazy { itemView.findViewById(R.id.ivThumb) }
-        private var model: MenuUiModel? = null
+        private var model: UiModel.ContentsUiModel? = null
         private val requestManager: RequestManager by lazy { Glide.with(fragment) }
 
         init {
             itemView.setOnClickListener {
-                model?.runCatching {
-                    val targetFragment = targetFragment
-                    val targetActivity = targetActivity
-                    // 선택한 Fragment or Activity 이동
-                    if (targetFragment != null) {
-                        fragment.parentFragmentManager.moveToFragment(targetFragment)
-                    } else if (targetActivity != null) {
-                        Intent(itemView.context, targetActivity.java).apply {
-                            startActivity(this)
+                if (model == null) return@setOnClickListener
+                val card = model?.data ?: return@setOnClickListener
+                when (card) {
+                    is Card.FragmentCard -> {
+                        card.getTargetFragment()?.let {
+                            fragment.parentFragmentManager.moveToFragment(it)
+                        }
+                    }
+
+                    is Card.ActivityCard -> {
+                        card.getTargetActivity()?.let {
+                            itemView.context.startActivity(Intent(itemView.context, it.java))
                         }
                     }
                 }
             }
         }
 
-        fun onBindView(model: MenuUiModel) {
+        fun onBindView(model: UiModel) {
+            if (model !is UiModel.ContentsUiModel) return
             this.model = model
             tvTitle.text = model.title
-            val imageThumb = model.imageThumb
-            if (!imageThumb.isNullOrEmpty()) {
-                if (imageThumb.endsWith(".webp")) {
-                    requestManager.load(imageThumb)
-                        .optionalTransform(
-                            WebpDrawable::class.java,
-                            WebpDrawableTransformation(FitCenter())
-                        )
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                        .into(ivThumb)
-                } else {
-                    requestManager.load(imageThumb)
+            when (val thumbContents = model.data.getThumbContents()) {
+                is Card.ContentsType.WebP -> {
+                    requestManager.load(thumbContents.bytes)
                         .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                         .into(ivThumb)
                 }
 
-            } else {
-                ivThumb.visibility = View.GONE
+                is Card.ContentsType.Images -> {
+                    requestManager.load(thumbContents.bytes)
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .into(ivThumb)
+                }
             }
         }
     }

@@ -2,6 +2,7 @@
 # Build Config
 minSdk = "23"
 compileSdk = "34"
+shimmer = "0.5.0"
 targetSdk = "34"
 agp = "8.2.2"
 kotlin = "1.8.22"
@@ -94,6 +95,7 @@ retrofit-kotlinx = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serial
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
 # Timber
+shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 # Glide

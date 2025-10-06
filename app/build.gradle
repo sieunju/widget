@@ -5,6 +5,15 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
 }
 
+static def getGitBranch() {
+    try {
+        def process = 'git rev-parse --abbrev-ref HEAD'.execute()
+        return process.text.trim()
+    } catch (Exception e) {
+        return "unknown"
+    }
+}
+
 android {
     namespace 'com.hmju.visual'
     compileSdk libs.versions.compileSdk.get().toInteger()
@@ -16,6 +25,7 @@ android {
         versionName libs.versions.release.get().toString()
         archivesBaseName = "widget_" + versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        resValue("string", "git_branch", getGitBranch())
     }
 
     buildTypes {
@@ -82,6 +92,7 @@ dependencies {
     // UI
     implementation libs.httptracking.ui
     implementation libs.httptracking.interceptor
+    implementation(libs.shimmer)
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
