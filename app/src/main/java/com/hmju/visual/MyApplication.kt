@@ -11,35 +11,33 @@ import timber.log.Timber
  */
 class MyApplication : Application() {
 
-    override fun onCreate() {
-        super.onCreate()
-        initTimber()
-        initTracking()
-    }
+	override fun onCreate() {
+		super.onCreate()
+		initTimber()
+		initTracking()
+	}
 
-    private fun initTimber() {
-        Timber.plant(object : Timber.DebugTree() {
-            override fun createStackElementTag(element: StackTraceElement): String {
-                val str = StringBuilder("Widget_")
-                try {
-                    str.append(
-                        element.className
-                            .substringAfterLast(".")
-                            .substringBefore("$")
-                    )
-                    str.append(":")
-                    str.append(element.methodName.substringAfterLast("."))
-                } catch (ex: Exception) {
-                    // ignore
-                }
-                return str.toString()
-            }
-        })
-    }
+	private fun initTimber() {
+		Timber.plant(object : Timber.DebugTree() {
+			override fun createStackElementTag(element: StackTraceElement): String? {
+				return null
+			}
 
-    private fun initTracking() {
-        HttpTracking.Builder()
-            .setBuildType(true)
-            .build(this)
-    }
+			override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+				val newTag = if (tag.isNullOrEmpty()) {
+					"Widget"
+				} else {
+					tag
+				}
+				super.log(priority, newTag, message, t)
+			}
+		})
+	}
+
+	private fun initTracking() {
+		HttpTracking.Builder()
+			.setBuildType(true)
+			.setWifiShare(true)
+			.build(this)
+	}
 }

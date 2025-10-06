@@ -5,6 +5,15 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
 }
 
+static def getGitBranch() {
+    try {
+        def process = 'git rev-parse --abbrev-ref HEAD'.execute()
+        return process.text.trim()
+    } catch (Exception e) {
+        return "unknown"
+    }
+}
+
 android {
     namespace 'com.hmju.visual'
     compileSdk libs.versions.compileSdk.get().toInteger()
@@ -16,6 +25,7 @@ android {
         versionName libs.versions.release.get().toString()
         archivesBaseName = "widget_" + versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        resValue("string", "git_branch", getGitBranch())
     }
 
     buildTypes {
@@ -74,7 +84,7 @@ dependencies {
     implementation(libs.retrofit.okhttp)
     implementation(libs.retrofit.base)
     implementation libs.retrofit.kotlinx
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
+    implementation(libs.kotlinx.serialization)
 
     implementation libs.timber
 
