@@ -18,13 +18,13 @@
 
         <activity
             android:name=".ui.coordinator.TranslationBehaviorActivity"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="false"
             android:launchMode="singleTop" />
 
         <activity
             android:name=".ui.coordinator.DynamicCoordinatorActivity"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="false"
             android:launchMode="singleTop" />
 
