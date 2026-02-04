@@ -16,11 +16,11 @@ static def getGitBranch() {
 
 android {
     namespace 'com.hmju.visual'
-    compileSdk libs.versions.compileSdk.get().toInteger()
+    compileSdk 36
 
     defaultConfig {
         minSdk libs.versions.minSdk.get().toInteger()
-        targetSdk libs.versions.targetSdk.get().toInteger()
+        targetSdk 36
         versionCode 1
         versionName libs.versions.release.get().toString()
         archivesBaseName = "widget_" + versionName
