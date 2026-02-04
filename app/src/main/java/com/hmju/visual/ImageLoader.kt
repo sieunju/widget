@@ -15,7 +15,7 @@ import androidx.core.graphics.scale
 object ImageLoader {
 
     // 이미지 캐시 원본 비트맵을 저장.
-    private val imageCache: HashMap<String, Bitmap> = HashMap()
+    private val imageCache: MutableMap<String, Bitmap> = mutableMapOf()
 
     @JvmStatic
     suspend fun reqBitmap(url: String?, width: Int = -1, height: Int = -1): Result<Bitmap> {

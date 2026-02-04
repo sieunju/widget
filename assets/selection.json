@@ -70,5 +70,11 @@
     "title": "PullToRefresh",
     "contentsName": "example_pull_to_refresh.webp",
     "routerName": "PullToRefreshFragment"
+  },
+  {
+    "type": "activity",
+    "title": "Simple SnackBar",
+    "contentsName" : "",
+    "routerName" : "SimpleSnackBarActivity"
   }
 ]

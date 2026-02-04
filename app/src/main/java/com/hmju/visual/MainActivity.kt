@@ -3,8 +3,12 @@ package com.hmju.visual
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.enableSavedStateHandles
 import com.hmju.visual.ui.select.SelectMenuFragment
 import kotlin.reflect.KClass
 
@@ -27,6 +31,11 @@ internal class MainActivity : AppCompatActivity() {
 
         supportFragmentManager.moveToFragment(SelectMenuFragment::class)
         onBackPressedDispatcher.addCallback(this, onBackPressCallback)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment)) {v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(top =  systemBars.top, bottom = systemBars.bottom)
+            return@setOnApplyWindowInsetsListener WindowInsetsCompat.CONSUMED
+        }
     }
 
     companion object {

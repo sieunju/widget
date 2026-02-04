@@ -62,9 +62,11 @@ dependencies {
     implementation project(":tablayout")
     implementation project(":coordinatorlayout")
     implementation project(":extensions")
+    implementation project(":snackbar")
 
     implementation libs.kotlin.core
 
+    implementation(libs.androidx.activity)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.material)
