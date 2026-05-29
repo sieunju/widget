@@ -222,50 +222,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginRight="20dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="CustomSwitchView"
-                    android:textColor="#222222"
-                    android:textSize="16sp" />
-
-                <hmju.widget.view.CustomSwitchView
-                    android:id="@+id/vSwitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="30dp"
-                    app:switchAnimDuration="400"
-                    app:switchChecked="false"
-                    app:switchThumbColor="#fff"
-                    app:switchThumbMargin="4dp"
-                    app:switchThumbSize="12dp"
-                    app:switchTouchPadding="30dp"
-                    app:switchTrackColorOff="#8E9292"
-                    app:switchTrackColorOn="#00A18E" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvSwitchState"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginRight="20dp"
-                android:text="OFF"
-                android:textColor="#888888"
-                android:textSize="13sp" />
-
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="100dp" />
