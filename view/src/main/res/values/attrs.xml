@@ -47,6 +47,19 @@
     </declare-styleable>
     <!-- [e] CustomImageView Attr -->
 
+    <!-- [s] CustomSwitchView Attr -->
+    <declare-styleable name="CustomSwitchView">
+        <attr name="switchChecked" format="boolean" />
+        <attr name="switchTrackColorOn" format="color" />
+        <attr name="switchTrackColorOff" format="color" />
+        <attr name="switchThumbColor" format="color" />
+        <attr name="switchThumbSize" format="dimension" />
+        <attr name="switchThumbMargin" format="dimension" />
+        <attr name="switchAnimDuration" format="integer" />
+        <attr name="switchTouchPadding" format="dimension" />
+    </declare-styleable>
+    <!-- [e] CustomSwitchView Attr -->
+
     <declare-styleable name="ShadowViewGroup">
         <attr name="shadowOffsetX" format="dimension" />
         <attr name="shadowOffsetY" format="dimension" />

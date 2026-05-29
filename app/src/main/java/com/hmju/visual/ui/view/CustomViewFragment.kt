@@ -7,6 +7,7 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.widget.NestedScrollView
+import hmju.widget.view.CustomSwitchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.slider.RangeSlider
@@ -33,6 +34,8 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
     private lateinit var vRollingAmount: RollingAmountView
     private lateinit var vRollingAmount2: RollingAmountView
     private lateinit var tvAmount: AppCompatTextView
+    private lateinit var vSwitch: CustomSwitchView
+    private lateinit var tvSwitchState: AppCompatTextView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -43,6 +46,11 @@ internal class CustomViewFragment : Fragment(R.layout.f_custom_view) {
             tvAmount = findViewById(R.id.tvAmount)
             vRollingAmount = findViewById(R.id.vRollingAmount)
             vRollingAmount2 = findViewById(R.id.vRollingAmount2)
+            vSwitch = findViewById(R.id.vSwitch)
+            tvSwitchState = findViewById(R.id.tvSwitchState)
+            vSwitch.setOnCheckedChangeListener { isChecked ->
+                tvSwitchState.text = if (isChecked) "ON" else "OFF"
+            }
 
             requestTestImage()
             handleTvChangeStatus()
