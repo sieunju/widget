@@ -76,5 +76,11 @@
     "title": "Simple SnackBar",
     "contentsName" : "",
     "routerName" : "SimpleSnackBarActivity"
+  },
+  {
+    "type": "activity",
+    "title": "CustomSnackBar",
+    "contentsName": "",
+    "routerName": "SnackBarActivity"
   }
 ]
