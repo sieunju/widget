@@ -73,14 +73,8 @@
   },
   {
     "type": "activity",
-    "title": "Simple SnackBar",
-    "contentsName" : "",
-    "routerName" : "SimpleSnackBarActivity"
-  },
-  {
-    "type": "activity",
     "title": "CustomSnackBar",
-    "contentsName": "",
+    "contentsName": "example_pull_to_refresh.webp",
     "routerName": "SnackBarActivity"
   }
 ]

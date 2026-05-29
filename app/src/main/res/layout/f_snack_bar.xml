@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:text="CustomSnackBar 테스트"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnShowBottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="Bottom SnackBar 표시" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnShowTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="Top SnackBar 표시" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnShowLong"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="Bottom 5초 SnackBar 표시" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="24dp"
+        android:background="#DDDDDD" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="연속 이벤트 테스트 (300ms 간격 3회)"
+        android:textColor="#666666"
+        android:textSize="13sp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnShowConsecutive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="Bottom 연속 이벤트" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnShowTopConsecutive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Top 연속 이벤트" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
