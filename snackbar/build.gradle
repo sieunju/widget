@@ -33,6 +33,9 @@ android {
 dependencies {
     implementation("androidx.appcompat:appcompat:1.2.0")
     implementation(libs.androidx.material)
+    implementation(libs.androidx.fragment)
+    implementation(libs.lifecycle.runtime)
+    implementation(libs.bundles.coroutines)
 }
 
 afterEvaluate {
