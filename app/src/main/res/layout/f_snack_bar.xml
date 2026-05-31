@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="FLOAT Style"
+        android:textColor="#666666"
+        android:textSize="12sp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnFloatBottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="FLOAT · Bottom" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnFloatTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="FLOAT · Top" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="24dp"
+        android:background="#DDDDDD" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="BANNER Style (StatusBar / NavBar 오버랩)"
+        android:textColor="#666666"
+        android:textSize="12sp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnBannerBottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="BANNER · Bottom" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnBannerTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="BANNER · Top (StatusBar 오버랩)" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="24dp"
+        android:background="#DDDDDD" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnConsecutive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="연속 이벤트 테스트 (400ms 간격 3회)" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

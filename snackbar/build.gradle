@@ -1,0 +1,52 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+}
+
+android {
+    namespace 'hmju.widget.snackbar'
+    compileSdk libs.versions.compileSdk.get().toInteger()
+
+    defaultConfig {
+        minSdk libs.versions.minSdk.get().toInteger()
+
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation("androidx.appcompat:appcompat:1.2.0")
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.fragment)
+    implementation(libs.lifecycle.runtime)
+    implementation(libs.bundles.coroutines)
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.sieunju'
+                artifactId = 'snackbar'
+                version = libs.versions.release.get()
+            }
+        }
+    }
+}

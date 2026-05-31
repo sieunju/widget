@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.hmju.visual.ui.coordinator.DynamicCoordinatorActivity
 import com.hmju.visual.ui.coordinator.TranslationBehaviorActivity
+import com.hmju.visual.ui.snackbar.SnackBarActivity
 import com.hmju.visual.ui.gesture.FlexibleImageViewFragment
 import com.hmju.visual.ui.progress.ProgressFragment
 import com.hmju.visual.ui.recyclerview.ParallaxViewHolderFragment
@@ -103,6 +104,7 @@ sealed interface Card {
             return when (router) {
                 "TranslationBehaviorActivity" -> TranslationBehaviorActivity::class
                 "DynamicCoordinatorActivity" -> DynamicCoordinatorActivity::class
+                "SnackBarActivity" -> SnackBarActivity::class
                 else -> null
             }
         }
