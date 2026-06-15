@@ -23,8 +23,8 @@ import androidx.annotation.RequiresApi
  */
 @RequiresApi(Build.VERSION_CODES.S)
 class RenderEffectBlurStrategy(
-    private var radiusX: Float = 70f,
-    private var radiusY: Float = 70f,
+    private var radiusX: Float = 22.5f,
+    private var radiusY: Float = 22.5f,
     private val saturation: Float = 1.8f
 ) : BlurStrategy {
 
@@ -56,8 +56,11 @@ class RenderEffectBlurStrategy(
     private fun createRenderEffect(): RenderEffect {
         val blur = RenderEffect.createBlurEffect(radiusX, radiusY, Shader.TileMode.CLAMP)
         val vibrance = RenderEffect.createColorFilterEffect(
-            ColorMatrixColorFilter(ColorMatrix().apply { setSaturation(saturation) }),
-            blur
+            ColorMatrixColorFilter(ColorMatrix().apply {
+                setSaturation(saturation)
+
+            }
+            ), blur
         )
         return vibrance
     }
