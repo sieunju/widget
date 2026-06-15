@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.serialization.InternalSerializationApi
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Description :
@@ -45,11 +47,12 @@ internal class SelectionUseCase(
         timeoutMillis: Long = 10 * 1000,
         block: suspend () -> T
     ): T? {
-        return withTimeoutOrNull(timeoutMillis) {
+        return withTimeoutOrNull(timeoutMillis.milliseconds) {
             withContext(Dispatchers.IO) { block() }
         }
     }
 
+    @OptIn(InternalSerializationApi::class)
     private suspend fun CardDTO.toCard(): Card? {
         return withContext(Dispatchers.IO) {
             val downloadUrl = repository.fetchAssets()

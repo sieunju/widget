@@ -1,4 +1,4 @@
-package hmju.widget.view
+package hmju.widget.view.blur
 
 import android.graphics.RenderEffect
 import android.graphics.Shader
@@ -19,8 +19,8 @@ import androidx.annotation.RequiresApi
  */
 @RequiresApi(Build.VERSION_CODES.S)
 class RenderEffectBlurStrategy(
-    private val radiusX: Float = 25f,
-    private val radiusY: Float = 25f
+    private var radiusX: Float = 50f,
+    private var radiusY: Float = 50f
 ) : BlurStrategy {
 
     private var mirrorView: BlurMirrorView? = null
@@ -41,5 +41,14 @@ class RenderEffectBlurStrategy(
         mirrorView?.setRenderEffect(null)
         mirrorView?.sourceView = null
         mirrorView = null
+    }
+
+    override fun setRadius(radiusX: Float, radiusY: Float) {
+        this.radiusX = radiusX
+        this.radiusY = radiusY
+        mirrorView?.setRenderEffect(
+            RenderEffect.createBlurEffect(radiusX, radiusY, Shader.TileMode.CLAMP)
+        )
+        mirrorView?.invalidate()
     }
 }

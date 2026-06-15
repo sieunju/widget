@@ -1,9 +1,10 @@
-package hmju.widget.view
+package hmju.widget.view.blur
 
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.graphics.withClip
 
 /**
  * Description : [sourceView] 가 그리는 내용을 동일한 화면 좌표로 보정하여
@@ -48,10 +49,9 @@ class BlurMirrorView @JvmOverloads constructor(
         val dx = (srcLocation[0] - dstLocation[0]).toFloat()
         val dy = (srcLocation[1] - dstLocation[1]).toFloat()
 
-        canvas.save()
-        canvas.clipRect(0, 0, width, height)
-        canvas.translate(dx, dy)
-        source.draw(canvas)
-        canvas.restore()
+        canvas.withClip(0, 0, width, height) {
+            translate(dx, dy)
+            source.draw(this)
+        }
     }
 }

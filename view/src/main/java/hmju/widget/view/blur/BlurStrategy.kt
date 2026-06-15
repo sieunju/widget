@@ -1,4 +1,4 @@
-package hmju.widget.view
+package hmju.widget.view.blur
 
 import android.view.View
 
@@ -29,4 +29,13 @@ interface BlurStrategy {
      * Blur 효과를 해제하고 점유 중인 리소스를 정리한다.
      */
     fun release()
+
+    /**
+     * Blur 반경을 실시간으로 변경한다.
+     * 반경 개념이 없는 전략(ex. [DimOnlyStrategy])에서는 아무 동작도 하지 않는다.
+     *
+     * @param radiusX 가로 방향 블러 반경
+     * @param radiusY 세로 방향 블러 반경
+     */
+    fun setRadius(radiusX: Float, radiusY: Float) {}
 }

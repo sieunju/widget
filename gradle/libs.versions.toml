@@ -92,6 +92,7 @@ retrofit-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhtt
 retrofit-base = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-rxjava = { module = "com.squareup.retrofit2:adapter-rxjava3", version.ref = "retrofit" }
 retrofit-kotlinx = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit-kotlinx" }
+retrofit-okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 
 # Kotlinx
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
@@ -112,7 +113,7 @@ rxjava-android = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxa
 rxjava-kotlin = { module = "io.reactivex.rxjava3:rxkotlin", version.ref = "rxkotlin" }
 
 # Lottie
-lottie = {group = "com.airbnb.android", name = "lottie", version.ref = "lottie"}
+lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

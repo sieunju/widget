@@ -1,6 +1,5 @@
 package com.hmju.visual.ui.coordinator
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -19,9 +18,6 @@ import com.hmju.visual.LogoThumb
 import com.hmju.visual.R
 import com.hmju.visual.databinding.ADynamicCoordinatorBinding
 import com.hmju.visual.databinding.VhChildDynamicCoordinatorBinding
-import hmju.widget.view.BlurStrategy
-import hmju.widget.view.DimOnlyStrategy
-import hmju.widget.view.RenderEffectBlurStrategy
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.random.Random
@@ -44,12 +40,6 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
     private var headerHeight = -1
     private var scrollTargetEnd = -1
     private val reqManager: RequestManager by lazy { Glide.with(this) }
-
-    private val blurStrategy: BlurStrategy = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        RenderEffectBlurStrategy()
-    } else {
-        DimOnlyStrategy()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,21 +86,6 @@ internal class DynamicCoordinatorActivity : AppCompatActivity() {
             }
         })
         initAdapter()
-        initBlur()
-    }
-
-    override fun onDestroy() {
-        blurStrategy.release()
-        super.onDestroy()
-    }
-
-    private fun initBlur() {
-        blurStrategy.setup(binding.blurMirror, binding.rvContents)
-        binding.rvContents.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                blurStrategy.onScroll()
-            }
-        })
     }
 
     /**

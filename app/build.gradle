@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.retrofit.base)
     implementation libs.retrofit.kotlinx
     implementation(libs.kotlinx.serialization)
+    implementation(libs.retrofit.okhttp.logging)
     implementation(libs.lottie)
 
     implementation libs.timber

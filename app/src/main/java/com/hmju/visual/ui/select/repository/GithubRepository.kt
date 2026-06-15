@@ -17,9 +17,11 @@ import okhttp3.Cache
 import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.create
+import timber.log.Timber
 import java.io.File
 import java.net.SocketTimeoutException
 
@@ -41,6 +43,9 @@ internal class GithubRepository(
         maxSize = 50L * 1024 * 1024 // 50MB
     )
     private val httpClient = OkHttpClient.Builder()
+        .addInterceptor(HttpLoggingInterceptor{
+            Timber.tag("HTTP_LOG").d(it)
+        }.setLevel(HttpLoggingInterceptor.Level.BODY))
         .addInterceptor(TrackingHttpInterceptor())
         .cache(cache)
         .build()

@@ -1,4 +1,4 @@
-package hmju.widget.view
+package hmju.widget.view.blur
 
 import android.view.View
 import androidx.annotation.ColorInt
