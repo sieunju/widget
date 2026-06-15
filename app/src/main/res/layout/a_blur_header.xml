@@ -12,7 +12,9 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingTop="64dp"
-            android:paddingBottom="160dp" />
+            android:paddingBottom="160dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2" />
 
         <FrameLayout
             android:id="@+id/flHeader"
@@ -29,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#99FFFFFF"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -55,7 +57,7 @@
                 android:id="@+id/tvRadiusX"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Radius X : 50"
+                android:text="Radius X : 70"
                 android:textColor="@color/white" />
 
             <androidx.appcompat.widget.AppCompatSeekBar
@@ -63,13 +65,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="100"
-                android:progress="50" />
+                android:progress="70" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvRadiusY"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Radius Y : 50"
+                android:text="Radius Y : 70"
                 android:textColor="@color/white" />
 
             <androidx.appcompat.widget.AppCompatSeekBar
@@ -77,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="100"
-                android:progress="50" />
+                android:progress="70" />
 
         </LinearLayout>
 

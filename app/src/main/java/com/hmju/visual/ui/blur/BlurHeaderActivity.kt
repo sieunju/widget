@@ -8,14 +8,12 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -70,7 +68,6 @@ internal class BlurHeaderActivity : AppCompatActivity() {
             ExampleThumb.DEEP_LINK_WALLPAPER
         )
         val adapter = Adapter(reqManager)
-        binding.rvContents.layoutManager = LinearLayoutManager(this)
         binding.rvContents.adapter = adapter
         lifecycleScope.launch {
             val dataList = buildList {
