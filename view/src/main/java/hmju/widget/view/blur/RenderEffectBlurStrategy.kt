@@ -31,7 +31,7 @@ import androidx.annotation.RequiresApi
 class RenderEffectBlurStrategy(
     private var radius: Float = 22f,
     private val saturation: Float = 10.0f,
-    private var overlayColor: Int = Color.argb(0.6f, 1f, 1f, 1f)
+    private var overlayColor: Int = Color.argb(0.6f, 0f, 0f, 0f)
 ) : BlurStrategy {
 
     private var mirrorView: BlurMirrorView? = null
@@ -87,7 +87,7 @@ class RenderEffectBlurStrategy(
     }
 
     private fun createRenderEffect(): RenderEffect {
-        val blur = RenderEffect.createBlurEffect(radius, radius, Shader.TileMode.CLAMP)
+        val blur = RenderEffect.createBlurEffect(radius, 0f, Shader.TileMode.CLAMP)
         val colorMatrix = ColorMatrix().apply { setSaturation(saturation) }
         colorMatrix.postConcat(createOverlayColorMatrix(overlayColor))
         return RenderEffect.createColorFilterEffect(
