@@ -34,8 +34,7 @@ interface BlurStrategy {
      * Blur 반경을 실시간으로 변경한다.
      * 반경 개념이 없는 전략(ex. [DimOnlyStrategy])에서는 아무 동작도 하지 않는다.
      *
-     * @param radiusX 가로 방향 블러 반경
-     * @param radiusY 세로 방향 블러 반경
+     * @param radius 블러 반경
      */
-    fun setRadius(radiusX: Float, radiusY: Float) {}
+    fun setRadius(radius: Float) {}
 }

@@ -93,6 +93,13 @@ internal class BlurHeaderActivity : AppCompatActivity() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 blurStrategy.onScroll()
             }
+
+            override fun onScrollStateChanged(
+                recyclerView: RecyclerView,
+                newState: Int
+            ) {
+                blurStrategy.onScroll()
+            }
         })
         initBlurControl()
     }
@@ -103,21 +110,15 @@ internal class BlurHeaderActivity : AppCompatActivity() {
             binding.llBlurControl.isVisible = false
             return
         }
-        val listener = object : SeekBar.OnSeekBarChangeListener {
+        binding.sbRadius.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                binding.tvRadiusX.text = "Radius X : ${binding.sbRadiusX.progress}"
-                binding.tvRadiusY.text = "Radius Y : ${binding.sbRadiusY.progress}"
-                blurStrategy.setRadius(
-                    binding.sbRadiusX.progress.coerceAtLeast(1).toFloat(),
-                    binding.sbRadiusY.progress.coerceAtLeast(1).toFloat()
-                )
+                binding.tvRadius.text = "Radius : $progress"
+                blurStrategy.setRadius(progress.coerceAtLeast(1).toFloat())
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar) = Unit
-        }
-        binding.sbRadiusX.setOnSeekBarChangeListener(listener)
-        binding.sbRadiusY.setOnSeekBarChangeListener(listener)
+        })
     }
 
     sealed interface ListItem {
