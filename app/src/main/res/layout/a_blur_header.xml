@@ -16,66 +16,59 @@
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="2" />
 
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/flHeader"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="100dp"
             android:layout_gravity="top">
+
+<!--            <View-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:background="#1AFFFFFF"-->
+<!--                android:visibility="visible" />-->
 
             <hmju.widget.view.blur.BlurMirrorView
                 android:id="@+id/blurMirror"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#99FFFFFF"
-                android:visibility="gone" />
+<!--            <View-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:background="#33000000" />-->
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:paddingTop="16dp"
                 android:text="Blur Header Test"
-                android:textColor="#fff"
-                android:textSize="18sp"
+                android:textColor="#222"
+                android:textSize="18dp"
                 android:textStyle="bold" />
 
-        </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/llBlurControl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:layout_marginBottom="80dp"
             android:background="#CC000000"
             android:orientation="vertical"
             android:padding="12dp">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvRadiusX"
+                android:id="@+id/tvRadius"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Radius X : 70"
+                android:text="Radius : 22"
                 android:textColor="@color/white" />
 
             <androidx.appcompat.widget.AppCompatSeekBar
-                android:id="@+id/sbRadiusX"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="100"
-                android:progress="22" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvRadiusY"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Radius Y : 70"
-                android:textColor="@color/white" />
-
-            <androidx.appcompat.widget.AppCompatSeekBar
-                android:id="@+id/sbRadiusY"
+                android:id="@+id/sbRadius"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="100"

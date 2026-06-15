@@ -1,6 +1,7 @@
 package hmju.widget.view.blur
 
 import android.view.View
+import androidx.annotation.ColorInt
 
 /**
  * Description : [BlurMirrorView] 가 뒷배경(RecyclerView 등)을 흐림 처리하는
@@ -34,8 +35,15 @@ interface BlurStrategy {
      * Blur 반경을 실시간으로 변경한다.
      * 반경 개념이 없는 전략(ex. [DimOnlyStrategy])에서는 아무 동작도 하지 않는다.
      *
-     * @param radiusX 가로 방향 블러 반경
-     * @param radiusY 세로 방향 블러 반경
+     * @param radius 블러 반경
      */
-    fun setRadius(radiusX: Float, radiusY: Float) {}
+    fun setRadius(radius: Float) {}
+
+    /**
+     * Blur 결과물 위에 덧씌울 오버레이 컬러를 실시간으로 변경한다.
+     * 오버레이 개념이 없는 전략에서는 아무 동작도 하지 않는다.
+     *
+     * @param color 알파값을 포함한 오버레이 컬러 (ex. `0x66FFFFFF`)
+     */
+    fun setOverlayColor(@ColorInt color: Int) {}
 }
