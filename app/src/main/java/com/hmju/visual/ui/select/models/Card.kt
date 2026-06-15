@@ -2,6 +2,7 @@ package com.hmju.visual.ui.select.models
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.hmju.visual.ui.blur.BlurHeaderActivity
 import com.hmju.visual.ui.coordinator.DynamicCoordinatorActivity
 import com.hmju.visual.ui.coordinator.TranslationBehaviorActivity
 import com.hmju.visual.ui.snackbar.SnackBarActivity
@@ -105,6 +106,7 @@ sealed interface Card {
                 "TranslationBehaviorActivity" -> TranslationBehaviorActivity::class
                 "DynamicCoordinatorActivity" -> DynamicCoordinatorActivity::class
                 "SnackBarActivity" -> SnackBarActivity::class
+                "BlurHeaderActivity" -> BlurHeaderActivity::class
                 else -> null
             }
         }

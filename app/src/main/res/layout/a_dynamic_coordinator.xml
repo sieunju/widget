@@ -66,27 +66,42 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <FrameLayout
             android:id="@+id/llHeader"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:background="@color/white"
-            android:orientation="vertical">
+            android:layout_height="100dp"
+            android:layout_gravity="top">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <hmju.widget.view.BlurMirrorView
+                android:id="@+id/blurMirror"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:text="Header Area" />
+                android:layout_height="match_parent" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:text="Second Header Area" />
+                android:layout_height="match_parent"
+                android:background="#1AFFFFFF" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    android:text="Header Area" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    android:text="Second Header Area" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </FrameLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

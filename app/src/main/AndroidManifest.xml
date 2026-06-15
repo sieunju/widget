@@ -35,6 +35,12 @@
             android:launchMode="singleTop" />
 
         <activity
+            android:name=".ui.blur.BlurHeaderActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            android:exported="false"
+            android:launchMode="singleTop" />
+
+        <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="true"
