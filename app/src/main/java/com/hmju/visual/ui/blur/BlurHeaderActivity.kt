@@ -1,12 +1,17 @@
 package com.hmju.visual.ui.blur
 
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -25,6 +30,7 @@ import com.hmju.visual.databinding.ABlurHeaderBinding
 import com.hmju.visual.databinding.VhChildDynamicCoordinatorBinding
 import com.hmju.visual.databinding.VhSpecialLinear1Binding
 import hmju.widget.view.blur.BlurStrategy
+import hmju.widget.view.blur.BlurStyle
 import hmju.widget.view.blur.Extensions.create
 import kotlinx.coroutines.launch
 import kotlin.random.Random
@@ -98,6 +104,33 @@ internal class BlurHeaderActivity : AppCompatActivity() {
             }
         })
         initBlurControl()
+        initDebugCapture()
+    }
+
+    // TODO: 디버그 확인 후 제거
+    private fun initDebugCapture() {
+        val dp = resources.displayMetrics.density
+        val previewWidth = (280 * dp).toInt()
+        val previewHeight = (120 * dp).toInt()
+
+        val debugView = ImageView(this).apply {
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            setBackgroundColor(Color.argb(200, 0, 0, 0))
+            layoutParams = CoordinatorLayout.LayoutParams(previewWidth, previewHeight).apply {
+                gravity = Gravity.CENTER
+            }
+        }
+        (binding.root as CoordinatorLayout).addView(debugView)
+
+        binding.blurMirror.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    val bitmap = binding.blurMirror.captureFrame()
+                    debugView.setImageBitmap(bitmap)
+                    return true
+                }
+            }
+        )
     }
 
     private fun initBlurControl() {
@@ -109,7 +142,7 @@ internal class BlurHeaderActivity : AppCompatActivity() {
         binding.sbRadius.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 binding.tvRadius.text = "Radius : $progress"
-                blurStrategy.setRadius(progress.coerceAtLeast(1).toFloat())
+                // blurStrategy.setRadius(progress.coerceAtLeast(1).toFloat())
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
