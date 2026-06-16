@@ -46,4 +46,10 @@ interface BlurStrategy {
      * @param color 알파값을 포함한 오버레이 컬러 (ex. `0x66FFFFFF`)
      */
     fun setOverlayColor(@ColorInt color: Int) {}
+
+    /**
+     * [BlurStyle] 프리셋을 실시간으로 교체한다.
+     * 스타일 개념이 없는 전략에서는 아무 동작도 하지 않는다.
+     */
+    fun setStyle(style: BlurStyle) {}
 }

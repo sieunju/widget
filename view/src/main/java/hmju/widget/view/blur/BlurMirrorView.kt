@@ -1,10 +1,10 @@
 package hmju.widget.view.blur
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
-import androidx.core.graphics.withClip
 
 /**
  * Description : [sourceView] 가 그리는 내용을 동일한 화면 좌표로 보정하여
@@ -38,6 +38,28 @@ class BlurMirrorView @JvmOverloads constructor(
         setLayerType(LAYER_TYPE_HARDWARE, null)
     }
 
+    /**
+     * 현재 [sourceView] 가 그리는 내용을 [Bitmap] 으로 캡처한다.
+     * 블러 적용 전 원본 이미지를 확인하는 디버그용.
+     */
+    fun captureFrame(): Bitmap? {
+        val source = sourceView ?: return null
+        if (source.width == 0 || source.height == 0) return null
+        val bitmap = Bitmap.createBitmap(
+            width.coerceAtLeast(1), height.coerceAtLeast(1), Bitmap.Config.ARGB_8888
+        )
+        val bitmapCanvas = Canvas(bitmap)
+        source.getLocationInWindow(srcLocation)
+        getLocationInWindow(dstLocation)
+        val dx = (srcLocation[0] - dstLocation[0]).toFloat()
+        val dy = (srcLocation[1] - dstLocation[1]).toFloat()
+        bitmapCanvas.save()
+        bitmapCanvas.translate(dx, dy)
+        source.draw(bitmapCanvas)
+        bitmapCanvas.restore()
+        return bitmap
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val source = sourceView ?: return
@@ -49,9 +71,9 @@ class BlurMirrorView @JvmOverloads constructor(
         val dx = (srcLocation[0] - dstLocation[0]).toFloat()
         val dy = (srcLocation[1] - dstLocation[1]).toFloat()
 
-        canvas.withClip(0, 0, width, height) {
-            translate(dx, dy)
-            source.draw(this)
-        }
+        canvas.save()
+        canvas.translate(dx, dy)
+        source.draw(canvas)
+        canvas.restore()
     }
 }

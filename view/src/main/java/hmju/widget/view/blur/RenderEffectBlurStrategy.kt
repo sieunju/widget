@@ -15,24 +15,26 @@ import androidx.annotation.RequiresApi
  * Description : API 31(Android 12) 이상에서 [View.setRenderEffect] 와
  * [RenderEffect.createBlurEffect] 를 이용해 실시간 블러를 적용하는 전략.
  *
- * [mirror] 에 [source] 의 내용을 미러링한 뒤, Blur 와 채도(Saturation) 보정, 오버레이 컬러를
- * 체이닝하여 iOS frosted glass 와 비슷한 느낌을 낸다.
+ * [BlurStyle] 프리셋을 기반으로 균일한 가우시안 블러(iOS UIBlurEffect 와 동일한 방향성)를
+ * [blurPasses] 횟수만큼 체이닝한 뒤, 채도(Saturation) 보정과 오버레이 컬러를 적용한다.
  *
  * [source] 의 [ViewTreeObserver] 에 [ViewTreeObserver.OnPreDrawListener] 를 등록하여,
  * 스크롤 여부와 관계없이 매 프레임마다 [mirror] 를 갱신해 실시간으로 블러를 반영한다.
  *
- * @param radius 블러 반경
- * @param saturation 블러 결과물에 적용할 채도 배율 (1f = 원본, iOS 는 약 1.8배 수준)
- * @param overlayColor 블러 결과물 위에 덧씌울 오버레이 컬러 (알파 포함, 0x00xxxxxx = 없음)
+ * @param style 블러 스타일 프리셋 ([BlurStyle] 참고)
+ * @param blurPasses 블러 패스 횟수 (횟수가 많을수록 더 심하게 번짐, 기본 2)
  *
  * Created by juhongmin on 2026. 6. 15.
  */
 @RequiresApi(Build.VERSION_CODES.S)
 class RenderEffectBlurStrategy(
-    private var radius: Float = 22f,
-    private val saturation: Float = 10.0f,
-    private var overlayColor: Int = Color.argb(0.6f, 0f, 0f, 0f)
+    style: BlurStyle = BlurStyle.LIGHT,
+    private val blurPasses: Int = 2
 ) : BlurStrategy {
+
+    private var radius: Float = style.radius
+    private var saturation: Float = style.saturation
+    private var overlayColor: Int = style.overlayColor
 
     private var mirrorView: BlurMirrorView? = null
     private var preDrawListener: ViewTreeObserver.OnPreDrawListener? = null
@@ -67,6 +69,14 @@ class RenderEffectBlurStrategy(
         mirrorView?.invalidate()
     }
 
+    override fun setStyle(style: BlurStyle) {
+        this.radius = style.radius
+        this.saturation = style.saturation
+        this.overlayColor = style.overlayColor
+        mirrorView?.setRenderEffect(createRenderEffect())
+        mirrorView?.invalidate()
+    }
+
     /**
      * [source] 가 그리는 모든 프레임마다 [mirror] 를 갱신하여,
      * 스크롤뿐만 아니라 이미지 로딩, 애니메이션 등 어떤 변화에도 블러가 실시간으로 반영되도록 한다.
@@ -87,11 +97,19 @@ class RenderEffectBlurStrategy(
     }
 
     private fun createRenderEffect(): RenderEffect {
-        val blur = RenderEffect.createBlurEffect(radius, 0f, Shader.TileMode.CLAMP)
+        var blurEffect: RenderEffect = RenderEffect.createBlurEffect(
+            radius, radius, Shader.TileMode.MIRROR
+        )
+        repeat(blurPasses - 1) {
+            blurEffect = RenderEffect.createChainEffect(
+                RenderEffect.createBlurEffect(radius, radius, Shader.TileMode.MIRROR),
+                blurEffect
+            )
+        }
         val colorMatrix = ColorMatrix().apply { setSaturation(saturation) }
         colorMatrix.postConcat(createOverlayColorMatrix(overlayColor))
         return RenderEffect.createColorFilterEffect(
-            ColorMatrixColorFilter(colorMatrix), blur
+            ColorMatrixColorFilter(colorMatrix), blurEffect
         )
     }
 
