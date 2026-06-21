@@ -6,11 +6,11 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.AppCompatButton
-import androidx.fragment.app.DialogFragment
 import com.hmju.visual.R
 
-internal class ADialogFragment : DialogFragment() {
+internal class ADialogFragment : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val view = LayoutInflater.from(requireContext()).inflate(R.layout.f_a_dialog, null)
         view.findViewById<AppCompatButton>(R.id.btnClose).setOnClickListener { dismiss() }
@@ -29,7 +29,7 @@ internal class ADialogFragment : DialogFragment() {
     }
 }
 
-internal class BDialogFragment : DialogFragment() {
+internal class BDialogFragment : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val view = LayoutInflater.from(requireContext()).inflate(R.layout.f_b_dialog, null)
         view.findViewById<AppCompatButton>(R.id.btnClose).setOnClickListener { dismiss() }
@@ -48,7 +48,7 @@ internal class BDialogFragment : DialogFragment() {
     }
 }
 
-internal class CDialogFragment : DialogFragment() {
+internal class CDialogFragment : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         AlertDialog.Builder(requireContext())
             .setTitle("[C] Priority 3 — 상단 노출")
@@ -65,7 +65,7 @@ internal class CDialogFragment : DialogFragment() {
     }
 }
 
-internal class DDialogFragment : DialogFragment() {
+internal class DDialogFragment : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         AlertDialog.Builder(requireContext())
             .setTitle("[D] Priority 4 — 최하위 다이얼로그")

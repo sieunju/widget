@@ -8,6 +8,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import com.hmju.visual.R
 import com.hmju.visual.databinding.ADialogBinding
 
@@ -36,7 +41,7 @@ class DialogActivity : AppCompatActivity() {
                 return WindowInsetsCompat.CONSUMED
             }
         })
-        manager = DialogPriorityManager(supportFragmentManager)
+        manager = DialogPriorityManager(supportFragmentManager, lifecycleScope)
         initButton()
     }
 
@@ -51,17 +56,26 @@ class DialogActivity : AppCompatActivity() {
 
     /** 시나리오 1: A~D 가 거의 동시에 API 응답 → debounce 300ms 내에 수집 후 정렬 show */
     private fun simulateAll() {
-
-        binding.root.postDelayed({ manager.enqueue(3, "dialog_c") { CDialogFragment() } }, 0)
-        binding.root.postDelayed({ manager.enqueue(1, "dialog_a") { ADialogFragment() } }, 50)
-        binding.root.postDelayed({ manager.enqueue(4, "dialog_d") { DDialogFragment() } }, 100)
-        binding.root.postDelayed({ manager.enqueue(2, "dialog_b") { BDialogFragment() } }, 150)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                delay(2000)
+                manager.enqueue(3, "dialog_c") { CDialogFragment() }
+                delay(150)
+                manager.enqueue(1, "dialog_a") { ADialogFragment() }
+                delay(530)
+                manager.enqueue(4, "dialog_d") { DDialogFragment() }
+                delay(250)
+                manager.enqueue(2, "dialog_b") { BDialogFragment() }
+            }
+        }
     }
 
     /** 시나리오 2: D, C 먼저 응답 → A 가 600ms 뒤에 응답 → A 가 최상단에 위치해야 함 */
     private fun simulateLateA() {
-        binding.root.postDelayed({ manager.enqueue(4, "dialog_d") { DDialogFragment() } }, 0)
-        binding.root.postDelayed({ manager.enqueue(3, "dialog_c") { CDialogFragment() } }, 100)
-        binding.root.postDelayed({ manager.enqueue(1, "dialog_a") { ADialogFragment() } }, 600)
+        lifecycleScope.launch {
+            manager.enqueue(4, "dialog_d") { DDialogFragment() }
+            delay(100); manager.enqueue(3, "dialog_c") { CDialogFragment() }
+            delay(500); manager.enqueue(1, "dialog_a") { ADialogFragment() }
+        }
     }
 }

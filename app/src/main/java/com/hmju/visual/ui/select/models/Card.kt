@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import com.hmju.visual.ui.blur.BlurHeaderActivity
 import com.hmju.visual.ui.coordinator.DynamicCoordinatorActivity
 import com.hmju.visual.ui.coordinator.TranslationBehaviorActivity
+import com.hmju.visual.ui.dialog.DialogActivity
 import com.hmju.visual.ui.snackbar.SnackBarActivity
 import com.hmju.visual.ui.gesture.FlexibleImageViewFragment
 import com.hmju.visual.ui.progress.ProgressFragment
@@ -107,6 +108,7 @@ sealed interface Card {
                 "DynamicCoordinatorActivity" -> DynamicCoordinatorActivity::class
                 "SnackBarActivity" -> SnackBarActivity::class
                 "BlurHeaderActivity" -> BlurHeaderActivity::class
+                "DialogActivity" -> DialogActivity::class
                 else -> null
             }
         }

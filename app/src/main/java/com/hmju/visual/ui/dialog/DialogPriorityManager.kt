@@ -1,10 +1,13 @@
 package com.hmju.visual.ui.dialog
 
-import android.os.Handler
-import android.os.Looper
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * 우선순위 기반 DialogFragment 표시 매니저.
@@ -14,13 +17,15 @@ import androidx.fragment.app.FragmentManager
  * - 이미 show 된 상태에서 더 낮은 우선순위 다이얼로그가 들어오면 전체를 재정렬
  *   (기존 다이얼로그 dismiss → 우선순위 순으로 re-show)
  */
-internal class DialogPriorityManager(private val fm: FragmentManager) {
+internal class DialogPriorityManager(
+    private val fm: FragmentManager,
+    private val scope: CoroutineScope,
+) {
 
     private data class Entry(val priority: Int, val tag: String, val create: () -> DialogFragment)
 
     private val registry = mutableListOf<Entry>()
-    private val handler = Handler(Looper.getMainLooper())
-    private val flushRunnable = Runnable { flush() }
+    private var debounceJob: Job? = null
     private var isFlushing = false
 
     init {
@@ -35,8 +40,11 @@ internal class DialogPriorityManager(private val fm: FragmentManager) {
     fun enqueue(priority: Int, tag: String, create: () -> DialogFragment) {
         registry.removeAll { it.tag == tag }
         registry.add(Entry(priority, tag, create))
-        handler.removeCallbacks(flushRunnable)
-        handler.postDelayed(flushRunnable, DEBOUNCE_MS)
+        debounceJob?.cancel()
+        debounceJob = scope.launch(Dispatchers.Main) {
+            delay(DEBOUNCE_MS)
+            flush()
+        }
     }
 
     private fun flush() {
@@ -47,12 +55,13 @@ internal class DialogPriorityManager(private val fm: FragmentManager) {
         val tx = fm.beginTransaction()
         snapshot.forEach { entry -> fm.findFragmentByTag(entry.tag)?.let { tx.remove(it) } }
         tx.commitAllowingStateLoss()
-        fm.executePendingTransactions()
 
         // priority 내림차순(D=4 먼저, A=1 마지막)으로 show → 마지막 show = 시각적 최상단
+        // show() 내부의 commit() 대신 commitAllowingStateLoss() 사용 — onSaveInstanceState 이후에도 안전
         snapshot.sortedByDescending { it.priority }.forEach { entry ->
-            entry.create().show(fm, entry.tag)
-            fm.executePendingTransactions()
+            fm.beginTransaction()
+                .add(entry.create(), entry.tag)
+                .commitAllowingStateLoss()
         }
 
         isFlushing = false
