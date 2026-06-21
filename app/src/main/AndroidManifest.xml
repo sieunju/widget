@@ -41,6 +41,12 @@
             android:launchMode="singleTop" />
 
         <activity
+            android:name=".ui.dialog.DialogActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            android:exported="false"
+            android:launchMode="singleTop" />
+
+        <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="true"

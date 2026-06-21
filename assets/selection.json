@@ -82,5 +82,11 @@
     "title": "BlurHeader",
     "contentsName": "example_dynamic_coordinator.webp",
     "routerName": "BlurHeaderActivity"
+  },
+  {
+    "type": "activity",
+    "title": "DialogActivity",
+    "contentsName": "example_dynamic_coordinator.webp",
+    "routerName": "DialogActivity"
   }
 ]

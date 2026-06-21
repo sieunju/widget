@@ -10,6 +10,7 @@ object Extensions {
      * @param style 블러 스타일 프리셋 (API 31 미만에서는 무시됨)
      */
     fun create(style: BlurStyle = BlurStyle.LIGHT): BlurStrategy {
+        return DimOnlyStrategy()
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             RenderEffectBlurStrategy(style)
         } else {
