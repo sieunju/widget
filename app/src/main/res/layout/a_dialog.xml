@@ -2,29 +2,81 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <HorizontalScrollView
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/glBottom">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/llContents"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="시나리오 테스트"
+                android:textColor="#666666"
+                android:textSize="14sp" />
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSimulateAll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="A~D 동시 응답 시뮬레이션" />
 
-        </HorizontalScrollView>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSimulateLateA"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:text="D·C 먼저 응답 → A 늦게 응답" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/glBottom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.8" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="16dp"
+                android:background="#DDDDDD" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="단독 트리거"
+                android:textColor="#666666"
+                android:textSize="14sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnShowA"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="A 단독 (Priority 1 — 최상위)" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnShowB"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="B 단독 (Priority 2)" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnShowC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="C 단독 (Priority 3)" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnShowD"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="D 단독 (Priority 4 — 최하위)" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.core.widget.NestedScrollView>
+
 </layout>
