@@ -54,10 +54,10 @@ class DialogActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().apply {
             if (showB) {
                 show(fragmentB).setMaxLifecycle(fragmentB, Lifecycle.State.RESUMED)
-                hide(fragmentA).setMaxLifecycle(fragmentA, Lifecycle.State.CREATED)
+                hide(fragmentA).setMaxLifecycle(fragmentA, Lifecycle.State.STARTED)
             } else {
                 show(fragmentA).setMaxLifecycle(fragmentA, Lifecycle.State.RESUMED)
-                hide(fragmentB).setMaxLifecycle(fragmentB, Lifecycle.State.CREATED)
+                hide(fragmentB).setMaxLifecycle(fragmentB, Lifecycle.State.STARTED)
             }
         }.commit()
     }
