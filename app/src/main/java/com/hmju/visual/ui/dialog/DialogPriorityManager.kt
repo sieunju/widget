@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
  */
 internal class DialogPriorityManager(
     private val fm: FragmentManager,
-    private val scope: CoroutineScope,
+    private val scope: CoroutineScope
 ) {
 
     private data class Entry(val priority: Int, val tag: String, val create: () -> DialogFragment)
@@ -28,16 +28,25 @@ internal class DialogPriorityManager(
     private var debounceJob: Job? = null
     private var isFlushing = false
 
+    /** 마지막 flush() 결과 show 순서 (마지막 원소 = 시각적 최상단) */
+    private var shownOrder: List<String> = emptyList()
+
     init {
         fm.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
             override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
                 if (isFlushing) return
                 registry.removeAll { it.tag == f.tag }
+                shownOrder = shownOrder.filterNot { it == f.tag }
             }
         }, false)
     }
 
     fun enqueue(priority: Int, tag: String, create: () -> DialogFragment) {
+        val existing = registry.find { it.tag == tag }
+        if (existing != null && existing.priority == priority && isTopmost(tag)) {
+            // 이미 같은 우선순위로 최상단에 노출 중 → re-show 불필요
+            return
+        }
         registry.removeAll { it.tag == tag }
         registry.add(Entry(priority, tag, create))
         debounceJob?.cancel()
@@ -46,6 +55,9 @@ internal class DialogPriorityManager(
             flush()
         }
     }
+
+    private fun isTopmost(tag: String): Boolean =
+        shownOrder.lastOrNull() == tag && fm.findFragmentByTag(tag) != null
 
     private fun flush() {
         isFlushing = true
@@ -58,11 +70,13 @@ internal class DialogPriorityManager(
 
         // priority 내림차순(D=4 먼저, A=1 마지막)으로 show → 마지막 show = 시각적 최상단
         // show() 내부의 commit() 대신 commitAllowingStateLoss() 사용 — onSaveInstanceState 이후에도 안전
-        snapshot.sortedByDescending { it.priority }.forEach { entry ->
+        val order = snapshot.sortedByDescending { it.priority }
+        order.forEach { entry ->
             fm.beginTransaction()
                 .add(entry.create(), entry.tag)
                 .commitAllowingStateLoss()
         }
+        shownOrder = order.map { it.tag }
 
         isFlushing = false
     }

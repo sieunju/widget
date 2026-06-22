@@ -64,6 +64,8 @@ dependencies {
     implementation project(":extensions")
     implementation project(":snackbar")
 
+    implementation(libs.androidx.fragment)
+
     implementation libs.kotlin.core
 
     implementation(libs.androidx.activity)
