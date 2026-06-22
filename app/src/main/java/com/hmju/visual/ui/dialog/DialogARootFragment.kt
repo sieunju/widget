@@ -11,6 +11,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.hmju.visual.databinding.FDialogRootABinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
  * Description : DialogPriorityManager 가 종속되는 Root Fragment.
@@ -38,12 +39,24 @@ internal class DialogARootFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         manager = DialogPriorityManager(childFragmentManager, viewLifecycleOwner.lifecycleScope)
         initButton()
+        Timber.d("DialogARoot onViewCreated")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         manager = null
         binding = null
+        Timber.d("DialogARoot onDestroyView")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.d("DialogARoot onStop")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Timber.d("DialogARoot onPause")
     }
 
     private fun initButton() {
