@@ -18,7 +18,7 @@ class DimOnlyStrategy(
 ) : BlurStrategy {
 
     override fun setup(mirror: BlurMirrorView, source: View) {
-        mirror.sourceView = null
+        mirror.setSourceView(null)
         mirror.setLayerType(View.LAYER_TYPE_NONE, null)
         mirror.setBackgroundColor(dimColor)
     }
