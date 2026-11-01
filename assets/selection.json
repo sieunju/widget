@@ -76,5 +76,11 @@
     "title": "CustomSnackBar",
     "contentsName": "example_pull_to_refresh.webp",
     "routerName": "SnackBarActivity"
+  },
+  {
+    "type": "activity",
+    "title": "BlurHeader",
+    "contentsName": "example_dynamic_coordinator.webp",
+    "routerName": "BlurHeaderActivity"
   }
 ]

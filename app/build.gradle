@@ -50,6 +50,7 @@ android {
     buildFeatures {
         viewBinding = true
         dataBinding = true
+        buildConfig = true
     }
 }
 
@@ -75,7 +76,7 @@ dependencies {
     implementation(libs.coroutines.android)
 
     implementation(libs.glide.base)
-    // implementation(libs.glide.okhttp)
+    implementation(libs.glide.okhttp)
     implementation(libs.glide.webp)
     kapt(libs.glide.compiler)
 
@@ -87,6 +88,7 @@ dependencies {
     implementation(libs.retrofit.base)
     implementation libs.retrofit.kotlinx
     implementation(libs.kotlinx.serialization)
+    implementation(libs.retrofit.okhttp.logging)
     implementation(libs.lottie)
 
     implementation libs.timber

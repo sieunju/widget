@@ -1,5 +1,6 @@
 package com.hmju.visual.ui.select.dto
 
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,7 +14,7 @@ sealed class CardDTO {
 
     abstract val type: String
 
-    @SerialName("fragment")
+    @InternalSerializationApi @SerialName("fragment")
     @Serializable
     data class FragmentCardDTO(
         override val type: String = "fragment",
@@ -24,7 +25,7 @@ sealed class CardDTO {
         val router: String = ""
     ) : CardDTO()
 
-    @SerialName("activity")
+    @InternalSerializationApi @SerialName("activity")
     @Serializable
     data class ActivityCardDTO(
         override val type: String = "activity",
@@ -36,6 +37,7 @@ sealed class CardDTO {
     ) : CardDTO()
 
     companion object {
+        @OptIn(InternalSerializationApi::class)
         fun CardDTO.contentsName(): String {
             return when (this) {
                 is FragmentCardDTO -> contentsName
