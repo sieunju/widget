@@ -25,10 +25,8 @@ import com.hmju.visual.databinding.ABlurHeaderBinding
 import com.hmju.visual.databinding.VhChildDynamicCoordinatorBinding
 import com.hmju.visual.databinding.VhSpecialLinear1Binding
 import hmju.widget.view.blur.BlurStrategy
-import hmju.widget.view.blur.BlurStyle
 import hmju.widget.view.blur.Extensions.create
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 /**
  * Description : [hmju.widget.view.BlurMirrorView] 동작 확인용 테스트 화면.

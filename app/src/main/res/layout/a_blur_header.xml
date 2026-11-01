@@ -11,10 +11,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#fff"
+            android:clipChildren="false"
             android:clipToPadding="false"
-            android:paddingTop="64dp"
-            android:paddingBottom="160dp"
+            android:paddingTop="120dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
             app:spanCount="2" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,21 +24,10 @@
             android:layout_height="100dp"
             android:layout_gravity="top">
 
-            <!--            <View-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="match_parent"-->
-            <!--                android:background="#1AFFFFFF"-->
-            <!--                android:visibility="visible" />-->
-
             <hmju.widget.view.blur.BlurMirrorView
                 android:id="@+id/blurMirror"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-
-            <!--            <View-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="match_parent"-->
-            <!--                android:background="#33000000" />-->
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
