@@ -7,7 +7,6 @@ import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.os.Build
 import android.view.View
-import android.view.ViewTreeObserver
 import androidx.annotation.ColorInt
 import androidx.annotation.RequiresApi
 
@@ -18,8 +17,9 @@ import androidx.annotation.RequiresApi
  * [BlurStyle] 프리셋을 기반으로 균일한 가우시안 블러(iOS UIBlurEffect 와 동일한 방향성)를
  * [blurPasses] 횟수만큼 체이닝한 뒤, 채도(Saturation) 보정과 오버레이 컬러를 적용한다.
  *
- * [source] 의 [ViewTreeObserver] 에 [ViewTreeObserver.OnPreDrawListener] 를 등록하여,
- * 스크롤 여부와 관계없이 매 프레임마다 [mirror] 를 갱신해 실시간으로 블러를 반영한다.
+ * 블러 갱신은 [onScroll] 호출 시에만 이루어진다.
+ * OnPreDrawListener 를 사용하면 mirror 의 invalidate 가 리스너를 재발동시켜
+ * 60fps 로 무한 렌더링 루프가 생기기 때문에 사용하지 않는다.
  *
  * @param style 블러 스타일 프리셋 ([BlurStyle] 참고)
  * @param blurPasses 블러 패스 횟수 (횟수가 많을수록 더 심하게 번짐, 기본 2)
@@ -37,13 +37,11 @@ class RenderEffectBlurStrategy(
     private var overlayColor: Int = style.overlayColor
 
     private var mirrorView: BlurMirrorView? = null
-    private var preDrawListener: ViewTreeObserver.OnPreDrawListener? = null
 
     override fun setup(mirror: BlurMirrorView, source: View) {
         mirrorView = mirror
-        mirror.sourceView = source
+        mirror.setSourceView(source)
         mirror.setRenderEffect(createRenderEffect())
-        registerAutoUpdate(mirror, source)
     }
 
     override fun onScroll() {
@@ -51,9 +49,8 @@ class RenderEffectBlurStrategy(
     }
 
     override fun release() {
-        unregisterAutoUpdate()
         mirrorView?.setRenderEffect(null)
-        mirrorView?.sourceView = null
+        mirrorView?.setSourceView(null)
         mirrorView = null
     }
 
@@ -77,25 +74,6 @@ class RenderEffectBlurStrategy(
         mirrorView?.invalidate()
     }
 
-    /**
-     * [source] 가 그리는 모든 프레임마다 [mirror] 를 갱신하여,
-     * 스크롤뿐만 아니라 이미지 로딩, 애니메이션 등 어떤 변화에도 블러가 실시간으로 반영되도록 한다.
-     */
-    private fun registerAutoUpdate(mirror: BlurMirrorView, source: View) {
-        val listener = ViewTreeObserver.OnPreDrawListener {
-            mirror.invalidate()
-            true
-        }
-        source.viewTreeObserver.addOnPreDrawListener(listener)
-        preDrawListener = listener
-    }
-
-    private fun unregisterAutoUpdate() {
-        val listener = preDrawListener ?: return
-        mirrorView?.sourceView?.viewTreeObserver?.removeOnPreDrawListener(listener)
-        preDrawListener = null
-    }
-
     private fun createRenderEffect(): RenderEffect {
         var blurEffect: RenderEffect = RenderEffect.createBlurEffect(
             radius, radius, Shader.TileMode.MIRROR
@@ -112,6 +90,16 @@ class RenderEffectBlurStrategy(
             ColorMatrixColorFilter(colorMatrix), blurEffect
         )
     }
+
+//    private fun createRenderEffect(): RenderEffect {
+//        var blurEffect: RenderEffect = RenderEffect.createBlurEffect(
+//            radius, radius, Shader.TileMode.CLAMP
+//        )
+//        val colorMatrix = ColorMatrix().apply { setSaturation(saturation) }
+//        return RenderEffect.createColorFilterEffect(
+//            ColorMatrixColorFilter(colorMatrix), blurEffect
+//        )
+//    }
 
     /**
      * src' = src * (1 - alpha) + color * alpha 형태로 [color] 를 alpha 비율만큼 블렌딩하는 행렬

@@ -1,12 +1,18 @@
 package com.hmju.visual.ui.blur
 
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -27,6 +33,8 @@ import com.hmju.visual.databinding.VhSpecialLinear1Binding
 import hmju.widget.view.blur.BlurStrategy
 import hmju.widget.view.blur.Extensions.create
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import kotlin.random.Random
 
 /**
  * Description : [hmju.widget.view.BlurMirrorView] 동작 확인용 테스트 화면.

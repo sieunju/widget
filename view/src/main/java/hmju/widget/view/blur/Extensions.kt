@@ -11,9 +11,11 @@ object Extensions {
      */
     fun create(style: BlurStyle = BlurStyle.LIGHT): BlurStrategy {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            RenderEffectBlurStrategy(style)
-        } else {
+             RenderEffectBlurStrategy(style)
+//            SoftwareBlurStrategy(style)
+        } else  {
             DimOnlyStrategy()
+            SoftwareBlurStrategy(style)
         }
     }
 }

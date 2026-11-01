@@ -24,6 +24,10 @@ import retrofit2.create
 import timber.log.Timber
 import java.io.File
 import java.net.SocketTimeoutException
+import java.security.cert.X509Certificate
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 /**
  * Description : Github REST API
@@ -43,12 +47,30 @@ internal class GithubRepository(
         maxSize = 50L * 1024 * 1024 // 50MB
     )
     private val httpClient = OkHttpClient.Builder()
-        .addInterceptor(HttpLoggingInterceptor{
+        .addInterceptor(HttpLoggingInterceptor {
             Timber.tag("HTTP_LOG").d(it)
         }.setLevel(HttpLoggingInterceptor.Level.BODY))
         .addInterceptor(TrackingHttpInterceptor())
         .cache(cache)
+        .applyDebugSsl()
         .build()
+
+    // 구형 기기(API 24↓)에서 CA 스토어가 오래돼 GitHub 인증서 체인 검증 실패하는 경우를 대비
+    // Debug 빌드에서만 적용, Release 빌드는 기본 TrustManager 유지
+    private fun OkHttpClient.Builder.applyDebugSsl(): OkHttpClient.Builder {
+        if (!com.hmju.visual.BuildConfig.DEBUG) return this
+        val trustAll = object : X509TrustManager {
+            override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) = Unit
+            override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) = Unit
+            override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
+        }
+        val sslContext = SSLContext.getInstance("TLS").apply {
+            init(null, arrayOf<TrustManager>(trustAll), java.security.SecureRandom())
+        }
+        return sslSocketFactory(sslContext.socketFactory, trustAll)
+            .hostnameVerifier { _, _ -> true }
+    }
+
     private val json: Json = Json {
         isLenient = true // Json 큰따옴표 느슨하게 체크.
         ignoreUnknownKeys = true // Field 값이 없는 경우 무시
